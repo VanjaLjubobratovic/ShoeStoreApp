@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="20dp"
+    android:weightSum="1">
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="0.34"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="5dp"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.32"
+        android:id="@+id/dividerText"
+        android:text="Or connect with"
+        android:textAllCaps="true"
+        android:gravity="center"
+        android:textColor="@android:color/darker_gray"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="0.34"
+        android:background="@android:color/darker_gray"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="5dp"/>
+
+</LinearLayout>

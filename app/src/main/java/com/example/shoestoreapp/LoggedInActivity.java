@@ -13,12 +13,15 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoggedInActivity extends AppCompatActivity {
     private ActivityLoggedInBinding binding;
     private FirebaseAuth firebaseAuth;
+    private UserModel user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoggedInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        user = getIntent().getParcelableExtra("userData");
 
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
@@ -40,7 +43,8 @@ public class LoggedInActivity extends AppCompatActivity {
             finish();
         } else {
             String email = firebaseUser.getEmail();
-            binding.textView.setText("Hello " + email);
+            String nameLname = user.getName() + user.getLastname();
+            binding.textView.setText("Hello " + nameLname + "\nEmail: " + email + "\nRole: " + user.getRole());
         }
     }
 }
