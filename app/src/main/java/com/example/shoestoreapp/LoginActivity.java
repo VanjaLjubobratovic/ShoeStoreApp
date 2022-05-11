@@ -18,8 +18,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.shoestoreapp.admin.AdminMainActivity;
+import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.databinding.ActivityLoginBinding;
-import com.firebase.ui.auth.data.model.User;
+import com.example.shoestoreapp.employee.EmployeeMainActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -36,11 +38,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.Collection;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -94,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //TODO: enable login button only after credentials format check
         binding.loginBtn.setEnabled(true);
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,16 +150,17 @@ public class LoginActivity extends AppCompatActivity {
                                                     }
 
                                                     //user role check
+                                                    //TODO: Pospremi ovo u zasebnu metodu
                                                     Intent intent;
                                                     if(user == null) {
                                                         Log.d("FIRESTORE", "NULL USER");
                                                         return;
                                                     } else if(user.getRole().equals("customer")) {
-                                                        intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+                                                        intent = new Intent(LoginActivity.this, CustomerMainActivity.class);
                                                     } else if(user.getRole().equals("admin")) {
-                                                        intent = new Intent(LoginActivity.this, LoggedInActivity.class);
-                                                    } else if(user.getRole().equals("worker")) {
-                                                        intent = new Intent(LoginActivity.this, LoggedInActivity.class);
+                                                        intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                                                    } else if(user.getRole().equals("employee")) {
+                                                        intent = new Intent(LoginActivity.this, EmployeeMainActivity.class);
                                                     } else {
                                                         Log.d("FIRESTORE", "invalid user role");
                                                         return;
@@ -170,7 +169,6 @@ public class LoginActivity extends AppCompatActivity {
                                                     Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
 
-                                                    //TODO: add user object as a bundle for new activity
                                                     intent.putExtra("userData", user);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     startActivity(intent);
