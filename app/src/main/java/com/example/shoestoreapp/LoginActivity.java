@@ -102,16 +102,26 @@ public class LoginActivity extends AppCompatActivity {
                 checkCredentials();
             }
         });
+
+        binding.registerTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void checkCredentials() {
+        //TODO: check if email is verified
         String email = binding.username.getText().toString();
         String password = binding.password.getText().toString();
 
         if(email.isEmpty() || !email.contains("@"))
             showErrorCredentials(binding.username, "Email is not valid");
         else if(password.isEmpty() || password.length() < 7)
-            showErrorCredentials(binding.password, "Password must be at least 7 characters long");
+            showErrorCredentials(binding.password, "Password must be at least 8 characters long");
         else {
             loadingBar.setTitle("Authenticating user...");
             loadingBar.setMessage("Please wait while we check your credentials...");
@@ -223,6 +233,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUser() {
+        //TODO: check if email is verified
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
 
         //fetch user data from memory

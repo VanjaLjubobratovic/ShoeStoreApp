@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoggedInActivity;
@@ -33,6 +34,15 @@ public class CustomerMainActivity extends AppCompatActivity {
 
         //TODO: rest of the code here
         checkUser();
+
+        binding.logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseAuth.signOut();
+                startActivity(new Intent(CustomerMainActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
     }
 
     private void checkUser() {

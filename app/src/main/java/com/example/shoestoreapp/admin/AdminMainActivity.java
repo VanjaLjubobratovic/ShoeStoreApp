@@ -31,6 +31,8 @@ public class AdminMainActivity extends AppCompatActivity {
 
         //TODO: rest of the code here
         checkUser();
+
+
     }
 
     private void checkUser() {
