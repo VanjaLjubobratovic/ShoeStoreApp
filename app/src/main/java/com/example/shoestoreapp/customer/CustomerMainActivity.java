@@ -93,6 +93,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
     private void initDummyData(){
+        //Filling the array lists with random data for testing
+
         mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
         mNames.add("Havasu Falls");
         ratings.add(4.2f);
@@ -122,6 +124,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         switch (item.getItemId()){
             case R.id.nav_my_profile:
                 //TODO my profile on click
+                //Launching profile activity
+                Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
+                profileIntent.putExtra("userData", user);
+                startActivity(profileIntent);
+
                 break;
             case R.id.nav_oder_history:
                 //TODO order history on click
@@ -131,6 +138,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case R.id.nav_logout:
                 //TODO logout on click
+                //Logging out user and launching the login activity
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = CustomerMainActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
