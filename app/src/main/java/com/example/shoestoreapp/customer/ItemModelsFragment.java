@@ -27,17 +27,13 @@ import java.util.ArrayList;
  */
 public class ItemModelsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String CATEGORY_PARAM = "category";
     private String itemType = "";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<Float> ratings = new ArrayList<>();
     private RecyclerView recyclerView;
 
     private TextView helloWorld;
@@ -53,11 +49,11 @@ public class ItemModelsFragment extends Fragment {
      *
      * @return A new instance of fragment ItemModelsFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static ItemModelsFragment newInstance(String itemType) {
         ItemModelsFragment fragment = new ItemModelsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, itemType);
+        args.putString(CATEGORY_PARAM, itemType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,7 +62,7 @@ public class ItemModelsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            itemType = getArguments().getString(ARG_PARAM1);
+            itemType = getArguments().getString(CATEGORY_PARAM);
         }
 
     }
@@ -75,20 +71,31 @@ public class ItemModelsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_item_models, container, false);
+        View view = inflater.inflate(R.layout.fragment_item_models, container, false);
+
+
+        //Binding the recycle view to the loaded data
+        RecyclerView recyclerView = view.findViewById(R.id.recylcerViewModelList);
+        initDummyData();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getContext(), mNames, mImageUrls);
+        recyclerView.setAdapter(adapter);
+
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         helloWorld = view.findViewById(R.id.textViewSelectModel);
         helloWorld.setText(itemType);
-        RecyclerView recyclerView = getView().findViewById(R.id.recylcerViewModelList);
-        initDummyData(recyclerView);
 
     }
 
-    private void initDummyData(RecyclerView recycleModel){
-        if(itemType == "shoe") {
+    //load data depending on which category was clicked
+    private void initDummyData(){
+        if(itemType.equals("shoe")) {
+
             mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
             mNames.add("Cipele model 1");
 
@@ -104,6 +111,7 @@ public class ItemModelsFragment extends Fragment {
             mNames.add("Cipele model 4");
         }
         else{
+
             mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
             mNames.add("Torba model 1");
 
@@ -118,16 +126,6 @@ public class ItemModelsFragment extends Fragment {
             mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
             mNames.add("Torba model 4");
         }
-        //Initializing the RecycleViews with the loaded data
-        initRecyclerView(recycleModel);
     }
 
-    private void initRecyclerView(RecyclerView recycleModel){
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recycleModel.setLayoutManager(layoutManager);
-        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getActivity(), mNames, mImageUrls);
-        //app crashes here
-        //recycleModel.setAdapter(adapter);
-    }
 }

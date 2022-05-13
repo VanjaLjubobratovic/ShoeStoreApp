@@ -44,9 +44,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        Glide.with(mContext).
-                asBitmap().
-                load(mImageUrls.get(position))
+        Glide.with(mContext)
+                .asBitmap()
+                .load(mImageUrls.get(position))
                 .into(holder.productImage);
         holder.productName.setText(mNames.get(position));
         holder.productRating.setRating(ratings.get(position));

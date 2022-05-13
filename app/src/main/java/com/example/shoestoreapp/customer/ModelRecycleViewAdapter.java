@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,15 +29,14 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_model_list_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Glide.with(mContext).
-                asBitmap()
+        Glide.with(mContext)
+                .asBitmap()
                 .load(mImageUrls.get(position))
                 .into(holder.modelImage);
         holder.modelName.setText(mNames.get(position));
@@ -62,8 +60,8 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
 
         public ViewHolder(View itemView) {
             super(itemView);
-            modelImage = itemView.findViewById(R.id.imageViewItem);
-            modelName = itemView.findViewById(R.id.textViewItemName);
+            modelImage = itemView.findViewById(R.id.imageViewModel);
+            modelName = itemView.findViewById(R.id.textViewModelName);
 
 
         }
