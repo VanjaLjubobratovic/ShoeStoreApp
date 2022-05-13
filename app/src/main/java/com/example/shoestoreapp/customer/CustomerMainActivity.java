@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
@@ -43,6 +44,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private final static String TAG = "CustomerMainActivity";
     private ImageButton shoppingCart;
     private ImageView bag, shoe;
+    private TextView test;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,12 +80,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onClick(View view) {
                 //TODO shoe category onClick
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe")).commit();
             }
         });
         bag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO bag category onClick
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag")).commit();
             }
         });
     }

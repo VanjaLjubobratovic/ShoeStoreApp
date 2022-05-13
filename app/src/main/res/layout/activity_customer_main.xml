@@ -14,11 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:id="@+id/scrollView"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:id="@+id/relativeLayoutMain"
+            >
 
             <ImageButton
                 android:id="@+id/imageButtonCart"
