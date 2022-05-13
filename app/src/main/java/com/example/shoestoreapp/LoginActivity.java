@@ -211,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         Gson gson = new Gson();
                                                         String json = gson.toJson(user);
                                                         editor.putString("userData", json);
-                                                        editor.commit();
+                                                        editor.apply();
 
                                                         //activity switch
                                                         intent.putExtra("userData", user);
