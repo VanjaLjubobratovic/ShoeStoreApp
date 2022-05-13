@@ -11,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.databinding.ActivityLoginBinding;
 import com.example.shoestoreapp.employee.EmployeeMainActivity;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -40,6 +42,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -53,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore database;
     private CollectionReference usersRef;
     private UserModel user;
+    private SharedPreferences sharedPref;
 
     private static final String TAG ="GOOGLE_SIGN_IN";
 
@@ -66,23 +70,19 @@ public class LoginActivity extends AppCompatActivity {
 
         database = FirebaseFirestore.getInstance();
         usersRef = database.collection("users");
+        sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
 
         setContentView(binding.getRoot());
 
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(com.firebase.ui.auth.R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
         firebaseAuth = FirebaseAuth.getInstance();
-
-        /*TODO:spremi podatke ulogiranog korisnika u shared preferences
-            kako ova funkcija ne bi izazivala null pointer exception
-            buduci da firebase zapamti login
-         */
-        //checkUser();
+        checkUser();
 
         binding.googleSignInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
-                                //database query
+                                //database query to get user data
                                 usersRef.whereEqualTo("email", email).get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
@@ -149,26 +149,22 @@ public class LoginActivity extends AppCompatActivity {
                                                         Log.d("FIRESTORE", user.getLastname());
                                                     }
 
-                                                    //user role check
-                                                    //TODO: Pospremi ovo u zasebnu metodu
-                                                    Intent intent;
-                                                    if(user == null) {
-                                                        Log.d("FIRESTORE", "NULL USER");
+                                                    //chosing appropriate activity based on user role
+                                                    Intent intent = choseIntentByRole(user);
+                                                    if(intent == null)
                                                         return;
-                                                    } else if(user.getRole().equals("customer")) {
-                                                        intent = new Intent(LoginActivity.this, CustomerMainActivity.class);
-                                                    } else if(user.getRole().equals("admin")) {
-                                                        intent = new Intent(LoginActivity.this, AdminMainActivity.class);
-                                                    } else if(user.getRole().equals("employee")) {
-                                                        intent = new Intent(LoginActivity.this, EmployeeMainActivity.class);
-                                                    } else {
-                                                        Log.d("FIRESTORE", "invalid user role");
-                                                        return;
-                                                    }
 
                                                     Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
 
+                                                    //write user data to SharedPreferences
+                                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                                    Gson gson = new Gson();
+                                                    String json = gson.toJson(user);
+                                                    editor.putString("userData", json);
+                                                    editor.commit();
+
+                                                    //activity switch
                                                     intent.putExtra("userData", user);
                                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                     startActivity(intent);
@@ -205,6 +201,22 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private Intent choseIntentByRole(UserModel user) {
+        Intent intent = null;
+        if(user == null) {
+            Log.d("FIRESTORE", "NULL USER");
+        } else if(user.getRole().equals("customer")) {
+            intent = new Intent(LoginActivity.this, CustomerMainActivity.class);
+        } else if(user.getRole().equals("admin")) {
+            intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+        } else if(user.getRole().equals("employee")) {
+            intent = new Intent(LoginActivity.this, EmployeeMainActivity.class);
+        } else {
+            Log.d("FIRESTORE", "invalid user role");
+        }
+        return intent;
+    }
+
     private void showErrorCredentials(EditText input, String s) {
         input.setError(s);
         input.requestFocus();
@@ -212,11 +224,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if(firebaseUser != null) {
-            //TODO: check user and redirect him to appropriate activity
-            Intent intent = new Intent(LoginActivity.this, LoggedInActivity.class);
-            Bundle userDataBundle = intent.getExtras();
-            userDataBundle.putParcelable("userData", user);
+
+        //fetch user data from memory
+        if(sharedPref.contains("userData")) {
+            Gson gson = new Gson();
+            String json = sharedPref.getString("userData", "");
+            user = gson.fromJson(json, UserModel.class);
+        } else {
+            Log.d("CHECK USER", "No user in shared preferences");
+        }
+
+        if(firebaseUser != null && user != null) {
+            //redirect user to appropriate activity
+            Intent intent = choseIntentByRole(user);
+            if(intent == null)
+                return;
+
+            intent.putExtra("userData", user);
             startActivity(intent);
             finish();
         }
