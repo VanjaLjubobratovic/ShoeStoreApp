@@ -3,7 +3,9 @@ package com.example.shoestoreapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +20,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -83,13 +84,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void addUserToDatabase() {
-        //TODO: expand the model to include new fields from register screen
         Map<String, Object> newUser = new HashMap<>();
-        newUser.put("name", user.getName());
-        newUser.put("lastname", user.getLastname());
+        newUser.put("fullName", user.getFullName());
         newUser.put("address", user.getAddress());
         newUser.put("email", user.getEmail());
         newUser.put("role", user.getRole());
+        newUser.put("postalNumber", user.getPostalNumber());
+        newUser.put("city", user.getCity());
+        newUser.put("phoneNumber", user.getPhoneNumber());
 
         database.collection("users").document(user.getEmail())
                 .set(newUser)
@@ -97,12 +99,8 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void unused) {
                         Log.d("DATABASE APPEND", "DocumentSnapshot successfully written!");
-                        loadingBar.dismiss();
 
-                        Toast.makeText(RegisterActivity.this, "Account created successfuly", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        sendVerificationEmail();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -111,6 +109,42 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.d("DATABASE APPEND", "Error writing document", e);
                     }
                 });
+    }
+
+    private void sendVerificationEmail() {
+        if(firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.getCurrentUser().sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                loadingBar.dismiss();
+                                AlertDialog.Builder successfulRegister = new AlertDialog.Builder(RegisterActivity.this);
+                                successfulRegister.setMessage("We have sent you an email to verify your email address. " +
+                                        "Please follow the instructions in the email before you can log in.");
+                                successfulRegister.setCancelable(true);
+
+                                successfulRegister.setPositiveButton(
+                                        "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                firebaseAuth.signOut();
+                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                );
+                                successfulRegister.show();
+                            } else {
+                                Log.d("EMAIL VERIFICATION", "Send email failure");
+                            }
+                        }
+                    });
+        } else {
+            Log.d("EMAIL VERIFICAION", "Null user");
+        }
     }
 
     private Boolean checkCredentials() {
@@ -141,9 +175,7 @@ public class RegisterActivity extends AppCompatActivity {
         } else if(phone.isEmpty() || phone.matches(".*[a-zA-Z]+.*")) {
             showErrorCredentials(binding.registerPhoneNumber, "Invalid phone number");
         } else {
-            //TODO:do something with splitting full name into name and lastname
-            //TODO:use all data to create user
-            user = new UserModel(address, email, fullName, fullName, "customer");
+            user = new UserModel(address, email, fullName, "customer", city, phone, zip);
             return true;
         }
 
