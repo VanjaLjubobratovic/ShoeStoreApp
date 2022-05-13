@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
-import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.customer.CustomerMainActivity;
-import com.example.shoestoreapp.databinding.ActivityCustomerMainBinding;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,9 +41,7 @@ public class EmployeeMainActivity extends AppCompatActivity {
             finish();
         } else {
             //TODO: replace this placeholder with actual UI changes
-            String email = firebaseUser.getEmail();
-            String nameLname = user.getName() + user.getLastname();
-            String toast = "Hello " + nameLname + "\nEmail: " + email + "\nRole: " + user.getRole();
+            String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
             Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
         }
     }

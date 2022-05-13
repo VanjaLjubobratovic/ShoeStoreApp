@@ -3,22 +3,24 @@ package com.example.shoestoreapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.firestore.auth.User;
-
 public class UserModel implements Parcelable{
-    private String name;
-    private String lastname;
+    private String fullName;
     private String email;
     private String address;
     private String role;
+    private String city;
+    private String phoneNumber;
+    private String postalNumber;
 
 
-    public UserModel(String address, String email, String lastname, String name, String role) {
-        this.name = name;
-        this.lastname = lastname;
+    public UserModel(String address, String email, String fullName, String role, String city, String phoneNumber, String postalNumber) {
+        this.fullName = fullName;
         this.email = email;
         this.address = address;
         this.role = role;
+        this.city = city;
+        this.phoneNumber = phoneNumber;
+        this.postalNumber = postalNumber;
     }
 
     public UserModel(){
@@ -27,9 +29,11 @@ public class UserModel implements Parcelable{
     public UserModel(Parcel in) {
         this.address = in.readString();
         this.email = in.readString();
-        this.lastname = in.readString();
-        this.name = in.readString();
+        this.fullName = in.readString();
         this.role = in.readString();
+        this.city = in.readString();
+        this.phoneNumber = in.readString();
+        this.postalNumber = in.readString();
     }
 
     public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
@@ -44,12 +48,8 @@ public class UserModel implements Parcelable{
         }
     };
 
-    public String getName() {
-        return name;
-    }
-
-    public String getLastname() {
-        return lastname;
+    public String getFullName() {
+        return fullName;
     }
 
     public String getEmail() {
@@ -64,6 +64,18 @@ public class UserModel implements Parcelable{
         return role;
     }
 
+    public String getCity() {
+        return city;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPostalNumber() {
+        return postalNumber;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -73,8 +85,10 @@ public class UserModel implements Parcelable{
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(address);
         parcel.writeString(email);
-        parcel.writeString(lastname);
-        parcel.writeString(name);
+        parcel.writeString(fullName);
         parcel.writeString(role);
+        parcel.writeString(city);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(postalNumber);
     }
 }

@@ -31,6 +31,8 @@ public class AdminMainActivity extends AppCompatActivity {
 
         //TODO: rest of the code here
         checkUser();
+
+
     }
 
     private void checkUser() {
@@ -41,9 +43,7 @@ public class AdminMainActivity extends AppCompatActivity {
             finish();
         } else {
             //TODO: replace this placeholder with actual UI changes
-            String email = firebaseUser.getEmail();
-            String nameLname = user.getName() + user.getLastname();
-            String toast = "Hello " + nameLname + "\nEmail: " + email + "\nRole: " + user.getRole();
+            String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
             Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
         }
     }

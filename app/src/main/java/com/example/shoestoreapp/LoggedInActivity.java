@@ -43,7 +43,7 @@ public class LoggedInActivity extends AppCompatActivity {
             finish();
         } else {
             String email = firebaseUser.getEmail();
-            String nameLname = user.getName() + user.getLastname();
+            String nameLname = user.getFullName();
             binding.textView.setText("Hello " + nameLname + "\nEmail: " + email + "\nRole: " + user.getRole());
         }
     }

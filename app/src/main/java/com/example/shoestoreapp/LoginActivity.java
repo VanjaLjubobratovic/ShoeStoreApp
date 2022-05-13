@@ -102,16 +102,26 @@ public class LoginActivity extends AppCompatActivity {
                 checkCredentials();
             }
         });
+
+        binding.registerTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void checkCredentials() {
+        //TODO: check if email is verified
         String email = binding.username.getText().toString();
         String password = binding.password.getText().toString();
 
         if(email.isEmpty() || !email.contains("@"))
             showErrorCredentials(binding.username, "Email is not valid");
         else if(password.isEmpty() || password.length() < 7)
-            showErrorCredentials(binding.password, "Password must be at least 7 characters long");
+            showErrorCredentials(binding.password, "Password must be at least 8 characters long");
         else {
             loadingBar.setTitle("Authenticating user...");
             loadingBar.setMessage("Please wait while we check your credentials...");
@@ -127,54 +137,94 @@ public class LoginActivity extends AppCompatActivity {
              * If authentication fails, alert dialog will be shown and user will be asked
              * to try again.
              */
+            //TODO:clean this code up
             firebaseAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()) {
-                                //database query to get user data
-                                usersRef.whereEqualTo("email", email).get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if(task.isSuccessful()) {
-                                                    if(task.getResult().size() == 0) {
-                                                        Log.d("FIRESTORE", "0 Results");
-                                                        return;
-                                                    }
 
-                                                    for(QueryDocumentSnapshot document : task.getResult()) {
-                                                        Log.d("FIRESTORE", "Fetch succesful");
-                                                        user = document.toObject(UserModel.class);
-                                                        Log.d("FIRESTORE", user.getLastname());
-                                                    }
+                                if(!firebaseAuth.getCurrentUser().isEmailVerified()) {
+                                    loadingBar.dismiss();
+                                    AlertDialog.Builder failedLoginAlert = new AlertDialog.Builder(LoginActivity.this);
+                                    failedLoginAlert.setMessage("Please verify your email address before signing in.");
+                                    failedLoginAlert.setCancelable(true);
 
-                                                    //chosing appropriate activity based on user role
-                                                    Intent intent = choseIntentByRole(user);
-                                                    if(intent == null)
-                                                        return;
-
-                                                    Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
-                                                    loadingBar.dismiss();
-
-                                                    //write user data to SharedPreferences
-                                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                                    Gson gson = new Gson();
-                                                    String json = gson.toJson(user);
-                                                    editor.putString("userData", json);
-                                                    editor.commit();
-
-                                                    //activity switch
-                                                    intent.putExtra("userData", user);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                    finish();
-
-                                                } else {
-                                                    Log.d("FIRESTORE", "Failed to fetch user");
+                                    failedLoginAlert.setPositiveButton(
+                                            "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    dialogInterface.cancel();
                                                 }
                                             }
-                                        });
+                                    );
+
+                                    failedLoginAlert.setNegativeButton(
+                                            "Resend email",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    firebaseAuth.getCurrentUser().sendEmailVerification()
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if(task.isSuccessful()) {
+                                                                        Toast.makeText(LoginActivity.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
+                                                                    } else {
+                                                                        Log.d("EMAIL VERIFICATION", "Failed to send verification email");
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                    );
+                                    failedLoginAlert.show();
+                                } else {
+                                    //database query to get user data
+                                    usersRef.whereEqualTo("email", email).get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if(task.isSuccessful()) {
+                                                        if(task.getResult().size() == 0) {
+                                                            Log.d("FIRESTORE", "0 Results");
+                                                            return;
+                                                        }
+
+                                                        for(QueryDocumentSnapshot document : task.getResult()) {
+                                                            Log.d("FIRESTORE", "Fetch succesful");
+                                                            user = document.toObject(UserModel.class);
+                                                            Log.d("FIRESTORE", user.getFullName());
+                                                        }
+
+                                                        //chosing appropriate activity based on user role
+                                                        Intent intent = choseIntentByRole(user);
+                                                        if(intent == null)
+                                                            return;
+
+                                                        Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
+                                                        loadingBar.dismiss();
+
+                                                        //write user data to SharedPreferences
+                                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                                        Gson gson = new Gson();
+                                                        String json = gson.toJson(user);
+                                                        editor.putString("userData", json);
+                                                        editor.commit();
+
+                                                        //activity switch
+                                                        intent.putExtra("userData", user);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                        finish();
+
+                                                    } else {
+                                                        Log.d("FIRESTORE", "Failed to fetch user");
+                                                    }
+                                                }
+                                            });
+                                }
                             } else {
                                 //TODO: generate more detailed alerts based on the reason of request failure
                                 loadingBar.dismiss();
@@ -232,17 +282,21 @@ public class LoginActivity extends AppCompatActivity {
             user = gson.fromJson(json, UserModel.class);
         } else {
             Log.d("CHECK USER", "No user in shared preferences");
+            return;
         }
 
-        if(firebaseUser != null && user != null) {
+        if(firebaseUser == null) {
+            Log.d("CHECK USER", "firebaseUser is null");
+        } else if(firebaseUser.isEmailVerified()) {
             //redirect user to appropriate activity
             Intent intent = choseIntentByRole(user);
             if(intent == null)
                 return;
-
             intent.putExtra("userData", user);
             startActivity(intent);
             finish();
+        } else {
+            Log.d("CHECK USER", "User email not verified");
         }
     }
 

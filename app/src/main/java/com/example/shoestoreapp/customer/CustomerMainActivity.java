@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.shoestoreapp.LoggedInActivity;
 import com.example.shoestoreapp.LoginActivity;
-import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.ActivityCustomerMainBinding;
 import com.google.android.material.navigation.NavigationView;
@@ -140,9 +139,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             finish();
         } else {
             //TODO: replace this placeholder with actual UI changes
-            String email = firebaseUser.getEmail();
-            String nameLname = user.getName() + user.getLastname();
-            String toast = "Hello " + nameLname + "\nEmail: " + email + "\nRole: " + user.getRole();
+            String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
             Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
         }
     }
