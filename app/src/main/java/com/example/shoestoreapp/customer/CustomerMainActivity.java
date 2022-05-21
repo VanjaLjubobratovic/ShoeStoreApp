@@ -79,10 +79,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //TODO:replace with item fetch
-        //loading data into RecycleViewers
-        //initDummyData();
-
+        //fetch inventory data from db
         fetchItems();
 
         shoppingCart = findViewById(R.id.imageButtonCart);
@@ -110,31 +107,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag")).commit();
             }
         });
-    }
-
-    private void initDummyData(){
-        //Filling the array lists with random data for testing
-
-        mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
-        mNames.add("Havasu Falls");
-        ratings.add(4.2f);
-
-        mImageUrls.add("https://i.redd.it/tpsnoz5bzo501.jpg");
-        mNames.add("Trondheim");
-        ratings.add(3.7f);
-
-
-        mImageUrls.add("https://i.redd.it/qn7f9oqu7o501.jpg");
-        mNames.add("Portugal");
-        ratings.add(4.9f);
-
-        mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
-        mNames.add("Rocky Mountain");
-        ratings.add(1.2f);
-
-        //Initializing the RecycleViews with the loaded data
-        initRecyclerViewPopular();
-        initRecyclerViewRecent();
     }
 
     private void fetchItems() {

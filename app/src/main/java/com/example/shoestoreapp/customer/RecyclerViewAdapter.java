@@ -27,21 +27,11 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecycleViewAdapter";
-
-    /*private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
-    private ArrayList<Float> ratings = new ArrayList<>();*/
     private Context mContext;
     private ArrayList<ItemModel> items;
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
-    /*public RecyclerViewAdapter(Context mContext, ArrayList<String> mNames, ArrayList<String> mImageUrls, ArrayList<Float> ratings) {
-        this.mNames = mNames;
-        this.mImageUrls = mImageUrls;
-        this.ratings = ratings;
-        this.mContext = mContext;
-    }*/
 
     public RecyclerViewAdapter(Context mContext, ArrayList<ItemModel> items) {
         this.mContext = mContext;
@@ -73,6 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //TODO:Change this naming to something better
         holder.productName.setText(item.toString());
         holder.productRating.setRating((float)item.getRating());
+        holder.productPrice.setText((int)item.getPrice() + " kn");
 
         holder.productImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +81,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView productImage;
         TextView productName;
+        TextView productPrice;
         RatingBar productRating;
 
         public ViewHolder(View itemView) {
@@ -97,7 +89,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             productImage = itemView.findViewById(R.id.imageViewItem);
             productName = itemView.findViewById(R.id.textViewItemName);
             productRating = itemView.findViewById(R.id.ratingBar);
-
+            productPrice = itemView.findViewById(R.id.textViewItemPrice);
         }
     }
 }
