@@ -7,6 +7,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,9 +25,15 @@ import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.ActivityCustomerMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -38,13 +45,21 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private UserModel user;
     private ActivityCustomerMainBinding binding;
     private DrawerLayout drawer;
+    //TODO: replace this list with objects
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<Float> ratings = new ArrayList<>();
+
     private final static String TAG = "CustomerMainActivity";
     private ImageButton shoppingCart;
     private ImageView bag, shoe;
     private TextView test;
+
+    private ArrayList<ItemModel> items = new ArrayList<>();
+    private FirebaseFirestore database;
+    private CollectionReference itemsRef;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +69,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         user = getIntent().getParcelableExtra("userData");
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //TODO: rest of the code here
+        database = FirebaseFirestore.getInstance();
+        itemsRef = database.collection("/locations/webshop/items");
+
         checkUser();
 
         //Navigation drawer
@@ -62,6 +79,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        fetchItems();
+
+        //TODO:replace with item fetch
         //loading data into RecycleViewers
         initDummyData();
 
@@ -115,6 +135,27 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         //Initializing the RecycleViews with the loaded data
         initRecyclerViewPopular();
         initRecyclerViewRecent();
+    }
+
+    private void fetchItems() {
+        itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    if(task.getResult().size() == 0) {
+                        Log.d("FIRESTORE", "0 Results");
+                        return;
+                    }
+
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        ItemModel newItem = document.toObject(ItemModel.class);
+                        newItem.parseModelColor(document.getId());
+                        items.add(newItem);
+                        Log.d("FIRESTORE", newItem.toString());
+                    }
+                } else Log.d("FIRESTORE", "fetch failed");
+            }
+        });
     }
 
     //Drawer onclick
