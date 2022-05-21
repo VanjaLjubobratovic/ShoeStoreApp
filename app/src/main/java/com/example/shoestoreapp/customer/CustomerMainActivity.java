@@ -79,11 +79,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        fetchItems();
-
         //TODO:replace with item fetch
         //loading data into RecycleViewers
-        initDummyData();
+        //initDummyData();
+
+        fetchItems();
 
         shoppingCart = findViewById(R.id.imageButtonCart);
         shoppingCart.setOnClickListener(new View.OnClickListener() {
@@ -146,13 +146,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Log.d("FIRESTORE", "0 Results");
                         return;
                     }
-
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         ItemModel newItem = document.toObject(ItemModel.class);
                         newItem.parseModelColor(document.getId());
                         items.add(newItem);
                         Log.d("FIRESTORE", newItem.toString());
                     }
+
+                    initRecyclerViewPopular();
+                    initRecyclerViewRecent();
                 } else Log.d("FIRESTORE", "fetch failed");
             }
         });
@@ -213,7 +215,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewPopularProducts);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mNames,mImageUrls,ratings);
+        //TODO: pass filtered array
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
         recyclerView.setAdapter(adapter);
     }
 
@@ -223,7 +226,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewRecentProducts);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mNames,mImageUrls,ratings);
+        //TODO: pass filtered array
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
         recyclerView.setAdapter(adapter);
     }
 }
