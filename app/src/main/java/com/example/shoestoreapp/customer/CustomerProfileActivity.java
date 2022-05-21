@@ -1,5 +1,9 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shoestoreapp.LoginActivity;
@@ -26,11 +30,28 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ImageButton exit;
-    private Button logoutBtn;
+    private Button logoutBtn, changeBtn;
     private String fullName,name,surname,email,address,city,postalCode,phone;
     private String[] names;
     private TextView profileName, profileSurname, profileEmail, profileAddress, profileCityAndCode,
             profilePhone;
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+
+            if(result.getResultCode() == 78){
+                Intent intent = result.getData();
+
+                if(intent != null){
+                    user = intent.getParcelableExtra("userResult");
+                    setUserData();
+                }
+            }
+
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +87,34 @@ public class CustomerProfileActivity extends AppCompatActivity {
             }
         });
 
+        changeBtn = findViewById(R.id.buttonProfileChanges);
+        changeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profileChangeIntent = new Intent(CustomerProfileActivity.this, CustomerProfileChangeActivity.class);
+                profileChangeIntent.putExtra("userData", user);
+                activityLauncher.launch(profileChangeIntent);
+
+            }
+        });
+
         //Loading user data from intent data (user firebase object)
+        setUserData();
+
+    }
+
+    private void checkUser() {
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        if(firebaseUser == null) {
+            //user not logged in
+            startActivity(new Intent(CustomerProfileActivity.this, LoginActivity.class));
+            finish();
+        } else {
+            //TODO: replace this placeholder with actual UI changes
+        }
+    }
+
+    private void setUserData(){
         fullName = user.getFullName();
         names = fullName.split(" ");
         if(names.length > 0){
@@ -78,6 +126,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
         city = user.getCity();
         postalCode = user.getPostalNumber();
         phone = user.getPhoneNumber();
+
 
         profileName = findViewById(R.id.textViewProfileName);
         profileName.setText(name);
@@ -91,19 +140,5 @@ public class CustomerProfileActivity extends AppCompatActivity {
         profileAddress.setText(address);
         profilePhone = findViewById(R.id.textViewProfilePhone);
         profilePhone.setText(phone);
-
-
-
-    }
-
-    private void checkUser() {
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if(firebaseUser == null) {
-            //user not logged in
-            startActivity(new Intent(CustomerProfileActivity.this, LoginActivity.class));
-            finish();
-        } else {
-            //TODO: replace this placeholder with actual UI changes
-        }
     }
 }

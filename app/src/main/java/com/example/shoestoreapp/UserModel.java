@@ -76,6 +76,30 @@ public class UserModel implements Parcelable{
         return postalNumber;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setPostalNumber(String postalNumber) {
+        this.postalNumber = postalNumber;
+    }
+
     @Override
     public int describeContents() {
         return 0;
