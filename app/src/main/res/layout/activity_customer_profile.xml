@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".customer.CustomerProfileActivity">
+
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
     android:padding="20dp"
-    android:background="@color/colorAccent"
+    android:background="@color/purple_500"
     android:id="@+id/profileTopLayout">
     <ImageView
         android:id="@+id/imageViewProfilePic"
@@ -19,7 +20,7 @@
         android:layout_margin="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/avatardefault"/>
 
     <TextView
         android:id="@+id/textViewProfileName"

@@ -79,11 +79,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //fetch inventory data from db
         fetchItems();
-
-        //TODO:replace with item fetch
-        //loading data into RecycleViewers
-        initDummyData();
 
         shoppingCart = findViewById(R.id.imageButtonCart);
         shoppingCart.setOnClickListener(new View.OnClickListener() {
@@ -112,31 +109,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
-    private void initDummyData(){
-        //Filling the array lists with random data for testing
-
-        mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
-        mNames.add("Havasu Falls");
-        ratings.add(4.2f);
-
-        mImageUrls.add("https://i.redd.it/tpsnoz5bzo501.jpg");
-        mNames.add("Trondheim");
-        ratings.add(3.7f);
-
-
-        mImageUrls.add("https://i.redd.it/qn7f9oqu7o501.jpg");
-        mNames.add("Portugal");
-        ratings.add(4.9f);
-
-        mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
-        mNames.add("Rocky Mountain");
-        ratings.add(1.2f);
-
-        //Initializing the RecycleViews with the loaded data
-        initRecyclerViewPopular();
-        initRecyclerViewRecent();
-    }
-
     private void fetchItems() {
         itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -146,13 +118,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         Log.d("FIRESTORE", "0 Results");
                         return;
                     }
-
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         ItemModel newItem = document.toObject(ItemModel.class);
                         newItem.parseModelColor(document.getId());
                         items.add(newItem);
                         Log.d("FIRESTORE", newItem.toString());
                     }
+
+                    initRecyclerViewPopular();
+                    initRecyclerViewRecent();
                 } else Log.d("FIRESTORE", "fetch failed");
             }
         });
@@ -213,7 +187,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewPopularProducts);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mNames,mImageUrls,ratings);
+        //TODO: pass filtered array
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
         recyclerView.setAdapter(adapter);
     }
 
@@ -223,7 +198,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewRecentProducts);
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mNames,mImageUrls,ratings);
+        //TODO: pass filtered array
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
         recyclerView.setAdapter(adapter);
     }
 }
