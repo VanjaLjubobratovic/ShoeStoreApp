@@ -97,14 +97,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onClick(View view) {
                 //TODO shoe category onClick
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe")).commit();
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items)).addToBackStack(null).commit();
             }
         });
         bag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO bag category onClick
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag")).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items)).addToBackStack(null).commit();
             }
         });
     }
@@ -152,7 +153,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 //TODO payment method on click
                 break;
             case R.id.nav_logout:
-                //TODO logout on click
                 //Logging out user and launching the login activity
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = CustomerMainActivity.this.getPreferences(Context.MODE_PRIVATE);

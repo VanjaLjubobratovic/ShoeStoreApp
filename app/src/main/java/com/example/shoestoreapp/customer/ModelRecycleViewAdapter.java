@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.customer;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +13,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleViewAdapter.ViewHolder>{
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<ItemModel> items;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
     private Context mContext;
+    private static final String TAG = "ModelRecycleViewAdapter";
 
-    public ModelRecycleViewAdapter(Context mContext, ArrayList<String> mNames, ArrayList<String> mImageUrls) {
-        this.mNames = mNames;
-        this.mImageUrls = mImageUrls;
+    public ModelRecycleViewAdapter(Context mContext, ArrayList<ItemModel> items) {
+        this.items = items;
         this.mContext = mContext;
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
     }
 
     @NonNull
@@ -35,11 +42,17 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder: called");
+
+        ItemModel item = items.get(position);
+        StorageReference imageReference = storageRef.child(item.getImage());
+
         Glide.with(mContext)
                 .asBitmap()
-                .load(mImageUrls.get(position))
+                .load(imageReference)
                 .into(holder.modelImage);
-        holder.modelName.setText(mNames.get(position));
+
+        holder.modelName.setText("Model " + item.getModel());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +64,7 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return items.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

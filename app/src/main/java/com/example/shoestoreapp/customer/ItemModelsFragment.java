@@ -12,12 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.example.shoestoreapp.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -28,16 +31,16 @@ import java.util.ArrayList;
 public class ItemModelsFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String CATEGORY_PARAM = "category";
+    private static final String CATEGORY_PARAM = "category", ITEMS_PARAM = "listOfItems";
     private String itemType = "";
 
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<Float> ratings = new ArrayList<>();
     private RecyclerView recyclerView;
-
     private TextView helloWorld;
-
+    private ImageButton back;
+    private ArrayList<ItemModel> items = new ArrayList<>(), models = new ArrayList<>();
     public ItemModelsFragment() {
 
     }
@@ -50,19 +53,23 @@ public class ItemModelsFragment extends Fragment {
      * @return A new instance of fragment ItemModelsFragment.
      */
 
-    public static ItemModelsFragment newInstance(String itemType) {
+    //Setting the arguments got from parent activity
+    public static ItemModelsFragment newInstance(String itemType, ArrayList<ItemModel> items) {
         ItemModelsFragment fragment = new ItemModelsFragment();
         Bundle args = new Bundle();
         args.putString(CATEGORY_PARAM, itemType);
+        args.putSerializable(ITEMS_PARAM,(Serializable) items);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //Getting the passed values from parent activity
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             itemType = getArguments().getString(CATEGORY_PARAM);
+            items = (ArrayList<ItemModel>) getArguments().getSerializable(ITEMS_PARAM);
         }
 
     }
@@ -76,11 +83,12 @@ public class ItemModelsFragment extends Fragment {
 
         //Binding the recycle view to the loaded data
         RecyclerView recyclerView = view.findViewById(R.id.recylcerViewModelList);
-        initDummyData();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getContext(), mNames, mImageUrls);
+        models = getModels(items, itemType);
+        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getContext(), models);
         recyclerView.setAdapter(adapter);
+
 
         return view;
     }
@@ -88,44 +96,29 @@ public class ItemModelsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         helloWorld = view.findViewById(R.id.textViewSelectModel);
-        helloWorld.setText(itemType);
+
+        //Closing the fragment on x button click
+        back = view.findViewById(R.id.imageButtonModelExit);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               getActivity().getSupportFragmentManager().popBackStackImmediate();
+            }
+        });
 
     }
 
-    //load data depending on which category was clicked
-    private void initDummyData(){
-        if(itemType.equals("shoe")) {
-
-            mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
-            mNames.add("Cipele model 1");
-
-            mImageUrls.add("https://i.redd.it/tpsnoz5bzo501.jpg");
-            mNames.add("Cipele model 2");
-
-
-            mImageUrls.add("https://i.redd.it/qn7f9oqu7o501.jpg");
-            mNames.add("Cipele model 3");
-
-
-            mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
-            mNames.add("Cipele model 4");
+    //Removing duplicate models and separating by itemType
+    private ArrayList<ItemModel> getModels (ArrayList<ItemModel> items, String itemType){
+        ArrayList<ItemModel> uniqueModels = new ArrayList<>();
+        for(ItemModel item : items){
+            if(item.getType().contains(itemType) && !uniqueModels.contains(item)){
+                uniqueModels.add(item);
+            }
         }
-        else{
 
-            mImageUrls.add("https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg");
-            mNames.add("Torba model 1");
-
-            mImageUrls.add("https://i.redd.it/tpsnoz5bzo501.jpg");
-            mNames.add("Torba model 2");
-
-
-            mImageUrls.add("https://i.redd.it/qn7f9oqu7o501.jpg");
-            mNames.add("Torba model 3");
-
-
-            mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
-            mNames.add("Torba model 4");
-        }
+        return uniqueModels;
     }
+
 
 }
