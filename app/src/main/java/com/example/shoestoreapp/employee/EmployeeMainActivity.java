@@ -7,10 +7,18 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
+import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
@@ -19,6 +27,8 @@ public class EmployeeMainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityEmployeeMainBinding binding;
+
+    private BarChart barChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,30 @@ public class EmployeeMainActivity extends AppCompatActivity {
 
         //TODO: rest of the code here
         checkUser();
+
+
+        barChart = binding.salesChart;
+        ArrayList<BarEntry> saleSumList = new ArrayList<>();
+        saleSumList.add(new BarEntry(9f,1500));
+        saleSumList.add(new BarEntry(10f,1000));
+        saleSumList.add(new BarEntry(11f,350));
+        saleSumList.add(new BarEntry(12f,200));
+        saleSumList.add(new BarEntry(13f,2500));
+        saleSumList.add(new BarEntry(14f,4500));
+        saleSumList.add(new BarEntry(15f,500));
+        BarDataSet barDataSet = new BarDataSet(saleSumList, "Promet");
+        barDataSet.setColor(R.color.purple_500);
+
+        BarData theData = new BarData(barDataSet);
+
+        barChart.setData(theData);
+
+        barChart.setTouchEnabled(false);
+        barChart.setDragEnabled(false);
+        barChart.setScaleEnabled(true);
+        barChart.getXAxis().setDrawGridLines(false);
+        barChart.getAxisRight().setDrawGridLines(false);
+        barChart.getAxisLeft().setDrawGridLines(false);
     }
 
     private void checkUser() {
