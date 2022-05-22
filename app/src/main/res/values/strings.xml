@@ -26,4 +26,6 @@
     <string name="prompt_phone">Phone number</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="status_blagajne">STATUS BLAGAJNE</string>
+    <string name="status_placeholder">status</string>
 </resources>
