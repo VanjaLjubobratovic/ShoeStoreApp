@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.customer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
@@ -31,12 +33,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<ItemModel> items;
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private OnItemListener mOnItemListener;
 
-
-    public RecyclerViewAdapter(Context mContext, ArrayList<ItemModel> items) {
+    public RecyclerViewAdapter(Context mContext, ArrayList<ItemModel> items, OnItemListener onItemListener) {
         this.mContext = mContext;
         this.items = items;
-
+        this.mOnItemListener = onItemListener;
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
     }
@@ -45,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_listitem, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, mOnItemListener);
     }
 
     @Override
@@ -65,12 +67,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.productRating.setRating((float)item.getRating());
         holder.productPrice.setText((int)item.getPrice() + " kn");
 
-        holder.productImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO item onclick
-            }
-        });
     }
 
     @Override
@@ -78,18 +74,34 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return items.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView productImage;
         TextView productName;
         TextView productPrice;
         RatingBar productRating;
+        OnItemListener onItemListener;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, OnItemListener onItemListener) {
             super(itemView);
             productImage = itemView.findViewById(R.id.imageViewItem);
             productName = itemView.findViewById(R.id.textViewItemName);
             productRating = itemView.findViewById(R.id.ratingBar);
             productPrice = itemView.findViewById(R.id.textViewItemPrice);
+            this.onItemListener = onItemListener;
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            String viewFullName = view.getParent().toString();
+            String name = viewFullName.substring(viewFullName.lastIndexOf("/") + 1);
+            name = name.substring(0, name.length()-1);
+            onItemListener.onItemClick(getBindingAdapterPosition(), name);
+        }
+    }
+
+    public interface OnItemListener{
+        void onItemClick(int position, String id);
     }
 }

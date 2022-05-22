@@ -7,12 +7,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,12 +37,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
 
-public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RecyclerViewAdapter.OnItemListener{
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityCustomerMainBinding binding;
@@ -96,7 +99,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         shoe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO shoe category onClick
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items)).addToBackStack(null).commit();
             }
@@ -104,7 +106,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         bag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO bag category onClick
+
                 getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items)).addToBackStack(null).commit();
             }
         });
@@ -188,7 +190,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         RecyclerView recyclerView = findViewById(R.id.recyclerViewPopularProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -199,7 +201,17 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         RecyclerView recyclerView = findViewById(R.id.recyclerViewRecentProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    //starting new activity and sending item selected
+    @Override
+    public void onItemClick(int position, String id) {
+
+        Intent profileIntent = new Intent(this, SingleItemActivity.class);
+        profileIntent.putExtra("selectedItem", items.get(position));
+        profileIntent.putExtra("userData", user);
+        startActivity(profileIntent);
     }
 }

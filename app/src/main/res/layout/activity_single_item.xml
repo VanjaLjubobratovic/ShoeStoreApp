@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".customer.SingleItemActivity">
+
+    <TextView
+        android:id="@+id/itemNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/itemImageView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="fitXY"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/itemNameTextView"
+        app:srcCompat="@drawable/background1" />
+
+    <TextView
+        android:id="@+id/itemColorLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Boja:"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemImageView" />
+
+    <Spinner
+        android:id="@+id/colorSpinner"
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/itemColorLabel"
+        app:layout_constraintTop_toBottomOf="@+id/itemImageView" />
+
+    <Spinner
+        android:id="@+id/sizeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemImageView" />
+
+    <TextView
+        android:id="@+id/itemSizeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Velicina:"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_margin="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/sizeSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/itemImageView" />
+
+    <TextView
+        android:id="@+id/itemPriceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cijena"
+        android:layout_margin="30dp"
+        android:textColor="@color/black"
+        android:textSize="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colorSpinner" />
+
+    <RatingBar
+        android:id="@+id/itemRatingBar"
+        style="?android:ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemPriceLabel" />
+
+    <Button
+        android:id="@+id/buyItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Kupi"
+        android:layout_marginRight="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemSizeLabel" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemReviewsRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemRatingBar" />
+
+    <ImageButton
+        android:id="@+id/itemBackImageButton"
+        android:layout_margin="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:backgroundTint="#F4F0F0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_back_arrow" />
+</androidx.constraintlayout.widget.ConstraintLayout>
