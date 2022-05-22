@@ -43,6 +43,7 @@ public class EmployeeMainActivity extends AppCompatActivity {
         checkUser();
 
 
+        //TODO: Replace with real cashflow calculation
         barChart = binding.salesChart;
         ArrayList<BarEntry> saleSumList = new ArrayList<>();
         saleSumList.add(new BarEntry(9f,1500));
