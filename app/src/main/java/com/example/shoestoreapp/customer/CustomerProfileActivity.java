@@ -36,10 +36,11 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private TextView profileName, profileSurname, profileEmail, profileAddress, profileCityAndCode,
             profilePhone;
 
+
+    //Getting new details after changing user profile details
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
-
             if(result.getResultCode() == 78){
                 Intent intent = result.getData();
 
@@ -77,6 +78,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //logging out the user
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = CustomerProfileActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -87,10 +89,13 @@ public class CustomerProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        //Change profile details onClick -> new activity
         changeBtn = findViewById(R.id.buttonProfileChanges);
         changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //new activity with return data
                 Intent profileChangeIntent = new Intent(CustomerProfileActivity.this, CustomerProfileChangeActivity.class);
                 profileChangeIntent.putExtra("userData", user);
                 activityLauncher.launch(profileChangeIntent);
@@ -114,6 +119,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
         }
     }
 
+    //Reading user data from userDetails and writing it to appropriate elements
     private void setUserData(){
         fullName = user.getFullName();
         names = fullName.split(" ");

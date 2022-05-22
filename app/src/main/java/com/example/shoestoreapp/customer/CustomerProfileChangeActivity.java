@@ -40,6 +40,8 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
 
         checkUser();
 
+
+        //Cancel button on click, finish activity
         cancel = findViewById(R.id.buttonProfileChangeCancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,12 +50,14 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
             }
         });
 
+
+        //Save button onClick, read data from EditTexts and send it to previous activity
         save = findViewById(R.id.buttonProfileChangeSave);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
+                //Reading new user details
                 email = profileEmail.getText().toString();
                 name = profileName.getText().toString();
                 surname = profileSurname.getText().toString();
@@ -72,6 +76,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
                     }
                 }
 
+                //Setting the new user details
                 user.setFullName(name + " " + surname);
                 user.setAddress(address);
                 user.setCity(city);
@@ -89,6 +94,8 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
             }
         });
 
+
+        //Reading user data from userDetails and writing it to appropriate elements
         fullName = user.getFullName();
         names = fullName.split(" ");
         if(names.length > 0){
