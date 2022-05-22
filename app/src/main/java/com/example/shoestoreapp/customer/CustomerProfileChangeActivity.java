@@ -1,21 +1,29 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.remote.WatchChangeAggregator;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomerProfileChangeActivity extends AppCompatActivity {
 
@@ -28,15 +36,17 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
     private EditText profileName, profileSurname, profileAddress, profileCityAndCode,
             profilePhone;
     private TextView profileEmail;
-
+    private FirebaseFirestore database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_profile_change);
 
+
+
         user=getIntent().getParcelableExtra("userData");
         firebaseAuth = firebaseAuth.getInstance();
-
+        database = FirebaseFirestore.getInstance();
 
         checkUser();
 
@@ -86,6 +96,10 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
 
                 //TODO save user data to database
 
+                //nisam siguran ako ovo radi pa nisam htio sjebat usere, morat ces ti provjerit
+                //addUserToDatabase();
+
+
                 Intent intent = new Intent();
                 intent.putExtra("userResult", user);
                 setResult(78, intent);
@@ -132,5 +146,30 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         } else {
             //TODO: replace this placeholder with actual UI changes
         }
+    }
+    private void addUserToDatabase() {
+        Map<String, Object> newUser = new HashMap<>();
+        newUser.put("fullName", user.getFullName());
+        newUser.put("address", user.getAddress());
+        newUser.put("email", user.getEmail());
+        newUser.put("role", user.getRole());
+        newUser.put("postalNumber", user.getPostalNumber());
+        newUser.put("city", user.getCity());
+        newUser.put("phoneNumber", user.getPhoneNumber());
+
+        database.collection("users").document(user.getEmail())
+                .set(newUser)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("DATABASE APPEND", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("DATABASE APPEND", "Error writing document", e);
+                    }
+                });
     }
 }
