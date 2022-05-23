@@ -2,19 +2,37 @@ package com.example.shoestoreapp.employee;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.customer.ItemModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ReceiptFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class ReceiptFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -26,19 +44,25 @@ public class ReceiptFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private EditText modelEt, colorEt, sizeEt;
+    private MaterialButton addButton;
+    private ImageView shoeImage;
+    private TextView shoePriceTextView;
+    private ProgressBar loadingBar;
+
+    private ArrayList<ItemModel> items = new ArrayList<>();
+    private FirebaseFirestore database;
+    private CollectionReference itemsRef;
+    private ItemModel currentItem;
+
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+
     public ReceiptFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ReceiptFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static ReceiptFragment newInstance(String param1, String param2) {
         ReceiptFragment fragment = new ReceiptFragment();
         Bundle args = new Bundle();
@@ -56,6 +80,14 @@ public class ReceiptFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        database = FirebaseFirestore.getInstance();
+        //TODO:Replace this placeholder after you implement employee to store binding in login
+        //String collection = "/locations/" + getIntent().getStringExtra("shopID") + "/items";
+        String collection = "/locations/" + "TestShop1" + "/items";
+        itemsRef = database.collection(collection);
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
     }
 
@@ -63,5 +95,90 @@ public class ReceiptFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_receipt, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        modelEt = view.findViewById(R.id.modelEditText);
+        colorEt = view.findViewById(R.id.colorEditText);
+        sizeEt = view.findViewById(R.id.sizeEditText);
+
+        shoeImage = view.findViewById(R.id.shoeImage);
+        shoePriceTextView = view.findViewById(R.id.shoePriceTextView);
+        loadingBar = view.findViewById(R.id.loading);
+
+
+        modelEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                loadingBar.setVisibility(View.VISIBLE);
+                fetchItems(modelEt.getText().toString(), colorEt.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        colorEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                loadingBar.setVisibility(View.VISIBLE);
+                fetchItems(modelEt.getText().toString(), colorEt.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+    }
+
+
+    private void fetchItems(String model, String color) {
+        itemsRef.document(model + "-" + color).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    if (task.getResult().getData() == null) {
+                        Log.d("FIRESTORE", "Item not found");
+                        clearItemPreview();
+                        return;
+                    }
+                    Log.d("FIRESTORE", task.getResult().toString());
+                    currentItem = task.getResult().toObject(ItemModel.class);
+                    setItemPreview();
+                } else {
+                    Log.d("FIRESTORE", "task not successful");
+                    clearItemPreview();
+                }
+            }
+        });
+    }
+
+    private void setItemPreview() {
+        StorageReference imageRef = storageRef.child(currentItem.getImage());
+        Glide.with(getContext())
+                .asBitmap()
+                .load(imageRef)
+                .into(shoeImage);
+
+        shoePriceTextView.setText("Cijena: " + (int)currentItem.getPrice() + "kn");
+        loadingBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void clearItemPreview() {
+        shoeImage.setImageResource(R.drawable.running_shoe_icon);
+        shoePriceTextView.setText("Cijena: ");
+        loadingBar.setVisibility(View.INVISIBLE);
     }
 }
