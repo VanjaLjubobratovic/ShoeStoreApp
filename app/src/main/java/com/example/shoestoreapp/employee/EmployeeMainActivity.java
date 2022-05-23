@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
@@ -15,6 +16,7 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -29,12 +31,15 @@ public class EmployeeMainActivity extends AppCompatActivity {
     private ActivityEmployeeMainBinding binding;
 
     private BarChart barChart;
+    private MaterialButton newReceiptBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityEmployeeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        newReceiptBtn = binding.newSale;
 
         user = getIntent().getParcelableExtra("userData");
         firebaseAuth = FirebaseAuth.getInstance();
@@ -66,6 +71,14 @@ public class EmployeeMainActivity extends AppCompatActivity {
         barChart.getXAxis().setDrawGridLines(false);
         barChart.getAxisRight().setDrawGridLines(false);
         barChart.getAxisLeft().setDrawGridLines(false);
+
+
+        newReceiptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private void checkUser() {
