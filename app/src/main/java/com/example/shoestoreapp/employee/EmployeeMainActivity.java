@@ -1,9 +1,13 @@
 package com.example.shoestoreapp.employee;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,11 +20,19 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+
+import com.example.shoestoreapp.customer.ItemModel;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
@@ -29,9 +41,11 @@ public class EmployeeMainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityEmployeeMainBinding binding;
+    private ArrayList<ItemModel> items = new ArrayList<>();
+    private FirebaseFirestore database;
+    private CollectionReference itemsRef;
 
-    private BarChart barChart;
-    private MaterialButton newReceiptBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,44 +53,41 @@ public class EmployeeMainActivity extends AppCompatActivity {
         binding = ActivityEmployeeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        newReceiptBtn = binding.newSale;
-
         user = getIntent().getParcelableExtra("userData");
         firebaseAuth = FirebaseAuth.getInstance();
+
+        database = FirebaseFirestore.getInstance();
+        //TODO:Replace this placeholder after you implement employee to store binding in login
+        //String collection = "/locations/" + getIntent().getStringExtra("shopID") + "/items";
+        String collection = "/locations/" + "TestShop1" + "/items";
+        itemsRef = database.collection(collection);
 
         //TODO: rest of the code here
         checkUser();
 
+        fetchItems();
 
-        //TODO: Replace with real cashflow calculation
-        barChart = binding.salesChart;
-        ArrayList<BarEntry> saleSumList = new ArrayList<>();
-        saleSumList.add(new BarEntry(9f,1500));
-        saleSumList.add(new BarEntry(10f,1000));
-        saleSumList.add(new BarEntry(11f,350));
-        saleSumList.add(new BarEntry(12f,200));
-        saleSumList.add(new BarEntry(13f,2500));
-        saleSumList.add(new BarEntry(14f,4500));
-        saleSumList.add(new BarEntry(15f,500));
-        BarDataSet barDataSet = new BarDataSet(saleSumList, "Promet");
-        barDataSet.setColor(R.color.purple_500);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.employeeActivityLayout, new EmployeeMainFragment())
+                .commit();
+    }
 
-        BarData theData = new BarData(barDataSet);
-
-        barChart.setData(theData);
-
-        barChart.setTouchEnabled(false);
-        barChart.setDragEnabled(false);
-        barChart.setScaleEnabled(true);
-        barChart.getXAxis().setDrawGridLines(false);
-        barChart.getAxisRight().setDrawGridLines(false);
-        barChart.getAxisLeft().setDrawGridLines(false);
-
-
-        newReceiptBtn.setOnClickListener(new View.OnClickListener() {
+    private void fetchItems() {
+        itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onClick(View view) {
-
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    if(task.getResult().size() == 0) {
+                        Log.d("FIRESTORE", "0 Results");
+                        return;
+                    }
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        ItemModel newItem = document.toObject(ItemModel.class);
+                        newItem.parseModelColor(document.getId());
+                        items.add(newItem);
+                        Log.d("FIRESTORE", newItem.toString());
+                    }
+                } else Log.d("FIRESTORE", "fetch failed");
             }
         });
     }
