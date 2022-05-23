@@ -43,21 +43,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:hint="MODEL" />
+                android:hint="MODEL"
+                android:gravity="center"
+                android:inputType="number"/>
 
             <EditText
                 android:id="@+id/colorEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:hint="BOJA" />
+                android:hint="BOJA"
+                android:gravity="center"
+                android:inputType="text"/>
 
             <EditText
                 android:id="@+id/sizeEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:hint="BROJ" />
+                android:hint="BROJ"
+                android:gravity="center"
+                android:inputType="number"/>
 
         </LinearLayout>
 
@@ -96,6 +102,13 @@
             android:text="Cijena: "
             android:textSize="18sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/availableImageView"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/confirmicon"
+            android:layout_marginHorizontal="10dp"/>
     </LinearLayout>
 
     <View

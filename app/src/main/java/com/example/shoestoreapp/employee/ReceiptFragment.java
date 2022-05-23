@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.employee;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,7 +49,7 @@ public class ReceiptFragment extends Fragment {
 
     private EditText modelEt, colorEt, sizeEt;
     private MaterialButton addButton;
-    private ImageView shoeImage;
+    private ImageView shoeImage, availableImageView;
     private TextView shoePriceTextView;
     private ProgressBar loadingBar;
 
@@ -88,7 +91,6 @@ public class ReceiptFragment extends Fragment {
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
-
     }
 
     @Override
@@ -106,9 +108,13 @@ public class ReceiptFragment extends Fragment {
         sizeEt = view.findViewById(R.id.sizeEditText);
 
         shoeImage = view.findViewById(R.id.shoeImage);
+        availableImageView = view.findViewById(R.id.availableImageView);
         shoePriceTextView = view.findViewById(R.id.shoePriceTextView);
         loadingBar = view.findViewById(R.id.loading);
+        addButton = view.findViewById(R.id.addBtn);
 
+        availableImageView.setVisibility(View.INVISIBLE);
+        addButton.setEnabled(false);
 
         modelEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,6 +145,56 @@ public class ReceiptFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        sizeEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                addButton.setEnabled(false);
+
+                if(sizeEt.getText().toString().length() == 0)
+                    return;
+
+                Integer size = Integer.valueOf(sizeEt.getText().toString());
+                Log.d("SIZE", "size = " + size);
+
+                if(currentItem != null && size > 9) {
+                    int sizeIndex = currentItem.getSizes().indexOf(size);
+                    if(sizeIndex == -1) {
+                        showErrorCredentials(sizeEt, "Nepostojeća veličina");
+                        return;
+                    }
+
+                    if(currentItem.getAmounts().get(sizeIndex) > 0) {
+                        availableImageView.setImageResource(R.drawable.confirmicon);
+                    } else {
+                        availableImageView.setImageResource(R.drawable.unavailableicon);
+                    }
+
+                    addButton.setEnabled(true);
+                    availableImageView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO:add item to recycler view
+                sizeEt.clearFocus();
+                colorEt.clearFocus();
+                modelEt.clearFocus();
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getRootView().getWindowToken(), 0);
             }
         });
     }
@@ -177,8 +233,15 @@ public class ReceiptFragment extends Fragment {
     }
 
     private void clearItemPreview() {
+        currentItem = null;
         shoeImage.setImageResource(R.drawable.running_shoe_icon);
         shoePriceTextView.setText("Cijena: ");
+        availableImageView.setVisibility(View.INVISIBLE);
         loadingBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showErrorCredentials(EditText input, String s) {
+        input.setError(s);
+        input.requestFocus();
     }
 }
