@@ -17,13 +17,11 @@ import java.util.ArrayList;
 
 public class ReviewsRecycleViewAdapter extends RecyclerView.Adapter<ReviewsRecycleViewAdapter.ViewHolder> {
 
-    private ArrayList<String> mNames, mReviews, mRatings;
+    private ArrayList<ReviewModel> mReviews;
     private Context mContext;
 
-    public ReviewsRecycleViewAdapter(Context mContext, ArrayList<String> mNames, ArrayList<String> mReviews, ArrayList<String> mRatings) {
-        this.mNames = mNames;
-        this.mReviews = mReviews;
-        this.mRatings = mRatings;
+    public ReviewsRecycleViewAdapter(Context mContext, ArrayList<ReviewModel> reviews) {
+        this.mReviews = reviews;
         this.mContext = mContext;
     }
 
@@ -37,15 +35,15 @@ public class ReviewsRecycleViewAdapter extends RecyclerView.Adapter<ReviewsRecyc
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.userName.setText(mNames.get(position));
-        holder.userReview.setText(mReviews.get(position));
-        holder.ratingNumber.setText(mRatings.get(position));
-        holder.userRating.setRating(Float.parseFloat(mRatings.get(position)));
+        holder.userName.setText(mReviews.get(position).getEmail());
+        holder.userReview.setText(mReviews.get(position).getReview());
+        holder.ratingNumber.setText(String.valueOf(mReviews.get(position).getRating()));
+        holder.userRating.setRating(mReviews.get(position).getRating());
     }
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return mReviews.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

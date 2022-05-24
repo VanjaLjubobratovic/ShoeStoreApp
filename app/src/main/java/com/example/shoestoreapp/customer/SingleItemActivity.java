@@ -54,8 +54,9 @@ public class SingleItemActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private ArrayList<String> mNames = new ArrayList<>(), mReviews = new ArrayList<>(),
             mRatings = new ArrayList<>(), curColors = new ArrayList<>();
+    private ArrayList<ReviewModel> reviews = new ArrayList<>();
     private ImageButton backButton;
-    private CollectionReference itemsRef;
+    private CollectionReference itemsRef, reviewsRef;
     private ArrayList<ItemModel> items = new ArrayList<>();
     private MaterialButton buyButton;
     private ArrayList<Integer> sizes = new ArrayList<>(), amounts = new ArrayList<>();
@@ -75,6 +76,7 @@ public class SingleItemActivity extends AppCompatActivity {
         firebaseAuth = firebaseAuth.getInstance();
         database = FirebaseFirestore.getInstance();
         itemsRef = database.collection("/locations/webshop/items");
+
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
         itemPrice = findViewById(R.id.itemPriceLabel);
@@ -127,14 +129,7 @@ public class SingleItemActivity extends AppCompatActivity {
             }
         });
 
-        //filling the recycler view with data
-        initDummyData();
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
-        RecyclerView reviewRecyclerView = findViewById(R.id.itemReviewsRecyclerView);
-        reviewRecyclerView.setLayoutManager(layoutManager);
-        ReviewsRecycleViewAdapter adapter = new ReviewsRecycleViewAdapter(this,mNames,mReviews,mRatings);
-        reviewRecyclerView.setAdapter(adapter);
     }
 
     private void checkUser() {
@@ -164,6 +159,28 @@ public class SingleItemActivity extends AppCompatActivity {
                     }
                     initColorSpinner();
                     initSizeSpinner();
+                    fetchReviews();
+                } else Log.d("FIRESTORE Single", "fetch failed");
+            }
+        });
+    }
+
+    private void fetchReviews() {
+        reviewsRef = database.collection("locations/webshop/items/" + selectedItem.getModel() + "-" + selectedItem.getColor() +"/reviews");
+        reviewsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    if(task.getResult().size() == 0) {
+                        Log.d("FIRESTORE", "0 Results");
+                        return;
+                    }
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        ReviewModel newReview = document.toObject(ReviewModel.class);
+                        reviews.add(newReview);
+                        Log.d("FIRESTORE Single", newReview.toString());
+                    }
+                    initReviewRecycler();
                 } else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
@@ -208,13 +225,11 @@ public class SingleItemActivity extends AppCompatActivity {
 
     }
 
-    private void initDummyData(){
-        mNames.add("Vanja peder");
-        mRatings.add("4.5");
-        mReviews.add("Shit slaps ass");
-
-        mNames.add("Karlo Katalinic");
-        mRatings.add("4.2");
-        mReviews.add("Ja sam peder najveci");
+    private void initReviewRecycler(){
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
+        RecyclerView reviewRecyclerView = findViewById(R.id.itemReviewsRecyclerView);
+        reviewRecyclerView.setLayoutManager(layoutManager);
+        ReviewsRecycleViewAdapter adapter = new ReviewsRecycleViewAdapter(this,reviews);
+        reviewRecyclerView.setAdapter(adapter);
     }
 }
