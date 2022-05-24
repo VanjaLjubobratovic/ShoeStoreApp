@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.customer.RecyclerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -195,6 +198,9 @@ public class ReceiptFragment extends Fragment {
                 modelEt.clearFocus();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getRootView().getWindowToken(), 0);
+
+                items.add(currentItem);
+                initRecyclerView();
             }
         });
     }
@@ -212,6 +218,7 @@ public class ReceiptFragment extends Fragment {
                     }
                     Log.d("FIRESTORE", task.getResult().toString());
                     currentItem = task.getResult().toObject(ItemModel.class);
+                    currentItem.parseModelColor(model + "-" + color);
                     setItemPreview();
                 } else {
                     Log.d("FIRESTORE", "task not successful");
@@ -219,6 +226,16 @@ public class ReceiptFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void initRecyclerView() {
+        Log.d("RECYCLER VIEW", "initRecyclerView: ");
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView recyclerView = this.getView().findViewById(R.id.receiptRecyclerView);
+        recyclerView.setLayoutManager(layoutManager);
+        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), items);
+        recyclerView.setAdapter(adapter);
     }
 
     private void setItemPreview() {
