@@ -16,6 +16,7 @@ import android.os.Bundle;
 
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -49,14 +50,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private ActivityCustomerMainBinding binding;
     private DrawerLayout drawer;
     //TODO: replace this list with objects
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
-    private ArrayList<Float> ratings = new ArrayList<>();
 
     private final static String TAG = "CustomerMainActivity";
     private ImageButton shoppingCart;
     private ImageView bag, shoe;
-    private TextView test;
+    private TextView userName, userEmail;
 
     private ArrayList<ItemModel> items = new ArrayList<>();
     private FirebaseFirestore database;
@@ -81,6 +79,31 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                userName = findViewById(R.id.textViewUsername);
+                userName.setText(user.getFullName());
+                userEmail = findViewById(R.id.textViewEmail);
+                userEmail.setText(user.getEmail());
+            }
+        });
 
         //fetch inventory data from db
         fetchItems();
@@ -110,6 +133,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items, user)).addToBackStack(null).commit();
             }
         });
+
     }
 
     private void fetchItems() {
@@ -134,6 +158,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
         });
     }
+
+
+
 
     //Drawer onclick
     @Override
