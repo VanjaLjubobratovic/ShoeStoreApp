@@ -87,8 +87,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             productName = itemView.findViewById(R.id.textViewItemName);
             productRating = itemView.findViewById(R.id.ratingBar);
             productPrice = itemView.findViewById(R.id.textViewItemPrice);
-            this.onItemListener = onItemListener;
 
+            this.onItemListener = onItemListener;
             itemView.setOnClickListener(this);
         }
 

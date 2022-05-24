@@ -43,6 +43,8 @@ public class ItemModel implements Parcelable {
         image = in.readString();
         price = in.readDouble();
         rating = in.readDouble();
+        sizes = in.readArrayList(Integer.class.getClassLoader());
+        amounts = in.readArrayList(Integer.class.getClassLoader());
         //added = in.readParcelable(Timestamp.class.getClassLoader());
     }
 
@@ -119,5 +121,7 @@ public class ItemModel implements Parcelable {
         parcel.writeString(image);
         parcel.writeDouble(price);
         parcel.writeDouble(rating);
+        parcel.writeList(sizes);
+        parcel.writeList(amounts);
     }
 }

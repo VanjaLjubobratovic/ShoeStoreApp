@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.customer;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.UserModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,10 +30,10 @@ import java.util.ArrayList;
  * Use the {@link ItemModelsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ItemModelsFragment extends Fragment {
+public class ItemModelsFragment extends Fragment implements ModelRecycleViewAdapter.OnModelListener {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String CATEGORY_PARAM = "category", ITEMS_PARAM = "listOfItems";
+    private static final String CATEGORY_PARAM = "category", ITEMS_PARAM = "listOfItems", USER_PARAM = "userParams";
     private String itemType = "";
 
     private ArrayList<String> mNames = new ArrayList<>();
@@ -40,6 +42,7 @@ public class ItemModelsFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextView helloWorld;
     private ImageButton back;
+    private UserModel user;
     private ArrayList<ItemModel> items = new ArrayList<>(), models = new ArrayList<>();
     public ItemModelsFragment() {
 
@@ -54,11 +57,12 @@ public class ItemModelsFragment extends Fragment {
      */
 
     //Setting the arguments got from parent activity
-    public static ItemModelsFragment newInstance(String itemType, ArrayList<ItemModel> items) {
+    public static ItemModelsFragment newInstance(String itemType, ArrayList<ItemModel> items, UserModel user) {
         ItemModelsFragment fragment = new ItemModelsFragment();
         Bundle args = new Bundle();
         args.putString(CATEGORY_PARAM, itemType);
         args.putSerializable(ITEMS_PARAM,(Serializable) items);
+        args.putParcelable(USER_PARAM, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,6 +74,7 @@ public class ItemModelsFragment extends Fragment {
         if (getArguments() != null) {
             itemType = getArguments().getString(CATEGORY_PARAM);
             items = (ArrayList<ItemModel>) getArguments().getSerializable(ITEMS_PARAM);
+            user = getArguments().getParcelable(USER_PARAM);
         }
 
     }
@@ -86,7 +91,7 @@ public class ItemModelsFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         models = getModels(items, itemType);
-        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getContext(), models);
+        ModelRecycleViewAdapter adapter = new ModelRecycleViewAdapter(getContext(), models, this);
         recyclerView.setAdapter(adapter);
 
 
@@ -121,4 +126,14 @@ public class ItemModelsFragment extends Fragment {
     }
 
 
+    @Override
+    public void onModelClick(int position) {
+        Toast.makeText(getActivity(), "CLICKED", Toast.LENGTH_SHORT).show();
+
+        ItemModel selectedModel = models.get(position);
+        Intent singleItemIntent = new Intent(getActivity(),   SingleItemActivity.class);
+        singleItemIntent.putExtra("selectedItem", selectedModel);
+        singleItemIntent.putExtra("userData", user);
+        startActivity(singleItemIntent);
+    }
 }

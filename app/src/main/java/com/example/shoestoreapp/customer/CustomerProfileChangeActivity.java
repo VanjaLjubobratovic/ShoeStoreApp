@@ -8,6 +8,7 @@ import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +30,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private UserModel user;
-    private Button cancel, save;
+    private MaterialButton cancel, save;
 
     private String fullName,name,surname,email,address,city,postalCode,phone, tmpCity;
     private String[] names, cityPost;

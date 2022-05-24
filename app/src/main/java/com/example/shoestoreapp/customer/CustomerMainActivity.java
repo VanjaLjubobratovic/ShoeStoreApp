@@ -100,14 +100,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onClick(View view) {
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items)).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items, user)).addToBackStack(null).commit();
             }
         });
         bag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items)).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items, user)).addToBackStack(null).commit();
             }
         });
     }
