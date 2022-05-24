@@ -24,13 +24,16 @@ import java.util.ArrayList;
 public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "ReceiptRecycleViewAdapter";
     private Context mContext;
-    private ArrayList<ItemModel> items;
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private ReceiptModel receipt;
 
-    public ReceiptRecyclerViewAdapter(Context mContext, ArrayList<ItemModel> items) {
+    private TextView totalTextView;
+
+    public ReceiptRecyclerViewAdapter(Context mContext, ReceiptModel receipt, TextView totalTextView) {
         this.mContext = mContext;
-        this.items = items;
+        this.receipt = receipt;
+        this.totalTextView = totalTextView;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -45,7 +48,7 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ItemModel item = items.get(position);
+        ItemModel item = receipt.getItems().get(position);
         StorageReference imageReference = storageRef.child(item.getImage());
 
         Glide.with(mContext)
@@ -55,7 +58,10 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
 
         holder.productModel.setText(item.getModel());
         holder.productColor.setText(item.getColor());
-        //holder.productSize.setText();
+
+        //TODO: fix this hack
+        Log.d("ARRAYLIST", item.getAmounts().toString());
+        holder.productSize.setText(item.getSizes().get(item.getAmounts().indexOf(1)).toString());
         holder.productPrice.setText((int)item.getPrice() + "kn");
 
         Log.d(TAG, "Item model: " + item.getModel());
@@ -69,14 +75,15 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     }
 
     private void removeAt(int position) {
-        items.remove(position);
+        receipt.removeAt(position);
+        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return receipt.getItems().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

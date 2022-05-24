@@ -1,7 +1,6 @@
 package com.example.shoestoreapp.employee;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,19 +24,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
-import com.example.shoestoreapp.customer.RecyclerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ReceiptFragment extends Fragment {
 
@@ -50,19 +47,22 @@ public class ReceiptFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int sizeIndex = 0;
+
     private EditText modelEt, colorEt, sizeEt;
     private MaterialButton addButton;
     private ImageView shoeImage, availableImageView;
-    private TextView shoePriceTextView;
+    private TextView shoePriceTextView, totalTextView;
     private ProgressBar loadingBar;
 
-    private ArrayList<ItemModel> items = new ArrayList<>();
+    //private ArrayList<ItemModel> receiptItems = new ArrayList<>();
     private FirebaseFirestore database;
     private CollectionReference itemsRef;
     private ItemModel currentItem;
 
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private ReceiptModel receipt;
 
     public ReceiptFragment() {
         // Required empty public constructor
@@ -94,6 +94,8 @@ public class ReceiptFragment extends Fragment {
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+
+        receipt = new ReceiptModel();
     }
 
     @Override
@@ -115,9 +117,12 @@ public class ReceiptFragment extends Fragment {
         shoePriceTextView = view.findViewById(R.id.shoePriceTextView);
         loadingBar = view.findViewById(R.id.loading);
         addButton = view.findViewById(R.id.addBtn);
+        totalTextView = view.findViewById(R.id.totalTextView);
 
         availableImageView.setVisibility(View.INVISIBLE);
         addButton.setEnabled(false);
+
+        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
 
         modelEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -167,7 +172,7 @@ public class ReceiptFragment extends Fragment {
                 Log.d("SIZE", "size = " + size);
 
                 if(currentItem != null && size > 9) {
-                    int sizeIndex = currentItem.getSizes().indexOf(size);
+                    sizeIndex = currentItem.getSizes().indexOf(size);
                     if(sizeIndex == -1) {
                         showErrorCredentials(sizeEt, "Nepostojeća veličina");
                         return;
@@ -199,7 +204,17 @@ public class ReceiptFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getRootView().getWindowToken(), 0);
 
-                items.add(currentItem);
+
+                //TODO:make dedicated constructor after merge
+                ArrayList<Integer> sizeList = new ArrayList<Integer>(Collections.nCopies(currentItem.getSizes().size(), 0));
+                sizeList.set(sizeIndex, 1);
+
+                ItemModel receiptItem = new ItemModel(currentItem.getType(), currentItem.getImage(), currentItem.getPrice(),
+                currentItem.getRating(), currentItem.getAdded(), currentItem.getSizes(), sizeList);
+                receiptItem.parseModelColor(currentItem.toString());
+
+                receipt.addItem(receiptItem);
+                //TODO: Fix this terrible hack
                 initRecyclerView();
             }
         });
@@ -229,12 +244,12 @@ public class ReceiptFragment extends Fragment {
     }
 
     private void initRecyclerView() {
+        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
         Log.d("RECYCLER VIEW", "initRecyclerView: ");
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), items);
+        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView);
         recyclerView.setAdapter(adapter);
     }
 
