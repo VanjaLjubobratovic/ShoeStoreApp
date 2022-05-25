@@ -38,7 +38,7 @@ public class ReviewsRecycleViewAdapter extends RecyclerView.Adapter<ReviewsRecyc
         holder.userName.setText(mReviews.get(position).getEmail());
         holder.userReview.setText(mReviews.get(position).getReview());
         holder.ratingNumber.setText(String.valueOf(mReviews.get(position).getRating()));
-        holder.userRating.setRating(mReviews.get(position).getRating());
+        holder.userRating.setRating(mReviews.get(position).getRating().floatValue());
     }
 
     @Override

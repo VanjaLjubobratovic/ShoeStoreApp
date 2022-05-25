@@ -54,6 +54,7 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
                 .into(holder.modelImage);
 
         holder.modelName.setText("Model " + item.getModel());
+        holder.modelPrice.setText(String.valueOf(item.getPrice()) + "Kn");
 
     }
 
@@ -64,13 +65,14 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView modelImage;
-        TextView modelName;
+        TextView modelName, modelPrice;
         OnModelListener onModelListener;
 
         public ViewHolder(View itemView, OnModelListener onModelListener) {
             super(itemView);
             modelImage = itemView.findViewById(R.id.imageViewModel);
             modelName = itemView.findViewById(R.id.textViewModelName);
+            modelPrice = itemView.findViewById(R.id.textViewModelPrice);
 
             this.onModelListener = onModelListener;
             itemView.setOnClickListener(this);

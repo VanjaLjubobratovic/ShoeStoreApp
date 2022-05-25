@@ -116,9 +116,11 @@ public class ItemModelsFragment extends Fragment implements ModelRecycleViewAdap
     //Removing duplicate models and separating by itemType
     private ArrayList<ItemModel> getModels (ArrayList<ItemModel> items, String itemType){
         ArrayList<ItemModel> uniqueModels = new ArrayList<>();
+        ArrayList<String> modelsList = new ArrayList<>();
         for(ItemModel item : items){
-            if(item.getType().contains(itemType) && !uniqueModels.contains(item)){
+            if(item.getType().contains(itemType) && !modelsList.contains(item.getModel())){
                 uniqueModels.add(item);
+                modelsList.add(item.getModel());
             }
         }
 

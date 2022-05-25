@@ -2,9 +2,9 @@ package com.example.shoestoreapp.customer;
 
 public class ReviewModel {
     String email, review;
-    Integer rating;
+    Double rating;
 
-    public ReviewModel(String email, String review, Integer rating) {
+    public ReviewModel(String email, String review, Double rating) {
         this.email = email;
         this.review = review;
         this.rating = rating;
@@ -30,11 +30,11 @@ public class ReviewModel {
         this.review = review;
     }
 
-    public Integer getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
     @Override
