@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.employee;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -25,16 +26,25 @@ import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ReceiptFragment extends Fragment {
 
@@ -50,12 +60,11 @@ public class ReceiptFragment extends Fragment {
     private int sizeIndex = 0;
 
     private EditText modelEt, colorEt, sizeEt;
-    private MaterialButton addButton;
+    private MaterialButton addButton, confirmButton;
     private ImageView shoeImage, availableImageView;
     private TextView shoePriceTextView, totalTextView;
     private ProgressBar loadingBar;
 
-    //private ArrayList<ItemModel> receiptItems = new ArrayList<>();
     private FirebaseFirestore database;
     private CollectionReference itemsRef;
     private ItemModel currentItem;
@@ -96,6 +105,10 @@ public class ReceiptFragment extends Fragment {
         storageRef = storage.getReference();
 
         receipt = new ReceiptModel();
+        //TODO: get real values
+        receipt.setEmployee("");
+        receipt.setUser("");
+        receipt.setStoreID("TestStore1");
     }
 
     @Override
@@ -117,9 +130,11 @@ public class ReceiptFragment extends Fragment {
         shoePriceTextView = view.findViewById(R.id.shoePriceTextView);
         loadingBar = view.findViewById(R.id.loading);
         addButton = view.findViewById(R.id.addBtn);
+        confirmButton = view.findViewById(R.id.confirmBtn);
         totalTextView = view.findViewById(R.id.totalTextView);
 
         availableImageView.setVisibility(View.INVISIBLE);
+        confirmButton.setEnabled(false);
         addButton.setEnabled(false);
 
         totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
@@ -190,8 +205,7 @@ public class ReceiptFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -206,7 +220,7 @@ public class ReceiptFragment extends Fragment {
 
 
                 //TODO:make dedicated constructor after merge
-                ArrayList<Integer> sizeList = new ArrayList<Integer>(Collections.nCopies(currentItem.getSizes().size(), 0));
+                ArrayList<Integer> sizeList = new ArrayList<>(Collections.nCopies(currentItem.getSizes().size(), 0));
                 sizeList.set(sizeIndex, 1);
 
                 ItemModel receiptItem = new ItemModel(currentItem.getType(), currentItem.getImage(), currentItem.getPrice(),
@@ -216,6 +230,34 @@ public class ReceiptFragment extends Fragment {
                 receipt.addItem(receiptItem);
                 //TODO: Fix this terrible hack
                 initRecyclerView();
+
+                clearInput();
+            }
+        });
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: make this a ReceiptModel method
+                ArrayList<ItemModel> receiptItemsMerged = new ArrayList<>();
+                ArrayList<ItemModel> receiptItems = receipt.getItems();
+                for(ItemModel item : receiptItems) {
+                    if(!receiptItemsMerged.contains(item)) {
+                        receiptItemsMerged.add(item);
+                    }
+                    else {
+                        int index = receiptItemsMerged.indexOf(item);
+                        for(int i = 0; i < receiptItems.get(0).getSizes().size(); i++) {
+                            int sizeAmount = receiptItemsMerged.get(index).getAmounts().get(i) + item.getAmounts().get(i);
+                            receiptItemsMerged.get(index).getAmounts().set(i, sizeAmount);
+                        }
+                    }
+                }
+                receipt.setItems(receiptItemsMerged);
+                receipt.setTime();
+                Log.d("CONFIRM BUTTON", receipt.getItems().get(0).getAmounts().toString());
+
+                addReceiptToDB();
             }
         });
     }
@@ -244,13 +286,65 @@ public class ReceiptFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
         Log.d("RECYCLER VIEW", "initRecyclerView: ");
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView);
+        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView, confirmButton);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void addReceiptToDB() {
+        Map<String, Object> newReceipt = new HashMap<>();
+        newReceipt.put("time", receipt.getTime());
+        newReceipt.put("user", receipt.getUser());
+        newReceipt.put("employee", receipt.getEmployee());
+        newReceipt.put("storeID", receipt.getStoreID());
+        newReceipt.put("total", receipt.getTotal());
+
+        DocumentReference newReceiptRef = database.collection("receipts").document();
+
+        newReceiptRef.set(newReceipt)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("addReceiptToDB", "onSuccess: ");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("addReceiptToDB", "onFailure: ");
+                    }
+                });
+
+        //TODO: make this ItemModelMethod
+        for(ItemModel item : receipt.getItems()) {
+            Map<String, Object> newReceiptItem = new HashMap<>();
+            newReceiptItem.put("added", item.getAdded());
+            newReceiptItem.put("image", item.getImage());
+            newReceiptItem.put("price", item.getPrice());
+            newReceiptItem.put("rating", item.getRating());
+            newReceiptItem.put("type", item.getType());
+            newReceiptItem.put("sizes", item.getSizes());
+            newReceiptItem.put("amounts", item.getAmounts());
+
+            //TODO: decrease inventory amounts
+            newReceiptRef.collection("items").document(item.toString())
+                    .set(newReceiptItem)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("addItemToReceipt", "onSuccess: ");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("addItemToReceipt", "onFailure: ");
+                        }
+                    });
+        }
     }
 
     private void setItemPreview() {
@@ -270,6 +364,14 @@ public class ReceiptFragment extends Fragment {
         shoePriceTextView.setText("Cijena: ");
         availableImageView.setVisibility(View.INVISIBLE);
         loadingBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void clearInput() {
+        clearItemPreview();
+        modelEt.setText("");
+        colorEt.setText("");
+        sizeEt.setText("");
+        addButton.setEnabled(false);
     }
 
     private void showErrorCredentials(EditText input, String s) {

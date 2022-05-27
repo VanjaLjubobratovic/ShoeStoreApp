@@ -70,8 +70,8 @@ public class ReceiptModel {
         this.items = items;
     }
 
-    public void setTime(Timestamp time) {
-        this.time = time;
+    public void setTime() {
+        this.time = Timestamp.now();
     }
 
     public void addItem(ItemModel item) {

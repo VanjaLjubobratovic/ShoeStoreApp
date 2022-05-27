@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ItemModel {
     private String model;
@@ -79,5 +80,18 @@ public class ItemModel {
     @Override
     public String toString() {
         return model + "-" + color;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemModel itemModel = (ItemModel) o;
+        return model.equals(itemModel.model) && color.equals(itemModel.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(model, color);
     }
 }

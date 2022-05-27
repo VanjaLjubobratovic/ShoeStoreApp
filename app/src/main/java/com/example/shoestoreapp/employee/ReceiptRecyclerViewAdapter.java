@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -27,13 +28,15 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private ReceiptModel receipt;
+    private MaterialButton confirmBtn;
 
     private TextView totalTextView;
 
-    public ReceiptRecyclerViewAdapter(Context mContext, ReceiptModel receipt, TextView totalTextView) {
+    public ReceiptRecyclerViewAdapter(Context mContext, ReceiptModel receipt, TextView totalTextView, MaterialButton confirmBtn) {
         this.mContext = mContext;
         this.receipt = receipt;
         this.totalTextView = totalTextView;
+        this.confirmBtn = confirmBtn;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -50,6 +53,9 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ItemModel item = receipt.getItems().get(position);
         StorageReference imageReference = storageRef.child(item.getImage());
+
+        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
+        confirmBtn.setEnabled(true);
 
         Glide.with(mContext)
                 .asBitmap()
@@ -77,6 +83,9 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     private void removeAt(int position) {
         receipt.removeAt(position);
         totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
+        if(receipt.getItems().size() == 0)
+            confirmBtn.setEnabled(false);
+
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
     }
