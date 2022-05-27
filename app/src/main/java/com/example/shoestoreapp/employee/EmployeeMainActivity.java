@@ -53,7 +53,7 @@ public class EmployeeMainActivity extends AppCompatActivity {
         } else {
             //TODO: replace this placeholder with actual UI changes
             String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
-            Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.example.shoestoreapp.employee;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -108,7 +110,7 @@ public class ReceiptFragment extends Fragment {
         //TODO: get real values
         receipt.setEmployee("");
         receipt.setUser("");
-        receipt.setStoreID("TestStore1");
+        receipt.setStoreID("TestShop1");
     }
 
     @Override
@@ -258,12 +260,15 @@ public class ReceiptFragment extends Fragment {
                 Log.d("CONFIRM BUTTON", receipt.getItems().get(0).getAmounts().toString());
 
                 addReceiptToDB();
+                adjustInventory();
+                clearDataAndUI();
             }
         });
     }
 
 
     private void fetchItems(String model, String color) {
+        //TODO: generalize this method
         itemsRef.document(model + "-" + color).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -292,6 +297,47 @@ public class ReceiptFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView, confirmButton);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void adjustInventory() {
+        //TODO: find if there's a better method
+        for(ItemModel item : receipt.getItems()) {
+            DocumentReference itemDocumentRef = itemsRef.document(item.toString());
+            ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
+
+            itemDocumentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()) {
+                        Log.d("FIRESTORE", task.getResult().toString());
+                        ItemModel itemToEdit = task.getResult().toObject(ItemModel.class);
+
+                        for(int i = 0; i < itemToEdit.getAmounts().size(); i++) {
+                            int adjustedAmount = itemToEdit.getAmounts().get(i) - item.getAmounts().get(i);
+                            adjustedAmountsList.add(adjustedAmount);
+
+                            //TODO:Merge this with fetchItem method
+
+                            itemDocumentRef.update("amounts", adjustedAmountsList)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d("adjustInventory", "Succesful amount update");
+                                        }
+                                    });
+                        }
+                    }
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("FIRESTORE", "task not successful");
+                }
+            });
+
+        }
+
     }
 
     private void addReceiptToDB() {
@@ -372,6 +418,21 @@ public class ReceiptFragment extends Fragment {
         colorEt.setText("");
         sizeEt.setText("");
         addButton.setEnabled(false);
+    }
+
+    private void clearDataAndUI() {
+        //TODO: Get real values
+        receipt = new ReceiptModel();
+        receipt.setEmployee("");
+        receipt.setUser("");
+        receipt.setStoreID("TestShop1");
+        initRecyclerView();
+
+        AlertDialog.Builder successfulReceipt = new AlertDialog.Builder(getContext());
+        successfulReceipt.setMessage("Uspješno ste zapisali račun u bazu podataka!");
+        successfulReceipt.setCancelable(true);
+        successfulReceipt.show();
+
     }
 
     private void showErrorCredentials(EditText input, String s) {

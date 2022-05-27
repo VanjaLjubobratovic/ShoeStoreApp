@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,8 +18,6 @@ import com.example.shoestoreapp.customer.ItemModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
 
 public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "ReceiptRecycleViewAdapter";
@@ -40,6 +37,8 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+
+        checkIfNoData();
     }
 
     @NonNull
@@ -53,9 +52,6 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ItemModel item = receipt.getItems().get(position);
         StorageReference imageReference = storageRef.child(item.getImage());
-
-        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
-        confirmBtn.setEnabled(true);
 
         Glide.with(mContext)
                 .asBitmap()
@@ -82,9 +78,8 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
 
     private void removeAt(int position) {
         receipt.removeAt(position);
-        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
-        if(receipt.getItems().size() == 0)
-            confirmBtn.setEnabled(false);
+
+        checkIfNoData();
 
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
@@ -93,6 +88,15 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     @Override
     public int getItemCount() {
         return receipt.getItems().size();
+    }
+
+    public void checkIfNoData() {
+        if(getItemCount() == 0) {
+            confirmBtn.setEnabled(false);
+        } else {
+            confirmBtn.setEnabled(true);
+        }
+        totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
