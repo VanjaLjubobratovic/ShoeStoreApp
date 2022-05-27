@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -50,15 +52,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ReceiptFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private int sizeIndex = 0;
 
     private EditText modelEt, colorEt, sizeEt;
@@ -68,34 +61,20 @@ public class ReceiptFragment extends Fragment {
     private ProgressBar loadingBar;
 
     private FirebaseFirestore database;
-    private CollectionReference itemsRef;
-    private ItemModel currentItem;
-
     private FirebaseStorage storage;
+    private CollectionReference itemsRef;
     private StorageReference storageRef;
+
+    private ItemModel currentItem;
     private ReceiptModel receipt;
+    private UserModel user;
 
     public ReceiptFragment() {
-        // Required empty public constructor
-    }
-
-
-    public static ReceiptFragment newInstance(String param1, String param2) {
-        ReceiptFragment fragment = new ReceiptFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         database = FirebaseFirestore.getInstance();
         //TODO:Replace this placeholder after you implement employee to store binding in login
@@ -103,14 +82,16 @@ public class ReceiptFragment extends Fragment {
         String collection = "/locations/" + "TestShop1" + "/items";
         itemsRef = database.collection(collection);
 
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
+        user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
 
         receipt = new ReceiptModel();
-        //TODO: get real values
-        receipt.setEmployee("");
+        receipt.setEmployee(user.getEmail());
         receipt.setUser("");
+        //TODO:get real value
         receipt.setStoreID("TestShop1");
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
     }
 
     @Override
@@ -375,7 +356,6 @@ public class ReceiptFragment extends Fragment {
             newReceiptItem.put("sizes", item.getSizes());
             newReceiptItem.put("amounts", item.getAmounts());
 
-            //TODO: decrease inventory amounts
             newReceiptRef.collection("items").document(item.toString())
                     .set(newReceiptItem)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -423,7 +403,7 @@ public class ReceiptFragment extends Fragment {
     private void clearDataAndUI() {
         //TODO: Get real values
         receipt = new ReceiptModel();
-        receipt.setEmployee("");
+        receipt.setEmployee(user.getEmail());
         receipt.setUser("");
         receipt.setStoreID("TestShop1");
         initRecyclerView();

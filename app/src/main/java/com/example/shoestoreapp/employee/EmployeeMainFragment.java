@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.employee;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.FragmentEmployeeMainBinding;
+import com.firebase.ui.auth.data.model.User;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -35,6 +38,8 @@ public class EmployeeMainFragment extends Fragment {
 
     private BarChart barChart;
     private MaterialButton newReceiptBtn;
+
+    private UserModel user;
 
     public EmployeeMainFragment() {
     }
@@ -60,6 +65,8 @@ public class EmployeeMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Intent intent = getActivity().getIntent();
+        user = (UserModel) intent.getParcelableExtra("userData");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_employee_main, container, false);
     }

@@ -37,7 +37,7 @@ public class EmployeeMainActivity extends AppCompatActivity {
         //TODO: rest of the code here
         checkUser();
 
-
+        getIntent().putExtra("userData", user);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.employeeActivityLayout, new EmployeeMainFragment())
                 .commit();
