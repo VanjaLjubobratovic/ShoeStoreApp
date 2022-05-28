@@ -177,6 +177,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case R.id.nav_oder_history:
                 //TODO order history on click
+                Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
+                orderHistoryIntent.putExtra("userData", user);
+                startActivity(orderHistoryIntent);
                 break;
             case R.id.nav_payment_method:
                 //TODO payment method on click

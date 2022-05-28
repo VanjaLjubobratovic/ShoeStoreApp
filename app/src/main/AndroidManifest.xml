@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoeStoreApp">
         <activity
+            android:name=".customer.CustomerOrderHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".customer.SingleItemActivity"
             android:exported="false" />
         <activity
