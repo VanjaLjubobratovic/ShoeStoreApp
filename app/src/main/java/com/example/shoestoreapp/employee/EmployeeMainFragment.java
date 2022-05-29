@@ -27,46 +27,17 @@ import java.util.ArrayList;
 
 public class EmployeeMainFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private BarChart barChart;
-    private MaterialButton newReceiptBtn;
+    private MaterialButton newReceiptBtn, salesListBtn;
 
     private UserModel user;
 
     public EmployeeMainFragment() {
     }
 
-    public static EmployeeMainFragment newInstance(String param1, String param2) {
-        EmployeeMainFragment fragment = new EmployeeMainFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Intent intent = getActivity().getIntent();
-        user = (UserModel) intent.getParcelableExtra("userData");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_employee_main, container, false);
     }
@@ -76,6 +47,10 @@ public class EmployeeMainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         newReceiptBtn = view.findViewById(R.id.newSale);
+        salesListBtn = view.findViewById(R.id.salesList);
+
+        Intent intent = getActivity().getIntent();
+        user = (UserModel) intent.getParcelableExtra("userData");
 
         //TODO: Replace with real cashflow calculation
         barChart = view.findViewById(R.id.salesChart);
@@ -110,6 +85,18 @@ public class EmployeeMainFragment extends Fragment {
                 fragmentTransaction.setReorderingAllowed(true);
 
                 fragmentTransaction.replace(R.id.employeeActivityLayout, ReceiptFragment.class, null);
+                fragmentTransaction.addToBackStack("name").commit();
+            }
+        });
+
+        salesListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setReorderingAllowed(true);
+
+                fragmentTransaction.replace(R.id.employeeActivityLayout, SalesListFragment.class, null);
                 fragmentTransaction.addToBackStack("name").commit();
             }
         });

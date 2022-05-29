@@ -31,6 +31,13 @@ public class ItemModel {
         this.amounts = amounts;
     }
 
+    public ItemModel(ItemModel itemModel) {
+        this(itemModel.getType(), itemModel.getImage(), itemModel.getPrice(), itemModel.getRating(),
+                itemModel.getAdded(), itemModel.getSizes(), itemModel.getAmounts());
+        //TODO: add model and color as fields
+        this.parseModelColor(itemModel.getModel() + "-" + itemModel.getColor());
+    }
+
     public ItemModel() {
     }
 
@@ -68,6 +75,10 @@ public class ItemModel {
 
     public ArrayList<Integer> getAmounts() {
         return amounts;
+    }
+
+    public void setAmounts(ArrayList<Integer> amounts) {
+        this.amounts = amounts;
     }
 
     public void parseModelColor(String modelColor) {

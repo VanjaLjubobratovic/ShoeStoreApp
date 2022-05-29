@@ -221,23 +221,9 @@ public class ReceiptFragment extends Fragment {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: make this a ReceiptModel method
-                ArrayList<ItemModel> receiptItemsMerged = new ArrayList<>();
-                ArrayList<ItemModel> receiptItems = receipt.getItems();
-                for(ItemModel item : receiptItems) {
-                    if(!receiptItemsMerged.contains(item)) {
-                        receiptItemsMerged.add(item);
-                    }
-                    else {
-                        int index = receiptItemsMerged.indexOf(item);
-                        for(int i = 0; i < receiptItems.get(0).getSizes().size(); i++) {
-                            int sizeAmount = receiptItemsMerged.get(index).getAmounts().get(i) + item.getAmounts().get(i);
-                            receiptItemsMerged.get(index).getAmounts().set(i, sizeAmount);
-                        }
-                    }
-                }
-                receipt.setItems(receiptItemsMerged);
+                receipt.packItems();
                 receipt.setTime();
+
                 Log.d("CONFIRM BUTTON", receipt.getItems().get(0).getAmounts().toString());
 
                 addReceiptToDB();
