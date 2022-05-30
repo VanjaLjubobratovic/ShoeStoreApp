@@ -19,6 +19,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "ReceiptRecycleViewAdapter";
     private Context mContext;
@@ -28,12 +30,14 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     private MaterialButton confirmBtn;
 
     private TextView totalTextView;
+    private ArrayList<ItemModel> itemsToRemove = new ArrayList<>();
 
-    public ReceiptRecyclerViewAdapter(Context mContext, ReceiptModel receipt, TextView totalTextView, MaterialButton confirmBtn) {
+    public ReceiptRecyclerViewAdapter(Context mContext, ReceiptModel receipt, TextView totalTextView, MaterialButton confirmBtn, ArrayList<ItemModel> itemsToRemove) {
         this.mContext = mContext;
         this.receipt = receipt;
         this.totalTextView = totalTextView;
         this.confirmBtn = confirmBtn;
+        this.itemsToRemove = itemsToRemove;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -77,6 +81,7 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
     }
 
     private void removeAt(int position) {
+        itemsToRemove.add(receipt.getItems().get(position));
         receipt.removeAt(position);
 
         checkIfNoData();

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -42,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class SalesListFragment extends Fragment {
+public class SalesListFragment extends Fragment implements ReceiptListRecyclerViewAdapter.OnReceiptListener {
     private MaterialButton dateEt;
     private ProgressBar progressBar;
 
@@ -144,6 +147,7 @@ public class SalesListFragment extends Fragment {
                             continue;
 
                         receipt.setTotal(0);
+                        receipt.setReceiptID(document.getId());
                         fetchItems(document.getId(), receipt);
                     }
                     progressBar.setVisibility(View.INVISIBLE);
@@ -154,12 +158,12 @@ public class SalesListFragment extends Fragment {
         });
     }
 
-    private void unpackReceipts() {
+    /*private void unpackReceipts() {
         for(ReceiptModel receipt : receiptList) {
             if(receipt.isPacked())
                 receipt.unpackItems();
         }
-    }
+    }*/
 
     private void fetchItems(String documentID, ReceiptModel receipt) {
         receiptsRef.document(documentID).collection("items").get()
@@ -192,7 +196,21 @@ public class SalesListFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptListRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        ReceiptListRecyclerViewAdapter adapter = new ReceiptListRecyclerViewAdapter(getContext(), receiptList);
+        ReceiptListRecyclerViewAdapter adapter = new ReceiptListRecyclerViewAdapter(getContext(), receiptList, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onReceiptClick(int position) {
+        if (receiptList.get(position).isAnnulled()) {
+            Toast.makeText(getContext(), "Ne možete uređivati stornirani račun", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ReceiptFragment.newInstance(receiptList.get(position));
+
+        ft.replace(R.id.employeeActivityLayout, fragment);
+        ft.addToBackStack("name").commit();
     }
 }

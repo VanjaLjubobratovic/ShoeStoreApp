@@ -66,10 +66,21 @@ public class ReceiptFragment extends Fragment {
     private StorageReference storageRef;
 
     private ItemModel currentItem;
+    private ArrayList<ItemModel> itemsToRemove = new ArrayList<>();
     private ReceiptModel receipt;
     private UserModel user;
 
+    private boolean editReceipt = false;
+
     public ReceiptFragment() {
+    }
+
+    public static ReceiptFragment newInstance(ReceiptModel receipt) {
+        ReceiptFragment fragment = new ReceiptFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("editReceipt", receipt);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
@@ -84,14 +95,22 @@ public class ReceiptFragment extends Fragment {
 
         user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
 
-        receipt = new ReceiptModel();
-        receipt.setEmployee(user.getEmail());
-        receipt.setUser("");
-        //TODO:get real value
-        receipt.setStoreID("TestShop1");
-
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+
+        if(getArguments() != null && getArguments().containsKey("editReceipt")) {
+            Log.d("ARGS", "Argument exists");
+            receipt = (ReceiptModel) getArguments().getParcelable("editReceipt");
+            editReceipt = true;
+        } else {
+            Log.d("ARGS", "No arguments");
+            receipt = new ReceiptModel();
+            receipt.setEmployee(user.getEmail());
+            receipt.setUser("");
+            receipt.setReceiptID("");
+            //TODO:get real value
+            receipt.setStoreID("TestShop1");
+        }
     }
 
     @Override
@@ -121,6 +140,10 @@ public class ReceiptFragment extends Fragment {
         addButton.setEnabled(false);
 
         totalTextView.setText("UKUPNO: " + receipt.getTotal() + "kn");
+
+        if(editReceipt) {
+            initRecyclerView();
+        }
 
         modelEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -262,13 +285,24 @@ public class ReceiptFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView, confirmButton);
+        ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(getContext(), receipt, totalTextView, confirmButton, itemsToRemove);
         recyclerView.setAdapter(adapter);
     }
 
     private void adjustInventory() {
+        if(editReceipt) {
+            for(ItemModel item : itemsToRemove) {
+                for (int i = 0; i < item.getAmounts().size(); i++) {
+                    item.getAmounts().set(i, item.getAmounts().get(i) * (-1));
+                }
+            }
+        }
+
+        ArrayList<ItemModel> itemsToAdjust = receipt.getItems();
+        itemsToAdjust.addAll(itemsToRemove);
+
         //TODO: find if there's a better method
-        for(ItemModel item : receipt.getItems()) {
+        for(ItemModel item : itemsToRemove) {
             DocumentReference itemDocumentRef = itemsRef.document(item.toString());
             ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
 
@@ -314,6 +348,7 @@ public class ReceiptFragment extends Fragment {
         newReceipt.put("employee", receipt.getEmployee());
         newReceipt.put("storeID", receipt.getStoreID());
         newReceipt.put("total", receipt.getTotal());
+        newReceipt.put("annulled", false);
 
         DocumentReference newReceiptRef = database.collection("receipts").document();
 
@@ -357,6 +392,19 @@ public class ReceiptFragment extends Fragment {
                         }
                     });
         }
+
+        if(editReceipt)
+            annulReceipt();
+    }
+
+    private void annulReceipt() {
+        DocumentReference receiptRef = database.collection("receipts").document(receipt.getReceiptID());
+        receiptRef.update("annulled", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("annulReceipt", "Receipt annulled");
+            }
+        });
     }
 
     private void setItemPreview() {
@@ -392,6 +440,9 @@ public class ReceiptFragment extends Fragment {
         receipt.setEmployee(user.getEmail());
         receipt.setUser("");
         receipt.setStoreID("TestShop1");
+        itemsToRemove = new ArrayList<>();
+        editReceipt = false;
+
         initRecyclerView();
 
         AlertDialog.Builder successfulReceipt = new AlertDialog.Builder(getContext());
