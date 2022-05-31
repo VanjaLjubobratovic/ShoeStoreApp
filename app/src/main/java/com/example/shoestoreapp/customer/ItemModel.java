@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ItemModel implements Parcelable {
     private String model;
@@ -31,6 +32,13 @@ public class ItemModel implements Parcelable {
         this.added = added;
         this.sizes = sizes;
         this.amounts = amounts;
+    }
+
+    public ItemModel(ItemModel itemModel) {
+        this(itemModel.getType(), itemModel.getImage(), itemModel.getPrice(), itemModel.getRating(),
+                itemModel.getAdded(), itemModel.getSizes(), itemModel.getAmounts());
+        //TODO: add model and color as fields
+        this.parseModelColor(itemModel.getModel() + "-" + itemModel.getColor());
     }
 
     public ItemModel() {
@@ -96,10 +104,22 @@ public class ItemModel implements Parcelable {
         return amounts;
     }
 
+    public void setAmounts(ArrayList<Integer> amounts) {
+        this.amounts = amounts;
+    }
+
     public void parseModelColor(String modelColor) {
         String[] parts = modelColor.split("-");
         this.model = parts[0];
         this.color = parts[1];
+    }
+  
+      @Override
+    public int hashCode() {
+        return Objects.hash(model, color);
+
+    public int describeContents() {
+        return 0;
     }
 
     @NonNull
@@ -109,9 +129,13 @@ public class ItemModel implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemModel itemModel = (ItemModel) o;
+        return model.equals(itemModel.model) && color.equals(itemModel.color);
     }
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {

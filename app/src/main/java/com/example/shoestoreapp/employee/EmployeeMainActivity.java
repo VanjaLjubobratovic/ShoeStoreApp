@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.employee;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
+import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -19,6 +22,8 @@ public class EmployeeMainActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityEmployeeMainBinding binding;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,13 @@ public class EmployeeMainActivity extends AppCompatActivity {
 
         //TODO: rest of the code here
         checkUser();
+
+        getIntent().putExtra("userData", user);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.employeeActivityLayout, new EmployeeMainFragment())
+                .commit();
     }
+
 
     private void checkUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -42,7 +53,7 @@ public class EmployeeMainActivity extends AppCompatActivity {
         } else {
             //TODO: replace this placeholder with actual UI changes
             String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
-            Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
         }
     }
 }
