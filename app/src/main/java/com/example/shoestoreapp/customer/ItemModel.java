@@ -1,12 +1,15 @@
 package com.example.shoestoreapp.customer;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 
-public class ItemModel {
+public class ItemModel implements Parcelable {
     private String model;
     private String color;
     private String type;
@@ -32,6 +35,30 @@ public class ItemModel {
 
     public ItemModel() {
     }
+
+    protected ItemModel(Parcel in) {
+        model = in.readString();
+        color = in.readString();
+        type = in.readString();
+        image = in.readString();
+        price = in.readDouble();
+        rating = in.readDouble();
+        sizes = in.readArrayList(Integer.class.getClassLoader());
+        amounts = in.readArrayList(Integer.class.getClassLoader());
+        //added = in.readParcelable(Timestamp.class.getClassLoader());
+    }
+
+    public static final Creator<ItemModel> CREATOR = new Creator<ItemModel>() {
+        @Override
+        public ItemModel createFromParcel(Parcel in) {
+            return new ItemModel(in);
+        }
+
+        @Override
+        public ItemModel[] newArray(int size) {
+            return new ItemModel[size];
+        }
+    };
 
     public String getModel() {
         return model;
@@ -79,5 +106,22 @@ public class ItemModel {
     @Override
     public String toString() {
         return model + "-" + color;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(model);
+        parcel.writeString(color);
+        parcel.writeString(type);
+        parcel.writeString(image);
+        parcel.writeDouble(price);
+        parcel.writeDouble(rating);
+        parcel.writeList(sizes);
+        parcel.writeList(amounts);
     }
 }

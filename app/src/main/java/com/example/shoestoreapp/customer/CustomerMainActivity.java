@@ -7,13 +7,16 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.os.Parcelable;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,25 +38,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
 
-public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class CustomerMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RecyclerViewAdapter.OnItemListener{
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityCustomerMainBinding binding;
     private DrawerLayout drawer;
     //TODO: replace this list with objects
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
-    private ArrayList<Float> ratings = new ArrayList<>();
 
     private final static String TAG = "CustomerMainActivity";
     private ImageButton shoppingCart;
     private ImageView bag, shoe;
-    private TextView test;
+    private TextView userName, userEmail;
 
     private ArrayList<ItemModel> items = new ArrayList<>();
     private FirebaseFirestore database;
@@ -79,6 +80,31 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                userName = findViewById(R.id.textViewUsername);
+                userName.setText(user.getFullName());
+                userEmail = findViewById(R.id.textViewEmail);
+                userEmail.setText(user.getEmail());
+            }
+        });
+
         //fetch inventory data from db
         fetchItems();
 
@@ -96,18 +122,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         shoe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO shoe category onClick
 
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items)).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("shoe",items, user)).addToBackStack(null).commit();
             }
         });
         bag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO bag category onClick
-                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items)).addToBackStack(null).commit();
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, ItemModelsFragment.newInstance("bag",items, user)).addToBackStack(null).commit();
             }
         });
+
     }
 
     private void fetchItems() {
@@ -133,6 +159,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         });
     }
 
+
+
+
     //Drawer onclick
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -148,6 +177,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case R.id.nav_oder_history:
                 //TODO order history on click
+                Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
+                orderHistoryIntent.putExtra("userData", user);
+                startActivity(orderHistoryIntent);
                 break;
             case R.id.nav_payment_method:
                 //TODO payment method on click
@@ -188,7 +220,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         RecyclerView recyclerView = findViewById(R.id.recyclerViewPopularProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -199,7 +231,17 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         RecyclerView recyclerView = findViewById(R.id.recyclerViewRecentProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    //starting new activity and sending item selected
+    @Override
+    public void onItemClick(int position, String id) {
+
+        Intent profileIntent = new Intent(this, SingleItemActivity.class);
+        profileIntent.putExtra("selectedItem", items.get(position));
+        profileIntent.putExtra("userData", user);
+        startActivity(profileIntent);
     }
 }
