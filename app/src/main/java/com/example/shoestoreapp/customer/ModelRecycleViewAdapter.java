@@ -24,11 +24,12 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
     private StorageReference storageRef;
     private Context mContext;
     private static final String TAG = "ModelRecycleViewAdapter";
+    private OnModelListener mOnModelListener;
 
-    public ModelRecycleViewAdapter(Context mContext, ArrayList<ItemModel> items) {
+    public ModelRecycleViewAdapter(Context mContext, ArrayList<ItemModel> items, OnModelListener onModelListener) {
         this.items = items;
         this.mContext = mContext;
-
+        this.mOnModelListener = onModelListener;
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
     }
@@ -37,7 +38,7 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_model_list_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, mOnModelListener);
     }
 
     @Override
@@ -53,13 +54,8 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
                 .into(holder.modelImage);
 
         holder.modelName.setText("Model " + item.getModel());
+        holder.modelPrice.setText(String.valueOf(item.getPrice()) + "Kn");
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO model onClick
-            }
-        });
     }
 
     @Override
@@ -67,16 +63,28 @@ public class ModelRecycleViewAdapter extends RecyclerView.Adapter<ModelRecycleVi
         return items.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView modelImage;
-        TextView modelName;
+        TextView modelName, modelPrice;
+        OnModelListener onModelListener;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, OnModelListener onModelListener) {
             super(itemView);
             modelImage = itemView.findViewById(R.id.imageViewModel);
             modelName = itemView.findViewById(R.id.textViewModelName);
+            modelPrice = itemView.findViewById(R.id.textViewModelPrice);
 
-
+            this.onModelListener = onModelListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            onModelListener.onModelClick(getBindingAdapterPosition());
+        }
+    }
+
+    public interface OnModelListener{
+        void onModelClick(int position);
     }
 }

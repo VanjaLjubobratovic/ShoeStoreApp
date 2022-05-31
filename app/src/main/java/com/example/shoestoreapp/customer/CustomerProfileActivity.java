@@ -11,6 +11,7 @@ import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.databinding.ActivityAdminMainBinding;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -30,7 +31,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ImageButton exit;
-    private Button logoutBtn, changeBtn;
+    private MaterialButton logoutBtn, changeBtn;
     private String fullName,name,surname,email,address,city,postalCode,phone;
     private String[] names;
     private TextView profileName, profileSurname, profileEmail, profileAddress, profileCityAndCode,
