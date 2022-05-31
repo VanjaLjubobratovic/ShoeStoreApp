@@ -15,15 +15,13 @@
         android:id="@+id/changeProfileTopLayout">
 
         <ImageView
-            android:id="@+id/imageViewProfilePic"
+            android:id="@+id/imageViewProfilePicChange"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_margin="20dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_margin="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/avatardefault" />
+            android:src="@drawable/avatardefault" />
 
         <EditText
             android:id="@+id/editTxtProfileName"
@@ -34,7 +32,7 @@
             android:textSize="20dp"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
+            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePicChange"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
@@ -46,7 +44,7 @@
             android:textColor="@color/black"
             android:layout_marginTop="40dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
+            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePicChange"
             app:layout_constraintTop_toBottomOf="@+id/editTxtProfileName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
