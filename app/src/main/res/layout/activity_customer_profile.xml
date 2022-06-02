@@ -6,57 +6,57 @@
     android:layout_height="match_parent"
     tools:context=".customer.CustomerProfileActivity">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent"
-    android:padding="20dp"
-    android:background="@color/purple_500"
-    android:id="@+id/profileTopLayout">
-    <ImageView
-        android:id="@+id/imageViewProfilePic"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_margin="20dp"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/avatardefault"/>
+        android:padding="20dp"
+        android:background="@color/purple_500"
+        android:id="@+id/profileTopLayout">
+        <ImageView
+            android:id="@+id/imageViewProfilePic"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/avatardefault"/>
 
-    <TextView
-        android:id="@+id/textViewProfileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Name"
-        android:textSize="20dp"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textViewProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Name"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewProfileSurname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Surname"
-        android:textSize="20dp"
-        android:textColor="@color/black"
-        android:layout_marginTop="40dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
-        app:layout_constraintTop_toBottomOf="@+id/textViewProfileName" />
+        <TextView
+            android:id="@+id/textViewProfileSurname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Surname"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:layout_marginTop="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageViewProfilePic"
+            app:layout_constraintTop_toBottomOf="@+id/textViewProfileName" />
 
-    <ImageButton
-        android:id="@+id/imageButtonCloseProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:backgroundTint="#F4F0F0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_close_x" />
+        <ImageButton
+            android:id="@+id/imageButtonCloseProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:backgroundTint="#F4F0F0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close_x" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <TextView
         android:id="@+id/textViewProfileEmail"
         android:layout_width="wrap_content"

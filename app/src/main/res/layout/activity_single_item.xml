@@ -86,7 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemPriceLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/itemPriceLabel"
+        android:theme="@style/RatingBar"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buyItemButton"

@@ -1,5 +1,9 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,12 +18,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.remote.WatchChangeAggregator;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +46,8 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
             profilePhone;
     private TextView profileEmail;
     private FirebaseFirestore database;
+    private ImageView profilePicture;
+    private Uri selectedImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +145,28 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         profileAddress.setText(address);
         profilePhone = findViewById(R.id.editTxtProfilePhone);
         profilePhone.setText(phone);
+        profilePicture = findViewById(R.id.imageViewProfilePicChange);
+
+        ActivityResultLauncher<Intent> profilePictureResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if(result.getResultCode() == Activity.RESULT_OK){
+                    Intent data = result.getData();
+                    selectedImage = data.getData();
+                    profilePicture.setImageURI(selectedImage);
+
+                }
+            }
+        });
+
+
+        profilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent pictureIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                profilePictureResultLauncher.launch(pictureIntent);
+            }
+        });
 
     }
 

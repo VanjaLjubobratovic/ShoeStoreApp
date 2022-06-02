@@ -28,6 +28,7 @@
         app:layout_constraintStart_toEndOf="@+id/buyerFullNameTextView"
         app:layout_constraintTop_toTopOf="parent"
         style="?android:ratingBarStyleSmall"
+        android:theme="@style/RatingBar"
         />
 
     <TextView
