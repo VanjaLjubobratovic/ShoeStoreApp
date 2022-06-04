@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -153,7 +154,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
                 if(result.getResultCode() == Activity.RESULT_OK){
                     Intent data = result.getData();
                     selectedImage = data.getData();
-                    profilePicture.setImageURI(selectedImage);
+                    Glide.with(CustomerProfileChangeActivity.this).load(selectedImage).into(profilePicture);
 
                 }
             }

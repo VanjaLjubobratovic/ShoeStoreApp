@@ -33,7 +33,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_customer_order_history);
 
         user=getIntent().getParcelableExtra("userData");
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         checkUser();
 

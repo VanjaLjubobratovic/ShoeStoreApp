@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.employee.ReceiptModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -21,11 +22,15 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +44,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class SingleItemActivity extends AppCompatActivity {
@@ -52,8 +58,7 @@ public class SingleItemActivity extends AppCompatActivity {
     private RatingBar itemRating;
     private FirebaseStorage storage;
     private StorageReference storageRef;
-    private ArrayList<String> mNames = new ArrayList<>(), mReviews = new ArrayList<>(),
-            mRatings = new ArrayList<>(), curColors = new ArrayList<>();
+    private ArrayList<String> curColors = new ArrayList<>();
     private ArrayList<ReviewModel> reviews = new ArrayList<>();
     private ImageButton backButton;
     private CollectionReference itemsRef, reviewsRef;
@@ -73,7 +78,7 @@ public class SingleItemActivity extends AppCompatActivity {
 
 
         //Initializing the views and database
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         database = FirebaseFirestore.getInstance();
         itemsRef = database.collection("/locations/webshop/items");
 
@@ -90,9 +95,10 @@ public class SingleItemActivity extends AppCompatActivity {
         fetchItems();
 
         //filling the views with data
+        //TODO fix first item spinner onclick
         fillElements();
 
-
+        //Changing the selected item on new color selection
         colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -112,10 +118,49 @@ public class SingleItemActivity extends AppCompatActivity {
             }
         });
 
+        //Initializing Shared Preferences to read and write shopping cart items
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        /*
+        editor.remove("ShoppingCartReceipt");
+        editor.apply();*/
+
+        //Add to cart button onclick
         buyButton = findViewById(R.id.buyItemButton);
         buyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //Converting item sizes to work with ReceiptModel items
+                //TODO make this a method in ReceiptModel
+                Integer sizeIndex = selectedItem.getSizes().indexOf(Integer.parseInt(sizeSpinner.getSelectedItem().toString()));
+
+                ArrayList<Integer> sizeList = new ArrayList<>(Collections.nCopies(selectedItem.getSizes().size(), 0));
+                sizeList.set(sizeIndex, 1);
+
+                ItemModel receiptItem = new ItemModel(selectedItem.getType(), selectedItem.getImage(), selectedItem.getPrice(),
+                        selectedItem.getRating(), selectedItem.getAdded(), selectedItem.getSizes(), sizeList);
+                receiptItem.parseModelColor(selectedItem.toString());
+                ReceiptModel receipt;
+
+                //Reading receipt written in Shared Preferences using gson
+                if(sharedPref.contains("ShoppingCartReceipt")){
+                    Gson gson = new Gson();
+                    String json = sharedPref.getString("ShoppingCartReceipt","NoItems");
+                    receipt = gson.fromJson(json, ReceiptModel.class);
+                }
+                //Creating a new receipt if there isn't one already in Shared Preferences
+                else{
+                    receipt = new ReceiptModel();
+                }
+                //Adding the selected item to cart and then Shared Preferences using gson
+                receipt.addItem(receiptItem);
+                Gson receiptGson = new Gson();
+                String receiptJson = receiptGson.toJson(receipt);
+                editor.putString("ShoppingCartReceipt",receiptJson);
+                editor.apply();
+                Toast.makeText(SingleItemActivity.this, "Item added to cart", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -132,6 +177,7 @@ public class SingleItemActivity extends AppCompatActivity {
 
     }
 
+    //Method to check if user is logged into a account
     private void checkUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if(firebaseUser == null) {
@@ -142,6 +188,8 @@ public class SingleItemActivity extends AppCompatActivity {
             //TODO: replace this placeholder with actual UI changes
         }
     }
+
+    //Fetching the list of items stored in the Firebase
     private void fetchItems() {
         itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -151,12 +199,14 @@ public class SingleItemActivity extends AppCompatActivity {
                         Log.d("FIRESTORE", "0 Results");
                         return;
                     }
+                    //Writing the results to a ArrayList
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         ItemModel newItem = document.toObject(ItemModel.class);
                         newItem.parseModelColor(document.getId());
                         items.add(newItem);
                         Log.d("FIRESTORE Single", newItem.toString());
                     }
+                    //Initialization of spinners and Review Recycler
                     initColorSpinner();
                     initSizeSpinner();
                     fetchReviews();
@@ -165,6 +215,7 @@ public class SingleItemActivity extends AppCompatActivity {
         });
     }
 
+    //Getting reviews from firebase
     private void fetchReviews() {
         reviewsRef = database.collection("locations/webshop/items/" + selectedItem.getModel() + "-" + selectedItem.getColor() +"/reviews");
         reviewsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -175,6 +226,7 @@ public class SingleItemActivity extends AppCompatActivity {
                         Log.d("FIRESTORE", "0 Results");
                         return;
                     }
+                    //Writing the results to a ArrayList
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         ReviewModel newReview = document.toObject(ReviewModel.class);
                         reviews.add(newReview);
@@ -186,8 +238,10 @@ public class SingleItemActivity extends AppCompatActivity {
         });
     }
 
+
     private void initColorSpinner(){
         String curModel = selectedItem.getModel();
+        //Reading all the colors that need to be added
         for(ItemModel item : items){
             if (item.getModel().equals(curModel)){
                 curColors.add(item.getColor());
@@ -201,6 +255,7 @@ public class SingleItemActivity extends AppCompatActivity {
 
     private void initSizeSpinner(){
         sizes = selectedItem.getSizes();
+        //Reading all the sizes that need to be added
         ArrayList<String> sizesString = new ArrayList<>();
         for (Integer size : sizes){
             sizesString.add(size.toString());
@@ -211,6 +266,7 @@ public class SingleItemActivity extends AppCompatActivity {
         sizeSpinner.setAdapter(spinnerArrayAdapter);
     }
 
+    //Method to fill all the elements with the selected item
     private void fillElements(){
 
         itemName.setText("Model " + selectedItem.toString());
@@ -225,6 +281,8 @@ public class SingleItemActivity extends AppCompatActivity {
 
     }
 
+
+    //Review recycler view initialization
     private void initReviewRecycler(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         RecyclerView reviewRecyclerView = findViewById(R.id.itemReviewsRecyclerView);

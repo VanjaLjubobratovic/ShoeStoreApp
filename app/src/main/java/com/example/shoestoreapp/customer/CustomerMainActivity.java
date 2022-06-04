@@ -113,6 +113,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onClick(View view) {
                 //TODO shopping cart onclick
+                Intent shoppingCartIntent = new Intent(CustomerMainActivity.this, ShoppingCartActivity.class);
+                shoppingCartIntent.putExtra("userData", user);
+                startActivity(shoppingCartIntent);
             }
         });
 
