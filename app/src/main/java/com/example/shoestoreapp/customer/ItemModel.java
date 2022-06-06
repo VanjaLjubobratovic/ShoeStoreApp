@@ -117,6 +117,7 @@ public class ItemModel implements Parcelable {
       @Override
     public int hashCode() {
         return Objects.hash(model, color);
+    }
 
     public int describeContents() {
         return 0;
