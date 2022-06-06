@@ -46,7 +46,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class DeliveryFragment extends Fragment {
+public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAdapter.OnDeliveryItemListener {
     private MaterialButton manualAddBtn, codeScanBtn, confirmBtn, addItemBtn;
     private EditText modelEt;
     private Spinner colorDropdown;
@@ -66,6 +66,7 @@ public class DeliveryFragment extends Fragment {
     private StorageReference storageRef;
 
     private ItemModel selectedItem;
+    private String editColor = "";
 
     public DeliveryFragment() {
     }
@@ -119,7 +120,6 @@ public class DeliveryFragment extends Fragment {
 
         manualAddBtn.setOnClickListener(view1 -> {
             flipper.showNext();
-            confirmBtn = binding.deliveryUpperFlipper.findViewById(R.id.addBtn);
         });
 
         codeScanBtn.setOnClickListener(view1 -> {
@@ -154,7 +154,7 @@ public class DeliveryFragment extends Fragment {
                         .load(imageRef)
                         .into(itemImage);
 
-                addAmountsInput();
+                addAmountsInput(null);
             }
 
             @Override
@@ -183,12 +183,12 @@ public class DeliveryFragment extends Fragment {
             initRecyclerView();
             clearData();
             clearInputs();
-
-            //confirmBtn.setEnabled(true);
+            confirmBtn.setEnabled(true);
         });
 
-        confirmBtn.setOnClickListener(view1 -> {
 
+        confirmBtn.setOnClickListener(view1 -> {
+            //TODO: code here
         });
     }
 
@@ -247,7 +247,7 @@ public class DeliveryFragment extends Fragment {
         colorDropdown.setAdapter(dropdownAdapter);
     }
 
-    private void addAmountsInput() {
+    private void addAmountsInput(ArrayList<Integer> sizes) {
         specificItemLayout.removeAllViews();
         selectedAmountsList = new ArrayList<>();
 
@@ -273,6 +273,8 @@ public class DeliveryFragment extends Fragment {
             et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             et.setGravity(Gravity.CENTER);
             et.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+            if(sizes != null)
+                et.setText(sizes.get(i));
 
             TextView tv = new TextView(getContext());
             tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -310,7 +312,14 @@ public class DeliveryFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.deliveryItemRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        DeliveryRecyclerViewAdapter adapter = new DeliveryRecyclerViewAdapter(getContext(), deliveredItems);
+        DeliveryRecyclerViewAdapter adapter = new DeliveryRecyclerViewAdapter(getContext(), deliveredItems, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onDeliveryItemClick(int position) {
+        /*String model = deliveredItems.get(position).getModel();
+        String editColor = deliveredItems.get(position).getColor();
+        modelEt.setText(model);*/
     }
 }

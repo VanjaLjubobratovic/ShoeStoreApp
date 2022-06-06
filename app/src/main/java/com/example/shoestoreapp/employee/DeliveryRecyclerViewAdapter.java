@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -32,9 +33,12 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
 
     private ArrayList<ItemModel> deliveryItems;
 
-    public DeliveryRecyclerViewAdapter (Context mContext, ArrayList<ItemModel> deliveryItems) {
+    private OnDeliveryItemListener deliveryItemListener;
+
+    public DeliveryRecyclerViewAdapter (Context mContext, ArrayList<ItemModel> deliveryItems, OnDeliveryItemListener deliveryItemListener) {
         this.mContext = mContext;
         this.deliveryItems = deliveryItems;
+        this.deliveryItemListener = deliveryItemListener;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -45,7 +49,7 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //TODO: change layout
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_item_delivery, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, deliveryItemListener);
     }
 
     @Override
@@ -63,6 +67,14 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
 
         addAmounts(holder, item);
         Log.d("DELIVERY RECYCLER", "item: " + item.toString());
+
+        holder.editBtn.setOnClickListener(view -> {
+
+        });
+
+        holder.removeBtn.setOnClickListener(view -> {
+            removeAt(holder.getLayoutPosition());
+        });
     }
 
     @Override
@@ -77,6 +89,12 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
         for(Integer amount : amounts)
             total += amount;
         return total;
+    }
+
+    private void removeAt(int position) {
+        deliveryItems.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
     }
 
     private void addAmounts(DeliveryRecyclerViewAdapter.ViewHolder holder, ItemModel item) {
@@ -127,17 +145,45 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
             holder.amountsLayout.removeViewAt(holder.amountsLayout.getChildCount() - 1);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView itemImage;
         TextView itemName, totalAmount;
-        LinearLayout amountsLayout;
+        LinearLayout amountsLayout, dynamicButtonLayout;
+        OnDeliveryItemListener deliveryItemListener;
+        MaterialButton editBtn, removeBtn;
+        boolean expanded = false;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, OnDeliveryItemListener onDeliveryItemListener) {
             super(itemView);
             itemImage = itemView.findViewById(R.id.recyclerItemImage);
             itemName = itemView.findViewById(R.id.recylcerItemName);
             totalAmount = itemView.findViewById(R.id.recyclerTotalAmount);
             amountsLayout = itemView.findViewById(R.id.recyclerSizesLayout);
+            dynamicButtonLayout = itemView.findViewById(R.id.recyclerButtonsLayout);
+            editBtn = itemView.findViewById(R.id.recyclerItemEditBtn);
+            removeBtn = itemView.findViewById(R.id.recyclerItemRemoveBtn);
+
+            this.deliveryItemListener = onDeliveryItemListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            deliveryItemListener.onDeliveryItemClick(getAbsoluteAdapterPosition());
+
+            if(!expanded) {
+                editBtn.setVisibility(View.VISIBLE);
+                removeBtn.setVisibility(View.VISIBLE);
+                expanded = true;
+            } else {
+                editBtn.setVisibility(View.GONE);
+                removeBtn.setVisibility(View.GONE);
+                expanded = false;
+            }
+        }
+    }
+
+    public interface OnDeliveryItemListener {
+        void onDeliveryItemClick(int position);
     }
 }
