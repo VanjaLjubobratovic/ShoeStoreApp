@@ -9,10 +9,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,15 +32,23 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
     private Context mContext;
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private MaterialButton confirmBtn, addBtn;
+    private EditText modelEt;
+    private ItemModel itemToEdit;
 
     private ArrayList<ItemModel> deliveryItems;
 
     private OnDeliveryItemListener deliveryItemListener;
 
-    public DeliveryRecyclerViewAdapter (Context mContext, ArrayList<ItemModel> deliveryItems, OnDeliveryItemListener deliveryItemListener) {
+    public DeliveryRecyclerViewAdapter (Context mContext, ArrayList<ItemModel> deliveryItems, OnDeliveryItemListener deliveryItemListener,
+                                        MaterialButton confirmBtn, ItemModel itemToEdit, EditText modelEt, MaterialButton addBtn) {
         this.mContext = mContext;
         this.deliveryItems = deliveryItems;
         this.deliveryItemListener = deliveryItemListener;
+        this.confirmBtn = confirmBtn;
+        this.itemToEdit = itemToEdit;
+        this.modelEt = modelEt;
+        this.addBtn = addBtn;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -69,7 +79,18 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
         Log.d("DELIVERY RECYCLER", "item: " + item.toString());
 
         holder.editBtn.setOnClickListener(view -> {
+            //In case user tries to edit another item during editing
+            if (!itemToEdit.getModel().equals(" ") && addBtn.isEnabled()) {
+                Toast.makeText(mContext, "Prvo spremite promjene na trenutnom predmetu", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            itemToEdit.parseModelColor(item.getModel() + "-" + item.getColor());
+            itemToEdit.setAmounts(item.getAmounts());
+            modelEt.setText(deliveryItems.get(holder.getLayoutPosition()).getModel());
+            modelEt.setEnabled(false);
+            removeAt(holder.getLayoutPosition());
+            Log.d("DELIVERY RECYCLER", "item: " + itemToEdit.toString());
         });
 
         holder.removeBtn.setOnClickListener(view -> {
@@ -95,6 +116,8 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
         deliveryItems.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, getItemCount());
+        if (getItemCount() == 0)
+            confirmBtn.setEnabled(false);
     }
 
     private void addAmounts(DeliveryRecyclerViewAdapter.ViewHolder holder, ItemModel item) {

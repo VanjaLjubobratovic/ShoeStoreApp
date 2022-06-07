@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.employee;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -38,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,11 +49,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAdapter.OnDeliveryItemListener {
     private MaterialButton manualAddBtn, codeScanBtn, confirmBtn, addItemBtn;
     private EditText modelEt;
     private Spinner colorDropdown;
+    private ProgressBar loading;
     private FragmentDeliveryBinding binding;
     private ViewFlipper flipper;
     private ImageView itemImage;
@@ -66,7 +73,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
     private StorageReference storageRef;
 
     private ItemModel selectedItem;
-    private String editColor = "";
+    private ItemModel itemToEdit = new ItemModel();
 
     public DeliveryFragment() {
     }
@@ -90,6 +97,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+
+        itemToEdit.parseModelColor(" - ");
     }
 
     @Override
@@ -104,6 +113,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         flipper = binding.deliveryUpperFlipper;
         confirmBtn = binding.deliveryConfirmButton;
+        loading = binding.deliveryProgressBar;
 
         manualAddBtn = flipper.getRootView().findViewById(R.id.manualDeliveryAdd);
         codeScanBtn = flipper.getRootView().findViewById(R.id.scanDeliveryCode);
@@ -133,8 +143,12 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                clearData();
+                clearItemPreview();
+                loading.setVisibility(View.VISIBLE);
+
                 fetchItems(modelEt.getText().toString());
+                if(modelEt.getText().toString().equals(""))
+                    loading.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -154,7 +168,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                         .load(imageRef)
                         .into(itemImage);
 
-                addAmountsInput(null);
+                addAmountsInput();
             }
 
             @Override
@@ -177,18 +191,30 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                     selectedItem.getRating(), selectedItem.getAdded(), selectedItem.getSizes(), sizeList);
             deliveredItem.parseModelColor(selectedItem.toString());
 
-            //TODO: implement item editing or amounts merge of same items
-            deliveredItems.add(deliveredItem);
+            //If item is already present in list, merge amounts
+            if(deliveredItems.contains(deliveredItem)) {
+                int index = deliveredItems.indexOf(deliveredItem);
+                mergeSameItems(deliveredItems.get(index), deliveredItem);
+            } else {
+                deliveredItems.add(deliveredItem);
+            }
 
             initRecyclerView();
-            clearData();
+            clearItemPreview();
             clearInputs();
             confirmBtn.setEnabled(true);
+            modelEt.setEnabled(true);
+
+            //TODO: fix this hack
+            itemToEdit.parseModelColor(" - ");
         });
 
 
         confirmBtn.setOnClickListener(view1 -> {
-            //TODO: code here
+            loading.setVisibility(View.VISIBLE);
+            confirmBtn.setEnabled(false);
+            adjustInventory();
+            clearData();
         });
     }
 
@@ -212,7 +238,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                     dropdownAddColors();
                 } else {
                     Log.d("FIRESTORE", "fetch unsuccessfull");
-                    clearData();
+                    clearItemPreview();
                 }
             }
         });
@@ -227,13 +253,22 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
     }
 
     private void clearData() {
+        deliveredItems = new ArrayList<>();
+
+        //TODO: instead of this make some kind of global recycler adapter and call notify methods
+        initRecyclerView();
+        clearItemPreview();
+    }
+
+    private void clearItemPreview(){
         fetchedItemsList = new ArrayList<>();
         selectedColorList = new ArrayList<>();
         selectedAmountsList = new ArrayList<>();
-        specificItemLayout.removeAllViews();
         itemImage.setImageResource(R.drawable.running_shoe_icon);
         selectedItem = null;
         addItemBtn.setEnabled(false);
+
+        specificItemLayout.removeAllViews();
     }
 
     private void clearInputs() {
@@ -245,14 +280,21 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, selectedColorList);
         dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         colorDropdown.setAdapter(dropdownAdapter);
+
+        if (!itemToEdit.getModel().equals(" ")) {
+            //Log.d("DELIVERY RECYCLER", "item: " + itemToEdit.toString());
+            colorDropdown.setSelection(selectedColorList.indexOf(itemToEdit.getColor()));
+        }
     }
 
-    private void addAmountsInput(ArrayList<Integer> sizes) {
+    private void addAmountsInput() {
         specificItemLayout.removeAllViews();
         selectedAmountsList = new ArrayList<>();
+        int numOfElements = 0;
 
         if (selectedItem == null)
             return;
+
 
         for(int i = 0; i < selectedItem.getSizes().size(); i++) {
             //Each size input is created as a vertical linear layout containing edit text and a label
@@ -273,8 +315,10 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
             et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             et.setGravity(Gravity.CENTER);
             et.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-            if(sizes != null)
-                et.setText(sizes.get(i));
+
+            //If item editing is taking place
+            if(!itemToEdit.getModel().equals(" ") && itemToEdit.getAmounts().get(i) != 0)
+                et.setText(itemToEdit.getAmounts().get(i).toString());
 
             TextView tv = new TextView(getContext());
             tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -283,6 +327,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
             tv.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             tv.setGravity(Gravity.CENTER);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+
+
 
             //Divider
             View v = new View(getContext());
@@ -302,17 +348,57 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         //Removing last divider to look nicer
         specificItemLayout.removeViewAt(specificItemLayout.getChildCount() - 1);
         addItemBtn.setEnabled(true);
+        loading.setVisibility(View.GONE);
     }
 
     private void adjustInventory() {
-        //TODO: code here
+        AtomicBoolean successfulUpdate = new AtomicBoolean(true);
+        ArrayList<ItemModel> itemsToAdjust = deliveredItems;
+
+        for (ItemModel item : itemsToAdjust) {
+            DocumentReference itemDocumentRef = itemsRef.document(item.toString());
+            ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
+
+            //TODO: generalise this method
+            itemDocumentRef.get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    Log.d("FIRESTORE", task.getResult().toString());
+                    ItemModel itemToAdjust = task.getResult().toObject(ItemModel.class);
+
+                    for(int i = 0; i < itemToAdjust.getAmounts().size(); i++) {
+                        int adjustedAmount = itemToAdjust.getAmounts().get(i) + item.getAmounts().get(i);
+                        adjustedAmountsList.add(adjustedAmount);
+
+                        itemDocumentRef.update("amounts", adjustedAmountsList)
+                                .addOnCompleteListener(task1 -> {
+                                    if(task.isSuccessful()) {
+                                        Log.d("adjustInventory", "Successful amount update");
+                                    } else {
+                                        Log.d("adjustInventory", "Amount update failed");
+                                        successfulUpdate.getAndSet(false);
+                                    }
+                                });
+                    }
+                }
+            })
+            .addOnFailureListener(task1 -> {
+                Log.d("FIRESTORE", "AdjustInventory fetch not successful");
+                successfulUpdate.getAndSet(false);
+            });
+        }
+
+        //TODO: make more detailed error message detection
+        if(successfulUpdate.get())
+            showAlert("Uspješno ste podesili inventar");
+        else showAlert("Količine nekih artikala nisu uspješno zapisane u bazu");
     }
 
     private void initRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.deliveryItemRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        DeliveryRecyclerViewAdapter adapter = new DeliveryRecyclerViewAdapter(getContext(), deliveredItems, this);
+        DeliveryRecyclerViewAdapter adapter = new DeliveryRecyclerViewAdapter(getContext(), deliveredItems, this, confirmBtn,
+                itemToEdit, modelEt, addItemBtn);
         recyclerView.setAdapter(adapter);
     }
 
@@ -322,4 +408,21 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         String editColor = deliveredItems.get(position).getColor();
         modelEt.setText(model);*/
     }
+
+    private void showAlert(String message) {
+        //TODO: add icon and title
+        AlertDialog.Builder deliveryAlert = new AlertDialog.Builder(getContext());
+        deliveryAlert.setMessage(message);
+        deliveryAlert.setCancelable(true);
+        deliveryAlert.show();
+        loading.setVisibility(View.GONE);
+    }
+
+    private void mergeSameItems(ItemModel addedItem, ItemModel itemToAdd) {
+        for(int i = 0; i < addedItem.getAmounts().size(); i++) {
+            int mergedAmount = addedItem.getAmounts().get(i) + itemToAdd.getAmounts().get(i);
+            addedItem.getAmounts().set(i, mergedAmount);
+        }
+    }
+
 }
