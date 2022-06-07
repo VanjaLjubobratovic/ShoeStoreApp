@@ -85,7 +85,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         RecyclerView orderRecyclerView = findViewById(R.id.userOrdersRecyclerView);
         orderRecyclerView.setLayoutManager(layoutManager);
-        UserOrdersRecyclerViewAdapter adapter = new UserOrdersRecyclerViewAdapter(this, fillerOrders);
+        CustomerOrderHistoryRecyclerAdapter adapter = new CustomerOrderHistoryRecyclerAdapter(this, fillerOrders);
         orderRecyclerView.setAdapter(adapter);
     }
 }
