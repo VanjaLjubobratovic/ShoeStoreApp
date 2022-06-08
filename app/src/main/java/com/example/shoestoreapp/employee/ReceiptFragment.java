@@ -306,6 +306,7 @@ public class ReceiptFragment extends Fragment {
             DocumentReference itemDocumentRef = itemsRef.document(item.toString());
             ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
 
+            //TODO: Generalise this boilerplate code
             itemDocumentRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -338,7 +339,6 @@ public class ReceiptFragment extends Fragment {
             });
 
         }
-
     }
 
     private void addReceiptToDB() {
