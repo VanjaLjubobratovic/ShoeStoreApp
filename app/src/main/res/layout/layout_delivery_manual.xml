@@ -4,6 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageButton
+        android:id="@+id/manualDeliveryBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_close_24"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="wrap_content"
@@ -25,23 +36,23 @@
                 android:id="@+id/modelEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:hint="Model"
-                android:inputType="number"
-                android:gravity="center"/>
+                android:inputType="number" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="Boja:"
-                android:textSize="17sp"
-                android:gravity="center"/>
+                android:textSize="17sp" />
 
             <Spinner
                 android:id="@+id/colorDropdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dropdown"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:spinnerMode="dropdown" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -49,10 +60,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dodaj"
-            android:textStyle="bold"
             android:textSize="16sp"
+            android:textStyle="bold"
             app:icon="@drawable/addicon"
-            app:iconSize="40dp"/>
+            app:iconSize="40dp" />
     </LinearLayout>
 
     <LinearLayout

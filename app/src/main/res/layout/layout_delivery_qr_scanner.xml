@@ -4,14 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageButton
+        android:id="@+id/scanDeliveryBack"
+        android:layout_alignParentRight="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="?android:selectableItemBackground"
+        android:scaleType="center"
+        android:translationZ="90dp"
+        android:src="@drawable/ic_baseline_close_24_white"
+        android:layout_margin="15dp"/>
+
     <com.budiyev.android.codescanner.CodeScannerView
+
         android:id="@+id/scannerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:autoFocusButtonColor="@color/white"
-        app:autoFocusButtonVisible="true"
+        app:autoFocusButtonPosition="bottomStart"
         app:flashButtonColor="@color/white"
         app:flashButtonVisible="true"
-        app:maskColor="#75000000"/>
+        app:flashButtonPosition="bottomEnd"
+        app:maskColor="#75000000" />
 
 </RelativeLayout>

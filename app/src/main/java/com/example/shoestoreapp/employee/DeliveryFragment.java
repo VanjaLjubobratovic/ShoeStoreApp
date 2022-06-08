@@ -34,6 +34,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -47,6 +48,7 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentDeliveryBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,11 +56,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.zxing.Result;
@@ -70,6 +74,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAdapter.OnDeliveryItemListener {
     private MaterialButton manualAddBtn, codeScanBtn, confirmBtn, addItemBtn;
+    private ImageButton manualBackBtn, scanBackBtn;
     private EditText modelEt;
     private Spinner colorDropdown;
     private ProgressBar loading;
@@ -90,8 +95,12 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
     private ItemModel selectedItem;
     private ItemModel itemToEdit = new ItemModel();
+    private UserModel user;
 
     private CodeScanner qrScanner;
+
+    private boolean codeScanned = false;
+    private DocumentReference deliveryRef;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int INPUT_MENU_SCREEN = 0;
@@ -122,6 +131,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         storageRef = storage.getReference();
 
         itemToEdit.parseModelColor(" - ");
+
+        user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
     }
 
     @Override
@@ -146,6 +157,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         colorDropdown = flipper.getRootView().findViewById(R.id.colorDropdown);
         itemImage = flipper.getRootView().findViewById(R.id.itemImageView);
         specificItemLayout = flipper.getRootView().findViewById(R.id.specificItemLinearLayout);
+        manualBackBtn = flipper.getRootView().findViewById(R.id.manualDeliveryBack);
+        scanBackBtn = flipper.getRootView().findViewById(R.id.scanDeliveryBack);
 
         addItemBtn.setEnabled(false);
         confirmBtn.setEnabled(false);
@@ -169,6 +182,18 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
             }
         });
 
+        manualBackBtn.setOnClickListener(view1 -> {
+            flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+            clearData();
+        });
+
+        scanBackBtn.setOnClickListener(view1 -> {
+            flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+            clearData();
+            if (qrScanner.isPreviewActive())
+                qrScanner.releaseResources();
+        });
+
         qrScanner.setDecodeCallback(result -> {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -176,7 +201,6 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                     //Toast.makeText(getContext(), result.getText(), Toast.LENGTH_SHORT).show();
                     qrScanner.releaseResources();
                     flipper.setDisplayedChild(MANUAL_ADD_SCREEN);
-
                     /* CODE FORMAT:
                            /locations/TestShop1/deliveries/delivery001
                            CODE:5217183
@@ -194,22 +218,6 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                 }
             });
         });
-
-        /*OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if(flipper.getDisplayedChild() != INPUT_MENU_SCREEN) {
-                    flipper.setDisplayedChild(INPUT_MENU_SCREEN);
-                    clearData();
-                } else {
-                    if(getActivity() != null) {
-                        FragmentManager fm = getActivity().getSupportFragmentManager();
-                        fm.popBackStack();
-                    }
-                }
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);*/
 
 
         modelEt.addTextChangedListener(new TextWatcher() {
@@ -290,6 +298,10 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
             loading.setVisibility(View.VISIBLE);
             confirmBtn.setEnabled(false);
             adjustInventory();
+
+            if(codeScanned)
+                confirmDeliveryInDB();
+
             clearData();
         });
     }
@@ -330,6 +342,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
     private void clearData() {
         deliveredItems = new ArrayList<>();
+        codeScanned = false;
+        confirmBtn.setEnabled(false);
 
         //TODO: instead of this make some kind of global recycler adapter and call notify methods
         initRecyclerView();
@@ -502,8 +516,24 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
     }
 
     private void fetchScannedDelivery(String path, String code) {
-        DocumentReference deliveryRef = database.document(path);
+        deliveryRef = database.document(path);
 
+        deliveryRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    //TODO: handle exception
+                    if(!(boolean) task.getResult().get("accepted")) {
+                        scanPerformFetch();
+                    } else {
+                        Toast.makeText(getContext(), "Dostava je već preuzeta", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    private void scanPerformFetch() {
         deliveryRef.collection("items").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -520,6 +550,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                                 }
                                 deliveredItems.add(deliveryItem);
                             }
+                            codeScanned = true;
                             initRecyclerView();
                         }
                     }
@@ -534,6 +565,22 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
                 });
     }
 
+    private void confirmDeliveryInDB() {
+        Log.d("confirmDeliveryInDB", "Confirming ");
+        WriteBatch batch = database.batch();
+        batch.update(deliveryRef, "accepted", true);
+        batch.update(deliveryRef, "accepted_by", user.getEmail());
+        batch.update(deliveryRef, "time_accepted", Timestamp.now());
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("confirmDeliveryInDB", "onComplete: ");
+            }
+        });
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -545,8 +592,6 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         qrScanner.releaseResources();
         super.onPause();
     }
-
-
 
     //TODO: deprecated
     @Override
