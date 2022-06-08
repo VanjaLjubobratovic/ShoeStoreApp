@@ -78,6 +78,9 @@ public class DeliveryRecyclerViewAdapter extends RecyclerView.Adapter<DeliveryRe
         addAmounts(holder, item);
         Log.d("DELIVERY RECYCLER", "item: " + item.toString());
 
+        if(getItemCount() > 0)
+            confirmBtn.setEnabled(true);
+
         holder.editBtn.setOnClickListener(view -> {
             //In case user tries to edit another item during editing
             if (!itemToEdit.getModel().equals(" ") && addBtn.isEnabled()) {

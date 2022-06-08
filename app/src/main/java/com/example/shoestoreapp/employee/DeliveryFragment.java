@@ -1,14 +1,21 @@
 package com.example.shoestoreapp.employee;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +25,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +39,19 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.DecodeCallback;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentDeliveryBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -47,8 +61,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.zxing.Result;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -74,6 +90,13 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
     private ItemModel selectedItem;
     private ItemModel itemToEdit = new ItemModel();
+
+    private CodeScanner qrScanner;
+
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int INPUT_MENU_SCREEN = 0;
+    private static final int MANUAL_ADD_SCREEN = 1;
+    private static final int QR_SCANNER_SCREEN = 2;
 
     public DeliveryFragment() {
     }
@@ -127,14 +150,67 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         addItemBtn.setEnabled(false);
         confirmBtn.setEnabled(false);
 
+        CodeScannerView scannerView = flipper.getRootView().findViewById(R.id.scannerView);
+        qrScanner = new CodeScanner(getActivity(), scannerView);
+
 
         manualAddBtn.setOnClickListener(view1 -> {
-            flipper.showNext();
+            flipper.setDisplayedChild(MANUAL_ADD_SCREEN);
         });
 
         codeScanBtn.setOnClickListener(view1 -> {
-            //TODO: implement QR code scanning
+            if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                //TODO: deprecated
+                requestPermissions(new String[] {Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+            } else {
+                flipper.setDisplayedChild(QR_SCANNER_SCREEN);
+                qrScanner.startPreview();
+            }
         });
+
+        qrScanner.setDecodeCallback(result -> {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //Toast.makeText(getContext(), result.getText(), Toast.LENGTH_SHORT).show();
+                    qrScanner.releaseResources();
+                    flipper.setDisplayedChild(MANUAL_ADD_SCREEN);
+
+                    /* CODE FORMAT:
+                           /locations/TestShop1/deliveries/delivery001
+                           CODE:5217183
+                     */
+                    try {
+                        String[] lines = result.getText().split(System.getProperty("line.separator"));
+                        fetchScannedDelivery(lines[0], lines[1]);
+                    } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
+                        Log.d("CODE READER", "invalid code ");
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Neispravan kod", Toast.LENGTH_SHORT).show();
+                        flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+                        clearData();
+                    }
+                }
+            });
+        });
+
+        /*OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(flipper.getDisplayedChild() != INPUT_MENU_SCREEN) {
+                    flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+                    clearData();
+                } else {
+                    if(getActivity() != null) {
+                        FragmentManager fm = getActivity().getSupportFragmentManager();
+                        fm.popBackStack();
+                    }
+                }
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getActivity(), callback);*/
+
 
         modelEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -425,4 +501,65 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         }
     }
 
+    private void fetchScannedDelivery(String path, String code) {
+        DocumentReference deliveryRef = database.document(path);
+
+        deliveryRef.collection("items").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.isEmpty()) {
+                            Toast.makeText(getContext(), "Pretraga nije pronašla niti jedan artikl", Toast.LENGTH_SHORT).show();
+                            flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+                            clearData();
+                        } else {
+                            for(DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                                ItemModel deliveryItem = document.toObject(ItemModel.class);
+                                if (deliveryItem != null) {
+                                    deliveryItem.parseModelColor(document.getId());
+                                }
+                                deliveredItems.add(deliveryItem);
+                            }
+                            initRecyclerView();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), "Neuspješno dobavljanje iz baze", Toast.LENGTH_SHORT).show();
+                        flipper.setDisplayedChild(INPUT_MENU_SCREEN);
+                        clearData();
+                    }
+                });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        qrScanner.startPreview();
+    }
+
+    @Override
+    public void onPause() {
+        qrScanner.releaseResources();
+        super.onPause();
+    }
+
+
+
+    //TODO: deprecated
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("REQUEST", "onRequestPermissionsResult: ");
+                Toast.makeText(getContext(), "Dodijeljeno dopuštenje za kameru", Toast.LENGTH_SHORT).show();
+                flipper.setDisplayedChild(2);
+            } else {
+                Toast.makeText(getContext(), "Odbijeno dopuštenje za kameru", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }

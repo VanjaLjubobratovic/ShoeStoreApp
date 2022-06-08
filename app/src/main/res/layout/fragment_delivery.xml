@@ -43,6 +43,9 @@
                 <include
                     android:id="@+id/flipperManualAdd"
                     layout="@layout/layout_delivery_manual" />
+                <include
+                    android:id="@+id/flipperScanCode"
+                    layout="@layout/layout_delivery_qr_scanner"/>
             </ViewFlipper>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
