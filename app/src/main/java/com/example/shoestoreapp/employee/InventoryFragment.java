@@ -1,18 +1,26 @@
 package com.example.shoestoreapp.employee;
 
+import android.content.ClipData;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
@@ -37,13 +45,15 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
-public class InventoryFragment extends Fragment {
+public class InventoryFragment extends Fragment{
     private FragmentInventoryBinding binding;
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
     private ProgressBar progressBar;
+    private Spinner modelDropdown, colorDropdown, sizeDropdown;
 
-    private ArrayList<ArrayList<ItemModel>> itemModelsList;
+    private ArrayList<ArrayList<ItemModel>> sortedItemsList, filteredItemsList;
+    private ArrayList<String> listOfModels;
 
     private FirebaseFirestore database;
     private CollectionReference itemsRef;
@@ -65,35 +75,15 @@ public class InventoryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        itemModelsList = new ArrayList<>();
+        sortedItemsList = new ArrayList<>();
+        listOfModels = new ArrayList<>();
 
         database = FirebaseFirestore.getInstance();
+        //TODO: fetch store attribute
         String collection = "/locations/" + "TestShop1" + "/items";
         itemsRef = database.collection(collection);
 
         user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
-
-        //TODO: change this dummy code
-        /*ArrayList<ItemModel> itemsList = new ArrayList<>();
-        ArrayList<Integer> sizes = new ArrayList<>(
-                Arrays.asList(35, 36, 37, 38, 39, 40));
-        ArrayList<Integer> amounts = new ArrayList<>(
-                Arrays.asList(1, 1, 1, 1, 1, 1));
-
-        ItemModel item = new ItemModel("cipela", "501crvene.jpg", 280.00, 5, Timestamp.now(), sizes, amounts);
-        item.parseModelColor("501-crvena");
-
-        for(int i = 0; i < 15; i++)
-            itemsList.add(item);
-        itemModelsList.add(itemsList);
-
-        itemsList = new ArrayList<>();
-        item = new ItemModel("cipela", "505zuta.jpg", 280.00, 5, Timestamp.now(), sizes, amounts);
-        item.parseModelColor("505-zuta");
-
-        for(int i = 0; i < 15; i++)
-            itemsList.add(item);
-        itemModelsList.add(itemsList);*/
     }
 
     @Override
@@ -106,7 +96,55 @@ public class InventoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         progressBar = binding.inventoryProgressbar;
+        modelDropdown = binding.inventoryModelSpinner;
+        colorDropdown = binding.inventoryColorSpinner;
+        sizeDropdown = binding.inventorySizeSpinner;
+
+        viewPager = binding.inventoryPager;
+
         fetchInventory();
+
+        modelDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String model = modelDropdown.getSelectedItem().toString();
+                int index = listOfModels.indexOf(model);
+
+                if(index == viewPager.getCurrentItem())
+                    return;
+
+                viewPager.setCurrentItem(index);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        colorDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(!colorDropdown.getSelectedItem().equals("-")) {
+                    filterByColor();
+                } else resetFilter();
+
+                buildPages();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                modelDropdown.setSelection(position);
+            }
+        });
     }
 
     private void fetchInventory() {
@@ -130,8 +168,13 @@ public class InventoryFragment extends Fragment {
                     itemsMap.get(item.getModel()).add(item);
                 }
 
-                itemModelsList = new ArrayList<>(itemsMap.values());
+                sortedItemsList = new ArrayList<>(itemsMap.values());
+                listOfModels = new ArrayList<>(itemsMap.keySet());
+
+                resetFilter();
                 buildPages();
+                dropdownAddModels();
+                dropdownAddColors();
             }
         })
         .addOnFailureListener(new OnFailureListener() {
@@ -143,13 +186,53 @@ public class InventoryFragment extends Fragment {
     }
 
     private void buildPages() {
-        viewPager = binding.inventoryPager;
         pagerAdapter = new CataloguePagerAdapter(getActivity());
         viewPager.setAdapter(pagerAdapter);
         progressBar.setVisibility(View.INVISIBLE);
     }
 
+    private void dropdownAddModels() {
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, listOfModels);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        modelDropdown.setAdapter(dropdownAdapter);
+    }
 
+    private void dropdownAddColors() {
+        colorDropdown.setAdapter(null);
+        ArrayList<String> colors = new ArrayList<>();
+
+        colors.add("-");
+
+        for(ArrayList<ItemModel> list : sortedItemsList) {
+            for(ItemModel item : list ) {
+                if(!colors.contains(item.getColor()))
+                    colors.add(item.getColor());
+            }
+        }
+
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, colors);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colorDropdown.setAdapter(dropdownAdapter);
+    }
+
+    private void filterByColor() {
+        resetFilter();
+        for(ArrayList<ItemModel> list : filteredItemsList) {
+            ArrayList<ItemModel> filteredList = new ArrayList<>();
+            for(ItemModel item : list) {
+                if (item.getColor().equals(colorDropdown.getSelectedItem().toString()))
+                    filteredList.add(item);
+            }
+            list.clear();
+            list.addAll(filteredList);
+        }
+    }
+
+    private void resetFilter() {
+        filteredItemsList = new ArrayList<>();
+        for(ArrayList<ItemModel> list : sortedItemsList)
+            filteredItemsList.add(new ArrayList<>(list));
+    }
 
     private class CataloguePagerAdapter extends FragmentStateAdapter {
         public CataloguePagerAdapter (FragmentActivity fa) {
@@ -159,12 +242,12 @@ public class InventoryFragment extends Fragment {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return new InventoryPageFragment(itemModelsList.get(position));
+            return new InventoryPageFragment(filteredItemsList.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return itemModelsList.size();
+            return filteredItemsList.size();
         }
     }
 }
