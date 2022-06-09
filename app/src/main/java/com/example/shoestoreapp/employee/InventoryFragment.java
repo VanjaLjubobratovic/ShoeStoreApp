@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -129,6 +130,7 @@ public class InventoryFragment extends Fragment{
                     filterByColor();
                 } else resetFilter();
 
+                dropdownAddModels();
                 buildPages();
             }
 
@@ -217,21 +219,37 @@ public class InventoryFragment extends Fragment{
 
     private void filterByColor() {
         resetFilter();
-        for(ArrayList<ItemModel> list : filteredItemsList) {
+        listOfModels = new ArrayList<>();
+
+        for(Iterator<ArrayList<ItemModel>> listIterator = filteredItemsList.iterator(); listIterator.hasNext();) {
             ArrayList<ItemModel> filteredList = new ArrayList<>();
-            for(ItemModel item : list) {
+            ArrayList<ItemModel> oneModelList = listIterator.next();
+            for(ItemModel item : oneModelList) {
                 if (item.getColor().equals(colorDropdown.getSelectedItem().toString()))
                     filteredList.add(item);
             }
-            list.clear();
-            list.addAll(filteredList);
+            oneModelList.clear();
+            oneModelList.addAll(filteredList);
+
+            if(oneModelList.isEmpty())
+                listIterator.remove();
+            else listOfModels.add(oneModelList.get(0).getModel());
         }
+
+        Log.d("FILTER_BY_COLOR", sortedItemsList.toString());
     }
 
     private void resetFilter() {
         filteredItemsList = new ArrayList<>();
-        for(ArrayList<ItemModel> list : sortedItemsList)
+        listOfModels = new ArrayList<>();
+        for(ArrayList<ItemModel> list : sortedItemsList) {
             filteredItemsList.add(new ArrayList<>(list));
+            try {
+                listOfModels.add(list.get(0).getModel());
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Uh oh. Greška.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private class CataloguePagerAdapter extends FragmentStateAdapter {
