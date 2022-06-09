@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".employee.InventoryFragment">
 
+    <ProgressBar
+        android:id="@+id/inventoryProgressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:translationZ="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <LinearLayout
         android:id="@+id/optionsLayout"
         android:layout_width="wrap_content"

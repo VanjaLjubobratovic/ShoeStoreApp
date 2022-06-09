@@ -7,9 +7,9 @@
         android:id="@+id/inventoryGridViewLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="20dp"
+        android:layout_margin="20dp"
         android:horizontalSpacing="10dp"
-        android:numColumns="3"
+        android:numColumns="2"
         android:verticalSpacing="10dp"
         android:stretchMode="columnWidth"/>
 
