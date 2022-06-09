@@ -27,10 +27,11 @@ public class InventoryPageFragment extends Fragment {
 
     MyGridView itemsGV;
     InventoryGridAdapter adapter;
+    ArrayList<ItemModel> itemsList;
 
 
-    public InventoryPageFragment() {
-        // Required empty public constructor
+    public InventoryPageFragment(ArrayList<ItemModel> itemsList) {
+        this.itemsList = itemsList;
     }
 
 
@@ -51,20 +52,6 @@ public class InventoryPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         itemsGV = (MyGridView) view.findViewById(R.id.inventoryGridViewLayout);
-
-        ArrayList<ItemModel> itemsList = new ArrayList<>();
-
-        //TODO: change this dummy code
-        ArrayList<Integer> sizes = new ArrayList<>(
-                Arrays.asList(35, 36, 37, 38, 39, 40));
-        ArrayList<Integer> amounts = new ArrayList<>(
-                Arrays.asList(1, 1, 1, 1, 1, 1));
-
-        ItemModel item = new ItemModel("cipela", "501crvene.jpg", 280.00, 5, Timestamp.now(), sizes, amounts);
-        item.parseModelColor("501-crvena");
-
-        for(int i = 0; i < 30; i++)
-            itemsList.add(item);
 
         if(getContext() != null) {
             adapter = new InventoryGridAdapter(getContext(), itemsList);

@@ -118,7 +118,7 @@ public class EmployeeMainFragment extends Fragment {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setReorderingAllowed(true);
 
-            fragmentTransaction.replace(R.id.employeeActivityLayout, InventoryPageFragment.class, null);
+            fragmentTransaction.replace(R.id.employeeActivityLayout, InventoryFragment.class, null);
             fragmentTransaction.addToBackStack("name").commit();
         });
     }
