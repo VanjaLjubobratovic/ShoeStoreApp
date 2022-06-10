@@ -7,10 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -58,5 +60,16 @@ public class InventoryPageFragment extends Fragment {
             itemsGV.setAdapter(adapter);
         } else Toast.makeText(getContext(), "context null", Toast.LENGTH_SHORT).show();
 
+        itemsGV.setOnItemClickListener((parent, view1, position, id) -> onItemClick(position));
+    }
+
+
+    public void onItemClick(int position) {
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        //TODO: fetch this path
+        Fragment fragment = InventoryAdjustmentFragment.newInstance(itemsList.get(position), "/locations/TestShop1/items");
+
+        ft.replace(R.id.employeeActivityLayout, fragment);
+        ft.addToBackStack("name").commit();
     }
 }

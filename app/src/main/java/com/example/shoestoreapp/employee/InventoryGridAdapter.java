@@ -7,9 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
@@ -22,9 +25,12 @@ import java.util.ArrayList;
 public class InventoryGridAdapter extends ArrayAdapter<ItemModel> {
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private ArrayList<ItemModel> items;
 
     public InventoryGridAdapter(@NonNull Context context, ArrayList<ItemModel> itemList) {
         super(context, 0, itemList);
+
+        this.items = itemList;
 
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -51,5 +57,9 @@ public class InventoryGridAdapter extends ArrayAdapter<ItemModel> {
                 .into(itemImage);
 
         return listItemView;
+    }
+
+    public int getCount() {
+        return items.size();
     }
 }
