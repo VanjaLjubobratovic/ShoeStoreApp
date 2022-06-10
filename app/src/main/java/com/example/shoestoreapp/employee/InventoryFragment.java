@@ -126,9 +126,11 @@ public class InventoryFragment extends Fragment{
         colorDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(!colorDropdown.getSelectedItem().equals("-")) {
+                /*if(!colorDropdown.getSelectedItem().equals("-")) {
                     filterByColor();
-                } else resetFilter();
+                } else resetFilter();*/
+
+                filter(colorDropdown.getSelectedItem().toString(), sizeDropdown.getSelectedItem().toString());
 
                 dropdownAddModels();
                 buildPages();
@@ -137,6 +139,20 @@ public class InventoryFragment extends Fragment{
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });
+
+        sizeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                filter(colorDropdown.getSelectedItem().toString(), sizeDropdown.getSelectedItem().toString());
+
+                dropdownAddModels();
+                buildPages();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
@@ -177,6 +193,7 @@ public class InventoryFragment extends Fragment{
                 buildPages();
                 dropdownAddModels();
                 dropdownAddColors();
+                dropdownAddSizes();
             }
         })
         .addOnFailureListener(new OnFailureListener() {
@@ -204,7 +221,6 @@ public class InventoryFragment extends Fragment{
         ArrayList<String> colors = new ArrayList<>();
 
         colors.add("-");
-
         for(ArrayList<ItemModel> list : sortedItemsList) {
             for(ItemModel item : list ) {
                 if(!colors.contains(item.getColor()))
@@ -217,6 +233,18 @@ public class InventoryFragment extends Fragment{
         colorDropdown.setAdapter(dropdownAdapter);
     }
 
+    private void dropdownAddSizes() {
+        ArrayList<String> sizes = new ArrayList<>();
+        sizes.add("-");
+
+        for(int i = 35; i <= 47; i++)
+            sizes.add(String.valueOf(i));
+
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, sizes);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sizeDropdown.setAdapter(dropdownAdapter);
+    }
+
     private void filterByColor() {
         resetFilter();
         listOfModels = new ArrayList<>();
@@ -226,6 +254,40 @@ public class InventoryFragment extends Fragment{
             ArrayList<ItemModel> oneModelList = listIterator.next();
             for(ItemModel item : oneModelList) {
                 if (item.getColor().equals(colorDropdown.getSelectedItem().toString()))
+                    filteredList.add(item);
+            }
+            oneModelList.clear();
+            oneModelList.addAll(filteredList);
+
+            if(oneModelList.isEmpty())
+                listIterator.remove();
+            else listOfModels.add(oneModelList.get(0).getModel());
+        }
+
+        Log.d("FILTER_BY_COLOR", sortedItemsList.toString());
+    }
+
+    private void filter(String color, String size) {
+        //TODO: test this for exceptions and bugs
+        if(!color.equals("-"))
+            filterByColor();
+        else resetFilter();
+
+        if(!size.equals("-"))
+            filterBySize();
+
+        if(size.equals("-") && color.equals("-"))
+            resetFilter();
+    }
+
+    private void filterBySize() {
+        listOfModels = new ArrayList<>();
+        for(Iterator<ArrayList<ItemModel>> listIterator = filteredItemsList.iterator(); listIterator.hasNext();) {
+            ArrayList<ItemModel> filteredList = new ArrayList<>();
+            ArrayList<ItemModel> oneModelList = listIterator.next();
+            for(ItemModel item : oneModelList) {
+                int amountIndex = item.getSizes().indexOf(Integer.parseInt(sizeDropdown.getSelectedItem().toString()));
+                if (amountIndex != -1 && item.getAmounts().get(amountIndex) > 0)
                     filteredList.add(item);
             }
             oneModelList.clear();

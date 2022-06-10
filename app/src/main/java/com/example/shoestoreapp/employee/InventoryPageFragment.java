@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
@@ -29,6 +30,7 @@ public class InventoryPageFragment extends Fragment {
 
     MyGridView itemsGV;
     InventoryGridAdapter adapter;
+    TextView title;
     ArrayList<ItemModel> itemsList;
 
 
@@ -54,12 +56,14 @@ public class InventoryPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         itemsGV = (MyGridView) view.findViewById(R.id.inventoryGridViewLayout);
+        title = view.findViewById(R.id.pageTitle);
 
         if(getContext() != null) {
             adapter = new InventoryGridAdapter(getContext(), itemsList);
             itemsGV.setAdapter(adapter);
         } else Toast.makeText(getContext(), "context null", Toast.LENGTH_SHORT).show();
 
+        title.setText("MODEL: " + itemsList.get(0).getModel());
         itemsGV.setOnItemClickListener((parent, view1, position, id) -> onItemClick(position));
     }
 
