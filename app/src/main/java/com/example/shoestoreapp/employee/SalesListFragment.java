@@ -158,13 +158,6 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
         });
     }
 
-    /*private void unpackReceipts() {
-        for(ReceiptModel receipt : receiptList) {
-            if(receipt.isPacked())
-                receipt.unpackItems();
-        }
-    }*/
-
     private void fetchItems(String documentID, ReceiptModel receipt) {
         receiptsRef.document(documentID).collection("items").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
