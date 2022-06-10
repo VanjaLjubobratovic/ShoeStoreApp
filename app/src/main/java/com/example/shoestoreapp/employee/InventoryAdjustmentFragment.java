@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,13 +36,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class InventoryAdjustmentFragment extends Fragment {
@@ -52,6 +58,7 @@ public class InventoryAdjustmentFragment extends Fragment {
 
     private UserModel user;
     private ItemModel itemToEdit;
+    private InventoryLogModel logModel;
 
     private FragmentInventoryAdjustmentBinding binding;
 
@@ -59,6 +66,7 @@ public class InventoryAdjustmentFragment extends Fragment {
     private ImageView itemIcon, backBtn;
     private TextView itemName, itemPrice;
     private LinearLayout sizesLayout;
+    private ProgressBar progressBar;
 
     private ArrayList<EditText> amountsEtList;
 
@@ -110,6 +118,7 @@ public class InventoryAdjustmentFragment extends Fragment {
         itemIcon = binding.itemEditImage;
         itemName = binding.editItemName;
         itemPrice = binding.itemEditPrice;
+        progressBar = binding.inventoryAdjustmentProgress;
 
         sizesLayout = binding.itemEditSizesLayout;
 
@@ -126,8 +135,14 @@ public class InventoryAdjustmentFragment extends Fragment {
         });
 
         groupEditBtn.setOnClickListener(view1 -> {
-
+            if(!user.getRole().equals("admin"))
+                Toast.makeText(getContext(), "Dopušteno samo voditelju poslovanja", Toast.LENGTH_SHORT).show();
+            else {
+                //TODO:group edit
+            }
         });
+
+        progressBar.setVisibility(View.VISIBLE);
 
         setItemPreview();
         fetchAmounts();
@@ -215,6 +230,7 @@ public class InventoryAdjustmentFragment extends Fragment {
         }
 
         sizesLayout.removeViewAt(sizesLayout.getChildCount() - 1);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     private void showCustomDialog(String message, boolean isRemoving) {
@@ -239,14 +255,21 @@ public class InventoryAdjustmentFragment extends Fragment {
         });
 
         confirmBtn.setOnClickListener(view -> {
+            ArrayList<Integer> amountDiff = new ArrayList<>(Collections.nCopies(itemToEdit.getSizes().size(), 0));
             int amountIndex = itemToEdit.getSizes().indexOf(Integer.parseInt(sizeSpinner.getSelectedItem().toString()));
-            int oldAmount = itemToEdit.getAmounts().get(amountIndex);
+            int diff = 1;
 
             if(isRemoving)
-                itemToEdit.getAmounts().set(amountIndex, oldAmount - 1);
-            else itemToEdit.getAmounts().set(amountIndex, oldAmount + 1);
+                diff = -diff;
 
+            amountDiff.set(amountIndex, diff);
+
+            adjustItemAmounts(amountDiff);
             updateInventory();
+
+            writeLog(new InventoryLogModel(itemToEdit.getModel(), itemToEdit.getColor(), reasonSpinner.getSelectedItem().toString(),
+                    descEt.getText().toString(), user.getEmail(), itemToEdit.getSizes(), amountDiff, Timestamp.now()));
+
             dialog.dismiss();
 
             //TODO: or just go to inventory fragment
@@ -254,6 +277,13 @@ public class InventoryAdjustmentFragment extends Fragment {
         });
 
         dialog.show();
+    }
+
+    private void adjustItemAmounts(ArrayList<Integer> amountDiff) {
+        for(int i = 0; i < amountDiff.size(); i++) {
+            int newAmount = itemToEdit.getAmounts().get(i) + amountDiff.get(i);
+            itemToEdit.getAmounts().set(i, newAmount);
+        }
     }
 
     private void setDialogDropdowns(Spinner reasonSpinner, Spinner sizeSpinner, boolean isRemoving) {
@@ -293,6 +323,35 @@ public class InventoryAdjustmentFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Ažuriranje neuspjelo", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void writeLog(InventoryLogModel logModel) {
+        Map<String, Object> newLog = new HashMap<>();
+        newLog.put("model", logModel.getModel());
+        newLog.put("color", logModel.getColor());
+        newLog.put("sizes", logModel.getSizes());
+        newLog.put("amounts", logModel.getAmounts());
+        newLog.put("type", logModel.getType());
+        newLog.put("description", logModel.getDescription());
+        newLog.put("time", logModel.getTime());
+        newLog.put("employee", logModel.getEmployee());
+
+        DocumentReference newLogRef;
+        try {
+            newLogRef = itemsRef.getParent().collection("logs").document();
+        }catch (NullPointerException e) {
+            Toast.makeText(getContext(), "Neuspješno dodavanje zapisnika o akciji", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        newLogRef.set(newLog)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(getContext(), "Uspješno dodavanje zapisnika", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Neuspješno dodavanje zapisnika o akciji", Toast.LENGTH_SHORT).show();
                 });
     }
 

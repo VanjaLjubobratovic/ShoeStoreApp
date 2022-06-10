@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".employee.InventoryAdjustmentFragment">
 
+    <ProgressBar
+        android:id="@+id/inventoryAdjustmentProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/scrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scrollView"/>
+
     <ImageButton
         android:id="@+id/inventoryEditBack"
         android:layout_width="30dp"
