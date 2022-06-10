@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/employeeOrderItemFullLayout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/employeeOrderItemModelImage"
+        android:layout_width="100dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/bag_image" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemModelAndColorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Model i boja"
+        android:textSize="20dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintStart_toEndOf="@+id/employeeOrderItemModelImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemSizeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Broj:"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintStart_toEndOf="@+id/employeeOrderItemModelImage"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemModelAndColorTextView" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemSizeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Broj"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintStart_toEndOf="@+id/employeeOrderItemSizeLabel"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemModelAndColorTextView" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemNameLabel"
+        android:layout_marginTop="5dp"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ime kupca:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemModelImage" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemAgeLabel"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Starost narudžbe:"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemNameLabel" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="5dp"
+        android:text="ime_kupca"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintStart_toEndOf="@+id/employeeOrderItemNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemModelImage" />
+
+    <TextView
+        android:id="@+id/employeeOrderItemAgeTextView"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="starost_narudzbe"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintStart_toEndOf="@+id/employeeOrderItemAgeLabel"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemNameTextView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/employeeOrderItemSubLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/employeeOrderItemAgeLabel">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/employeeOrderItemDeleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izbriši"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/employeeOrderItemEditButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="25dp"
+            android:text="Uredi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        app:layout_constraintTop_toBottomOf="@id/employeeOrderItemSubLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"></View>
+</androidx.constraintlayout.widget.ConstraintLayout>
