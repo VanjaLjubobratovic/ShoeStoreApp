@@ -32,15 +32,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/orderFragmentNewOrderButton"
+        app:icon="@drawable/scancodeicon"
+        app:iconSize="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nova \n narudzba"
+        android:text="Skeniraj \n narudžbu"
         android:layout_marginBottom="30dp"
         android:layout_marginLeft="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <com.google.android.material.button.MaterialButton
+        app:icon="@drawable/inventorysearch"
+        app:iconSize="30dp"
         android:id="@+id/orderFragmentPickupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

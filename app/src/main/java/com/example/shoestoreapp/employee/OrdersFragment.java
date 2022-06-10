@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.ItemModel;
@@ -67,6 +72,7 @@ public class OrdersFragment extends Fragment {
     private ArrayList<Integer> codesList = new ArrayList<>();
     private MaterialButton newDelivery, pickUpDelivery;
     private RecyclerView ordersRecycler;
+    private String qrCode = "";
 
     public OrdersFragment() {
         // Required empty public constructor
@@ -95,6 +101,15 @@ public class OrdersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        getParentFragmentManager().setFragmentResultListener("Qr code", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                qrCode = result.getString("Qr code");
+                Toast.makeText(getContext(), qrCode, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return inflater.inflate(R.layout.fragment_orders, container, false);
     }
 
@@ -117,26 +132,17 @@ public class OrdersFragment extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         EditText editText = customLayout.findViewById(R.id.editText);
                         m_Text = editText.getText().toString();
                         boolean orderFound = false;
                         OrderModel orderToRemove = null;
                         for(OrderModel order : orderList){
                             if(m_Text.equals(order.getOrderCode().toString())){
-                                ReceiptModel receipt = (ReceiptModel) order;
-                                receipt.packItems();
-                                receipt.setTime();
-                                addReceiptToDB(receipt);
-                                adjustInventory(receipt);
-                                orderToRemove = order;
-                                Log.d("Receipt complete","Receipt completed");
                                 orderFound = true;
+                                orderToRemove = order;
+
                             }
-                        }
-                        if(orderToRemove != null){
-                            orderList.remove(orderToRemove);
-                            parseOrderData();
-                            ordersRecycler.getAdapter().notifyDataSetChanged();
                         }
                         if(!orderFound){
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -150,9 +156,36 @@ public class OrdersFragment extends Fragment {
                             AlertDialog alert = builder.create();
                             alert.show();
                         }
+                        else{
+                            AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
+                            confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
+                            confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
+                            OrderModel finalOrderToRemove = orderToRemove;
+                            confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
+                                    receipt.packItems();
+                                    receipt.setTime();
+                                    addReceiptToDB(receipt);
+                                    adjustInventory(receipt);
+                                    orderList.remove(finalOrderToRemove);
+                                    parseOrderData();
+                                    ordersRecycler.getAdapter().notifyDataSetChanged();
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            confirmBulider.show();
+                        }
                     }
                 });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -162,10 +195,23 @@ public class OrdersFragment extends Fragment {
             }
         });
         fetchItems(view);
+        newDelivery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setReorderingAllowed(true);
+
+                fragmentTransaction.replace(R.id.employeeActivityLayout, QrScannerFragment.class, null);
+                fragmentTransaction.addToBackStack("name").commit();
+            }
+        });
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void initDummyRecyclerData(){
+        orderList.clear();
 
         OrderModel order = new OrderModel();
         order.addItem(itemsList.get(9));
@@ -181,32 +227,17 @@ public class OrdersFragment extends Fragment {
         order.setEmployee(user.getEmail());
         order.setStoreID(storeID);
         orderList.add(order);
-        /*ItemModel randomItem = itemsList.get(0);
-        ArrayList<Integer> list = new ArrayList<Integer>(Collections.nCopies(6, 0));
-        list.set(3,1);
-        randomItem.setAmounts(list);
-        OrderModel order = new OrderModel();
-        order.setUser("Karlo Katalinic");
-        order.setOrderCode(123);
-        order.setDateCreated(LocalDate.now());
-        order.addItem(randomItem);
-        list.set(3,0);
-        list.set(4,1);
-        randomItem.setAmounts(list);
-        order.addItem(randomItem);
-        orderList.add(order);
-        order.setUser("Matej Katalinic");
-        order.setOrderCode(999);
-        orderList.add(order);
-        orderList.add(order);*/
-
     }
 
     public void parseOrderData(){
-        orderItems.clear();
-        userList.clear();
-        dateList.clear();
-        codesList.clear();
+        if(!orderItems.isEmpty()) {
+            int size = orderItems.size();
+            orderItems.clear();
+            userList.clear();
+            dateList.clear();
+            codesList.clear();
+            ordersRecycler.getAdapter().notifyItemRangeRemoved(0, size);
+        }
         for(OrderModel order : orderList){
             ArrayList<ItemModel> tmpItems = order.getItems();
             for(ItemModel item : tmpItems){
@@ -239,10 +270,12 @@ public class OrdersFragment extends Fragment {
                     initDummyRecyclerData();
                     parseOrderData();
                     InitRecyclerView(view);
+                    removeScanned();
                 } else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
     }
+
 
     public void InitRecyclerView(View view){
         ordersRecycler = view.findViewById(R.id.orderFragmentOrderRecyclerView);
@@ -402,6 +435,58 @@ public class OrdersFragment extends Fragment {
                             Log.d("addItemToReceipt", "onFailure: ");
                         }
                     });
+        }
+    }
+    public void removeScanned(){
+        if(!qrCode.isEmpty()){
+            boolean orderFound = false;
+            OrderModel orderToRemove = null;
+            for(OrderModel order : orderList){
+                if(qrCode.equals(order.getOrderCode().toString())){
+                    orderFound = true;
+                    orderToRemove = order;
+
+                }
+            }
+            if(!orderFound){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Ne postojeći kod!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //do things
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+            else{
+                AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
+                confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
+                confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
+                OrderModel finalOrderToRemove = orderToRemove;
+                confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
+                        receipt.packItems();
+                        receipt.setTime();
+                        addReceiptToDB(receipt);
+                        adjustInventory(receipt);
+                        orderList.remove(finalOrderToRemove);
+                        parseOrderData();
+                        ordersRecycler.getAdapter().notifyDataSetChanged();
+                        dialogInterface.dismiss();
+                    }
+                });
+                confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                confirmBulider.show();
+            }
         }
     }
 
