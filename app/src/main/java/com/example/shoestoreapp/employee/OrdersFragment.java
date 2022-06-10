@@ -125,6 +125,7 @@ public class OrdersFragment extends Fragment {
                             if(m_Text.equals(order.getOrderCode().toString())){
                                 ReceiptModel receipt = (ReceiptModel) order;
                                 receipt.packItems();
+                                receipt.setTime();
                                 addReceiptToDB(receipt);
                                 adjustInventory(receipt);
                                 orderToRemove = order;
@@ -177,6 +178,8 @@ public class OrdersFragment extends Fragment {
         order.setOrderCode(123);
         order.setUser("Karlo Katalinic");
         order.setDateCreated(LocalDate.now());
+        order.setEmployee(user.getEmail());
+        order.setStoreID(storeID);
         orderList.add(order);
         /*ItemModel randomItem = itemsList.get(0);
         ArrayList<Integer> list = new ArrayList<Integer>(Collections.nCopies(6, 0));
