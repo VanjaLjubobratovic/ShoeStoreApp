@@ -29,7 +29,8 @@
             android:exported="false" />
         <activity
             android:name=".employee.EmployeeMainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.CustomerMainActivity"
             android:exported="false" />
