@@ -3,13 +3,16 @@ package com.example.shoestoreapp.employee;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 
 import com.google.firebase.auth.FirebaseAuth;
