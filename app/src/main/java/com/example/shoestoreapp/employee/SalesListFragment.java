@@ -146,7 +146,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
                         if(receipt == null)
                             continue;
 
-                        receipt.setTotal(0);
+                        //receipt.setTotal(0);
                         receipt.setReceiptID(document.getId());
                         fetchItems(document.getId(), receipt);
                     }
@@ -172,7 +172,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
                                     continue;
 
                                 item.parseModelColor(document.getId());
-                                receipt.addItem(item);
+                                receipt.addItemNoPrice(item);
                             }
                             receipt.unpackItems();
                             receiptList.add(receipt);

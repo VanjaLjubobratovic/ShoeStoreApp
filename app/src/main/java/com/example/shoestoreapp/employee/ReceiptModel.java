@@ -131,6 +131,10 @@ public class ReceiptModel implements Cloneable, Parcelable {
         this.items.add(item);
     }
 
+    public void addItemNoPrice(ItemModel item) {
+        this.items.add(item);
+    }
+
     public void removeAt(int position) {
         this.total -= this.items.get(position).getPrice();
         this.items.remove(position);
