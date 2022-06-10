@@ -20,10 +20,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
@@ -38,6 +42,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -54,7 +59,8 @@ public class ReceiptFragment extends Fragment {
 
     private int sizeIndex = 0;
 
-    private EditText modelEt, colorEt, sizeEt;
+    //private EditText modelEt, colorEt, sizeEt;
+    private Spinner modelSpinner, colorSpinner, sizeSpinner;
     private MaterialButton addButton, confirmButton;
     private ImageView shoeImage, availableImageView;
     private TextView shoePriceTextView, totalTextView;
@@ -65,6 +71,7 @@ public class ReceiptFragment extends Fragment {
     private CollectionReference itemsRef;
     private StorageReference storageRef;
 
+    private HashMap<String, ArrayList<ItemModel>> itemsMap;
     private ItemModel currentItem;
     private ArrayList<ItemModel> itemsToRemove = new ArrayList<>();
     private ReceiptModel receipt;
@@ -123,9 +130,13 @@ public class ReceiptFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        modelEt = view.findViewById(R.id.modelEditText);
+        /*modelEt = view.findViewById(R.id.modelEditText);
         colorEt = view.findViewById(R.id.colorEditText);
-        sizeEt = view.findViewById(R.id.sizeEditText);
+        sizeEt = view.findViewById(R.id.sizeEditText);*/
+
+        modelSpinner = view.findViewById(R.id.receiptModelDropdown);
+        colorSpinner = view.findViewById(R.id.receiptColorDropdown);
+        sizeSpinner = view.findViewById(R.id.receiptSizeDropdown);
 
         shoeImage = view.findViewById(R.id.shoeImage);
         availableImageView = view.findViewById(R.id.availableImageView);
@@ -145,82 +156,60 @@ public class ReceiptFragment extends Fragment {
             initRecyclerView();
         }
 
-        modelEt.addTextChangedListener(new TextWatcher() {
+        fetchInventory();
+
+        modelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                dropdownAddColors(modelSpinner.getSelectedItem().toString());
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                loadingBar.setVisibility(View.VISIBLE);
-                fetchItems(modelEt.getText().toString(), colorEt.getText().toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
-        colorEt.addTextChangedListener(new TextWatcher() {
+        colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(colorSpinner.getSelectedItem().toString().equals("-")) {
+                    clearItemPreview();
+                } else {
+                    findItem();
+                    dropdownAddSizes();
+                    setItemPreview();
+                }
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                loadingBar.setVisibility(View.VISIBLE);
-                fetchItems(modelEt.getText().toString(), colorEt.getText().toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
-        sizeEt.addTextChangedListener(new TextWatcher() {
+        sizeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                addButton.setEnabled(false);
-
-                if(sizeEt.getText().toString().length() == 0)
-                    return;
-
-                Integer size = Integer.valueOf(sizeEt.getText().toString());
-                Log.d("SIZE", "size = " + size);
-
-                if(currentItem != null && size > 9) {
-                    sizeIndex = currentItem.getSizes().indexOf(size);
-                    if(sizeIndex == -1) {
-                        showErrorCredentials(sizeEt, "Nepostojeća veličina");
-                        return;
-                    }
-
-                    if(currentItem.getAmounts().get(sizeIndex) > 0) {
-                        availableImageView.setImageResource(R.drawable.confirmicon);
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(!colorSpinner.getSelectedItem().toString().equals("-")) {
+                    if (isAvailable()) {
+                        availableImageView.setImageResource(R.drawable.ic_baseline_check_24);
+                        addButton.setEnabled(true);
                     } else {
-                        availableImageView.setImageResource(R.drawable.unavailableicon);
+                        availableImageView.setImageResource(R.drawable.ic_close_x);
+                        addButton.setEnabled(false);
                     }
-
-                    addButton.setEnabled(true);
                     availableImageView.setVisibility(View.VISIBLE);
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
         });
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO:add item to recycler view
-                sizeEt.clearFocus();
-                colorEt.clearFocus();
-                modelEt.clearFocus();
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getRootView().getWindowToken(), 0);
 
@@ -256,28 +245,85 @@ public class ReceiptFragment extends Fragment {
         });
     }
 
+    private void findItem() {
+        ArrayList<ItemModel> models = itemsMap.get(modelSpinner.getSelectedItem().toString());
+        if(models == null)
+            return;
 
-    private void fetchItems(String model, String color) {
-        //TODO: generalize this method
-        itemsRef.document(model + "-" + color).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    if (task.getResult().getData() == null) {
-                        Log.d("FIRESTORE", "Item not found");
-                        clearItemPreview();
-                        return;
-                    }
-                    Log.d("FIRESTORE", task.getResult().toString());
-                    currentItem = task.getResult().toObject(ItemModel.class);
-                    currentItem.parseModelColor(model + "-" + color);
-                    setItemPreview();
-                } else {
-                    Log.d("FIRESTORE", "task not successful");
-                    clearItemPreview();
-                }
+        for(ItemModel item : models) {
+            if(item.getColor().equals(colorSpinner.getSelectedItem().toString())) {
+                currentItem = item;
+                break;
             }
-        });
+        }
+    }
+
+    private boolean isAvailable() {
+        int size = Integer.parseInt(sizeSpinner.getSelectedItem().toString());
+        int amountIndex = currentItem.getSizes().indexOf(size);
+
+        return currentItem.getAmounts().get(amountIndex) > 0;
+    }
+
+    private void fetchInventory() {
+        itemsMap = new HashMap<>();
+        itemsRef.get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        for(DocumentSnapshot document : task.getResult()) {
+                            ItemModel item = document.toObject(ItemModel.class);
+                            if(item == null)
+                                continue;
+
+                            item.parseModelColor(document.getId());
+                            if(!itemsMap.containsKey(item.getModel()))
+                                itemsMap.put(item.getModel(), new ArrayList<>());
+
+                            try {
+                                itemsMap.get(item.getModel()).add(item);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        dropdownAddModels();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Neuspjelo preuzimanje inventara", Toast.LENGTH_SHORT).show());
+    }
+
+    private void dropdownAddModels() {
+        ArrayList<String> models = new ArrayList<>(itemsMap.keySet());
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, models);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        modelSpinner.setAdapter(dropdownAdapter);
+    }
+
+    private void dropdownAddColors(String model) {
+        ArrayList<ItemModel> extractedModel = itemsMap.get(model);
+        ArrayList<String> colors = new ArrayList<>();
+        colors.add("-");
+
+        try {
+            for(ItemModel item : extractedModel)
+                if(!colors.contains(item.getColor()))
+                    colors.add(item.getColor());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, colors);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        colorSpinner.setAdapter(dropdownAdapter);
+
+    }
+
+    private void dropdownAddSizes() {
+        ArrayList<String> sizes = new ArrayList<>();
+        for(Integer i : currentItem.getSizes())
+            sizes.add(String.valueOf(i));
+
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, sizes);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sizeSpinner.setAdapter(dropdownAdapter);
     }
 
     private void initRecyclerView() {
@@ -424,13 +470,12 @@ public class ReceiptFragment extends Fragment {
         shoePriceTextView.setText("Cijena: ");
         availableImageView.setVisibility(View.INVISIBLE);
         loadingBar.setVisibility(View.INVISIBLE);
+        sizeSpinner.setAdapter(null);
     }
 
     private void clearInput() {
         clearItemPreview();
-        modelEt.setText("");
-        colorEt.setText("");
-        sizeEt.setText("");
+        colorSpinner.setSelection(0);
         addButton.setEnabled(false);
     }
 
@@ -450,10 +495,5 @@ public class ReceiptFragment extends Fragment {
         successfulReceipt.setCancelable(true);
         successfulReceipt.show();
 
-    }
-
-    private void showErrorCredentials(EditText input, String s) {
-        input.setError(s);
-        input.requestFocus();
     }
 }
