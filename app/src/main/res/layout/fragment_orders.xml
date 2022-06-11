@@ -14,7 +14,7 @@
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/orderFragmentNewOrderButton"
+        app:layout_constraintBottom_toTopOf="@id/orderFragmentQrButton"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -31,7 +31,7 @@
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/orderFragmentNewOrderButton"
+        android:id="@+id/orderFragmentQrButton"
         app:icon="@drawable/scancodeicon"
         app:iconSize="30dp"
         android:layout_width="wrap_content"

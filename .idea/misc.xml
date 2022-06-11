@@ -24,11 +24,18 @@
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_single_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/custom_dialog_layout.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/customer_order_history_list_item.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/customer_order_single_order_list_item.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_nav_header.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_order_list_item.xml" value="0.33" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_order_single_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_order_single_item_list.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_delivery.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_employee_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_employee_main.xml" value="0.33" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_item_models.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_orders.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_receipt.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_sales_list.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/image_border.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/item_review_list_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_delivery_add_method.xml" value="0.36666666666666664" />
@@ -36,12 +43,14 @@
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_listitem.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_model_list_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_receipt_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_receipt_list_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/nav_header.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/order_code_dialog.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/order_list_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/purchased_list_item.xml" value="0.3282828282828283" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/sign_in_divider.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/menu/drawer_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/menu/employee_drawer_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/vanja/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_dropdown_item.xml" value="0.3099615220179564" />
         <entry key="..\:/Users/vanja/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_ceo_main.xml" value="0.3138586956521739" />
@@ -55,15 +64,21 @@
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/adapter_item_delivery.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/content_firebase_uiactivity.xml" value="0.3269927536231884" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/content_login.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/edit_dialog.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_delivery.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_employee_main.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_first.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_inventory.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_inventory_adjustment.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_inventory_page.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_receipt.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_sales_list.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_second.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_delivery_add_method.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_delivery_manual.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_delivery_qr_scanner.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_grid_inventory_item.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_inventory_page.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_listitem.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_model_list_item.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_receipt_item.xml" value="0.3009833262077811" />

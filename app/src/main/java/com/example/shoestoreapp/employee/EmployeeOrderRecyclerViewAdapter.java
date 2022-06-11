@@ -14,34 +14,35 @@ import com.example.shoestoreapp.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.customer.TestOrderModel;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.type.DateTime;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 
 public class EmployeeOrderRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeOrderRecyclerViewAdapter.ViewHolder>{
 
-    private ArrayList<ItemModel> mItems;
-    private ArrayList<String> mCustomerNames;
-    private ArrayList<LocalDate> mOrderDates;
+    private ArrayList<OrderModel> mOrders;
     private Context mContext;
     private FirebaseStorage storage;
     private StorageReference storageRef;
 
-    public EmployeeOrderRecyclerViewAdapter(Context mContext, ArrayList<ItemModel> mItems, ArrayList<String> mCustomerNames, ArrayList<LocalDate> mOrderDates, MyAdapterListener listener) {
-        this.mItems = mItems;
-        this.mCustomerNames = mCustomerNames;
-        this.mOrderDates = mOrderDates;
+    public EmployeeOrderRecyclerViewAdapter(Context mContext, ArrayList<OrderModel> mOrders, MyAdapterListener listener) {
         this.mContext = mContext;
+        this.mOrders = mOrders;
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
         onClickListener = listener;
@@ -57,67 +58,48 @@ public class EmployeeOrderRecyclerViewAdapter extends RecyclerView.Adapter<Emplo
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ItemModel currentItem = mItems.get(position);
-        holder.modelAndColor.setText(currentItem.getModel() + " " + currentItem.getColor());
-        ArrayList<Integer> tmpAmounts = currentItem.getAmounts();
-        Integer size = tmpAmounts.indexOf(1);
-        holder.size.setText(Integer.toString(currentItem.getSizes().get(size)));
-        holder.customerName.setText(mCustomerNames.get(position));
-        long dayDiff = ChronoUnit.DAYS.between(mOrderDates.get(position), LocalDateTime.now());
-        holder.orderAge.setText(Integer.toString((int) dayDiff) + " dana");
 
-        StorageReference imageReference = storageRef.child(currentItem.getImage());
+        OrderModel currentOrder = mOrders.get(position);
+        holder.customerName.setText(mOrders.get(position).getUser());
+        long miliCreated = mOrders.get(position).getDateCreated().toDate().getTime();
+        long miliNow = System.currentTimeMillis();
+        long dayDiff = (miliCreated - miliNow) / (24*60*60*1000);
+        holder.orderAge.setText(Long.toString(dayDiff) + " dana");
 
-        Glide.with(mContext)
-                .asBitmap()
-                .load(imageReference)
-                .into(holder.modelImage);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
+        holder.singleOrderRecycler.setLayoutManager(layoutManager);
 
-        boolean isVisible = currentItem.isEmployeeOrderExpanded();
-        holder.expandedItem.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-
+        EmployeeOrderSingleRecyclerAdapter adapter = new EmployeeOrderSingleRecyclerAdapter(mContext, currentOrder.getItems());
+        holder.singleOrderRecycler.setAdapter(adapter);
 
     }
 
     public void deleteItem(final int position) {
-
-        mItems.remove(position);
+        mOrders.remove(position);
         notifyDataSetChanged();
 
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mOrders.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView modelAndColor, size, customerName, orderAge;
-        ImageView modelImage;
-        MaterialButton deleteButton, editButton;
+        TextView customerName, orderAge;
+        RecyclerView singleOrderRecycler;
+        MaterialButton deleteButton;
         ConstraintLayout expandedItem, fullItem;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            modelAndColor = itemView.findViewById(R.id.employeeOrderItemModelAndColorTextView);
-            size = itemView.findViewById(R.id.employeeOrderItemSizeTextView);
             customerName = itemView.findViewById(R.id.employeeOrderItemNameTextView);
             orderAge = itemView.findViewById(R.id.employeeOrderItemAgeTextView);
-            modelImage = itemView.findViewById(R.id.employeeOrderItemModelImage);
+            singleOrderRecycler = itemView.findViewById(R.id.employeeOrderItemRecyclerView);
             deleteButton = itemView.findViewById(R.id.employeeOrderItemDeleteButton);
-            editButton = itemView.findViewById(R.id.employeeOrderItemDeleteButton);
             expandedItem = itemView.findViewById(R.id.employeeOrderItemSubLayout);
             fullItem = itemView.findViewById(R.id.employeeOrderItemFullLayout);
 
-            fullItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ItemModel item = mItems.get(getBindingAdapterPosition());
-                    item.setEmployeeOrderExpanded(!item.isEmployeeOrderExpanded());
-                    notifyItemChanged(getBindingAdapterPosition());
-                }
-            });
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,8 +113,6 @@ public class EmployeeOrderRecyclerViewAdapter extends RecyclerView.Adapter<Emplo
     public MyAdapterListener onClickListener;
 
     public interface MyAdapterListener {
-
         void deleteButtonOnClick(View v, int position);
-        void editButtonOnClick(View v, int position);
     }
 }

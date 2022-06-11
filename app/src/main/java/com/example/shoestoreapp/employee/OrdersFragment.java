@@ -1,8 +1,6 @@
 package com.example.shoestoreapp.employee;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,7 +15,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +22,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.budiyev.android.codescanner.CodeScanner;
-import com.budiyev.android.codescanner.CodeScannerView;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.ItemModel;
-import com.example.shoestoreapp.customer.ReviewModel;
-import com.example.shoestoreapp.customer.ReviewsRecycleViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,18 +36,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.model.mutation.ArrayTransformOperation;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class OrdersFragment extends Fragment {
@@ -63,16 +51,14 @@ public class OrdersFragment extends Fragment {
     private FirebaseStorage storage;
     private CollectionReference ordersRef, itemsRef;
     private StorageReference storageRef;
+    private ArrayList<ItemModel> itemsList = new ArrayList<>();
     private String storeID, m_Text;
     private UserModel user;
     private ArrayList<OrderModel> orderList = new ArrayList<>();
-    private ArrayList<ItemModel> itemsList = new ArrayList<>(), orderItems = new ArrayList<>();
-    private ArrayList<String> userList = new ArrayList<>();
-    private ArrayList<LocalDate> dateList = new ArrayList<>();
-    private ArrayList<Integer> codesList = new ArrayList<>();
-    private MaterialButton newDelivery, pickUpDelivery;
+    private MaterialButton qrButton, pickUpDelivery;
     private RecyclerView ordersRecycler;
     private String qrCode = "";
+    private View view;
 
     public OrdersFragment() {
         // Required empty public constructor
@@ -86,14 +72,14 @@ public class OrdersFragment extends Fragment {
         //TODO fetch orders once implemented
         //ordersRef = database.collection("/orders");
 
-        orderList = new ArrayList<>();
-
         user = getActivity().getIntent().getParcelableExtra("userData");
 
         //TODO:fetch
         storeID = "TestShop1";
-        String collection = "/locations/" + "TestShop1" + "/items";
-        itemsRef = database.collection(collection);
+        String collection = "/locations/" + storeID + "/orders";
+        ordersRef = database.collection(collection);
+        String itemCollection = "/locations/" + storeID + "/items";
+        itemsRef = database.collection(itemCollection);
 
     }
 
@@ -121,8 +107,11 @@ public class OrdersFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        clearData();
         super.onViewCreated(view, savedInstanceState);
-        newDelivery = view.findViewById(R.id.orderFragmentNewOrderButton);
+        this.view = view;
+
+        qrButton = view.findViewById(R.id.orderFragmentQrButton);
         pickUpDelivery = view.findViewById(R.id.orderFragmentPickupButton);
 
         pickUpDelivery.setOnClickListener(view1 -> {
@@ -139,54 +128,7 @@ public class OrdersFragment extends Fragment {
 
                     EditText editText = customLayout.findViewById(R.id.editText);
                     m_Text = editText.getText().toString();
-                    boolean orderFound = false;
-                    OrderModel orderToRemove = null;
-                    for(OrderModel order : orderList){
-                        if(m_Text.equals(order.getOrderCode().toString())){
-                            orderFound = true;
-                            orderToRemove = order;
-
-                        }
-                    }
-                    if(!orderFound){
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage("Ne postojeći kod!")
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        //do things
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    }
-                    else{
-                        AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
-                        confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
-                        confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
-                        OrderModel finalOrderToRemove = orderToRemove;
-                        confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
-                                receipt.packItems();
-                                receipt.setTime();
-                                addReceiptToDB(receipt);
-                                adjustInventory(receipt);
-                                orderList.remove(finalOrderToRemove);
-                                parseOrderData();
-                                ordersRecycler.getAdapter().notifyDataSetChanged();
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        });
-                        confirmBulider.show();
-                    }
+                    removeOrder(m_Text);
                 }
             });
             builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
@@ -198,9 +140,9 @@ public class OrdersFragment extends Fragment {
             builder.show();
         });
 
-        fetchItems(view);
+        fetchOrders(view);
 
-        newDelivery.setOnClickListener(new View.OnClickListener() {
+        qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -214,50 +156,8 @@ public class OrdersFragment extends Fragment {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void initDummyRecyclerData(){
-        orderList.clear();
-
-        OrderModel order = new OrderModel();
-        order.addItem(itemsList.get(9));
-        ArrayList<Integer> amounts = new ArrayList<>();
-        amounts.add(2);
-        for(int i = 0; i<5; i++)
-            amounts.add(0);
-        order.getItems().get(0).setAmounts(amounts);
-        order.unpackItems();
-        order.setOrderCode(123);
-        order.setUser("Karlo Katalinic");
-        order.setDateCreated(LocalDate.now());
-        order.setEmployee(user.getEmail());
-        order.setStoreID(storeID);
-        orderList.add(order);
-    }
-
-    public void parseOrderData(){
-        if(!orderItems.isEmpty()) {
-            int size = orderItems.size();
-            orderItems.clear();
-            userList.clear();
-            dateList.clear();
-            codesList.clear();
-            ordersRecycler.getAdapter().notifyItemRangeRemoved(0, size);
-        }
-        for(OrderModel order : orderList){
-            ArrayList<ItemModel> tmpItems = order.getItems();
-            for(ItemModel item : tmpItems){
-                orderItems.add(item);
-                userList.add(order.getUser());
-                dateList.add(order.getDateCreated());
-                codesList.add(order.getOrderCode());
-            }
-        }
-    }
-
-
-    private void fetchItems(View view) {
-        itemsRef = database.collection("locations/TestShop1/items");
-        itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void fetchOrders(View view) {
+        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -267,54 +167,91 @@ public class OrdersFragment extends Fragment {
                         return;
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        ItemModel newItem = document.toObject(ItemModel.class);
-                        newItem.parseModelColor(document.getId());
-                        itemsList.add(newItem);
-                        Log.d("FIRESTORE Single", newItem.toString());
+                        OrderModel order = document.toObject(OrderModel.class);
+                        if(order == null || order.isPickedUp())
+                            continue;
+
+                        order.setTotal(0);
+                        order.setReceiptID(document.getId());
+                        fetchItems(document.getId(), order);
+                        Log.d("FIRESTORE Single", order.toString());
                     }
-                    initDummyRecyclerData();
-                    parseOrderData();
-                    InitRecyclerView(view);
-                    removeScanned();
                 } else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
     }
 
+    private void fetchItems(String documentID, OrderModel order) {
+        ordersRef.document(documentID).collection("items").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("fetchItems query", "onComplete: ");
+
+                            for(DocumentSnapshot document : task.getResult()) {
+                                ItemModel item = document.toObject(ItemModel.class);
+                                if(item == null)
+                                    continue;
+
+                                item.parseModelColor(document.getId());
+                                order.addItem(item);
+                            }
+                            order.unpackItems();
+                            orderList.add(order);
+                            InitRecyclerView(view);
+                            removeScanned();
+                        } else {
+                            Log.d("fetchItems query", "onFailure: ");
+                        }
+                    }
+                });
+    }
+
+    public void confirmOrder(OrderModel order){
+        DocumentReference orderRef = database.collection("/locations/" + storeID + "/orders").document(order.getReceiptID());
+        orderRef.update("pickedUp", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("orderPickedUp", "Order picked up");
+            }
+        });
+        orderRef.update("reviewEnabled", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("Review enabled", "rev enabled");
+            }
+        });
+    }
 
     public void InitRecyclerView(View view){
         ordersRecycler = view.findViewById(R.id.orderFragmentOrderRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false);
         ordersRecycler.setLayoutManager(layoutManager);
-        EmployeeOrderRecyclerViewAdapter adapter = new EmployeeOrderRecyclerViewAdapter(getActivity(), orderItems, userList, dateList, new EmployeeOrderRecyclerViewAdapter.MyAdapterListener() {
+        EmployeeOrderRecyclerViewAdapter adapter = new EmployeeOrderRecyclerViewAdapter(getActivity(), orderList, new EmployeeOrderRecyclerViewAdapter.MyAdapterListener() {
             @Override
             public void deleteButtonOnClick(View v, int position) {
-
+                OrderModel clickedOrder = orderList.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Unesi broj narudžbe");
 
+                builder.setTitle("Unesi broj narudžbe");
                 final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout,null);
                 builder.setView(customLayout);
-
 
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText editText = customLayout.findViewById(R.id.editText);
                         m_Text = editText.getText().toString();
-                        if(m_Text.equals(codesList.get(position).toString())){
-                            int counter = 0;
-                            for(OrderModel order : orderList){
-                                if((counter + order.getItems().size()) >= position){
-                                    order.removeAt(position - counter);
-                                    parseOrderData();
-                                    ((EmployeeOrderRecyclerViewAdapter)ordersRecycler.getAdapter()).deleteItem(position);
-                                    Log.d("TAG", "Item removed at " + position);
-                                }
-                                else{
-                                    counter += order.getItems().size();
-                                }
-                            }
+                        if (m_Text.equals(clickedOrder.getOrderCode().toString())) {
+                            deleteOrderFromDB(clickedOrder);
+                            ((EmployeeOrderRecyclerViewAdapter) ordersRecycler.getAdapter()).deleteItem(position);
+                            Log.d("TAG", "Order removed at " + position);
+                            AlertDialog.Builder okAlert = new AlertDialog.Builder(getContext());
+                            okAlert.setMessage("Narudžba " + clickedOrder.getOrderCode().toString() + " uspješno izbrisana");
+                            okAlert.setPositiveButton("OK", null);
+                            okAlert.show();
+
                         }
                         else{
                             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -339,14 +276,10 @@ public class OrdersFragment extends Fragment {
                 builder.show();
 
             }
-
-            @Override
-            public void editButtonOnClick(View v, int position) {
-                Log.d("TAG", "iconImageViewOnClick at position "+position);
-            }
         });
         ordersRecycler.setAdapter(adapter);
     }
+
     private void adjustInventory(ReceiptModel receipt) {
         ArrayList<ItemModel> itemsToRemove = receipt.getItems();
 
@@ -442,57 +375,78 @@ public class OrdersFragment extends Fragment {
                     });
         }
     }
+
     public void removeScanned(){
         if(!qrCode.isEmpty()){
-            boolean orderFound = false;
-            OrderModel orderToRemove = null;
-            for(OrderModel order : orderList){
-                if(qrCode.equals(order.getOrderCode().toString())){
-                    orderFound = true;
-                    orderToRemove = order;
+            removeOrder(qrCode);
+        }
+    }
 
-                }
-            }
-            if(!orderFound){
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("Ne postojeći kod!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //do things
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-            else{
-                AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
-                confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
-                confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
-                OrderModel finalOrderToRemove = orderToRemove;
-                confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
-                        receipt.packItems();
-                        receipt.setTime();
-                        addReceiptToDB(receipt);
-                        adjustInventory(receipt);
-                        orderList.remove(finalOrderToRemove);
-                        parseOrderData();
-                        ordersRecycler.getAdapter().notifyDataSetChanged();
-                        dialogInterface.dismiss();
-                    }
-                });
-                confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-                confirmBulider.show();
+    public void removeOrder(String orderCode){
+        boolean orderFound = false;
+        OrderModel orderToRemove = null;
+        for(OrderModel order : orderList){
+            if(orderCode.equals(order.getOrderCode().toString())){
+                orderFound = true;
+                orderToRemove = order;
             }
         }
+        if(!orderFound){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Ne postojeći kod!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        else{
+            AlertDialog.Builder confirmBuilder = new AlertDialog.Builder(getContext());
+            confirmBuilder.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getUser() + " Kod: " +orderToRemove.getOrderCode());
+            confirmBuilder.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
+            OrderModel finalOrderToRemove = orderToRemove;
+            confirmBuilder.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
+                    receipt.packItems();
+                    receipt.setTime();
+                    addReceiptToDB(receipt);
+                    adjustInventory(receipt);
+                    confirmOrder(finalOrderToRemove);
+                    orderList.remove(finalOrderToRemove);
+                    ordersRecycler.getAdapter().notifyDataSetChanged();
+                    dialogInterface.dismiss();
+
+                    AlertDialog.Builder okAlert = new AlertDialog.Builder(getContext());
+                    okAlert.setMessage("Narudžba " + finalOrderToRemove.getOrderCode().toString() + " uspješno izbrisana");
+                    okAlert.setPositiveButton("OK", null);
+                    okAlert.show();
+                }
+            });
+            confirmBuilder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            confirmBuilder.show();
+        }
+
+    }
+
+    public void clearData(){
+        orderList.clear();
+        itemsList.clear();
+    }
+
+    public void deleteOrderFromDB(OrderModel orderToDelete){
+        DocumentReference orderRef = database.collection("/locations/" + storeID + "/orders").document(orderToDelete.getReceiptID());
+        orderRef.delete();
+
     }
 
 }
