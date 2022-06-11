@@ -66,6 +66,7 @@ public class SingleItemActivity extends AppCompatActivity {
     private MaterialButton buyButton;
     private ArrayList<Integer> sizes = new ArrayList<>(), amounts = new ArrayList<>();
     private Spinner colorSpinner, sizeSpinner;
+    private boolean isInit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,13 +103,19 @@ public class SingleItemActivity extends AppCompatActivity {
         colorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String newColor = colorSpinner.getSelectedItem().toString();
-                for(ItemModel item : items){
-                    if(selectedItem.getModel().equals(item.getModel()) && newColor.equals(item.getColor())){
-                        selectedItem = item;
-                        fillElements();
-                        break;
+                if(isInit) {
+                    String newColor = colorSpinner.getSelectedItem().toString();
+                    for (ItemModel item : items) {
+                        if (selectedItem.getModel().equals(item.getModel()) && newColor.equals(item.getColor())) {
+                            selectedItem = item;
+                            fillElements();
+                            break;
+                        }
                     }
+                }
+                else{
+                    colorSpinner.setSelection(curColors.indexOf(selectedItem.getColor()));
+                    isInit = true;
                 }
             }
 
@@ -217,6 +224,7 @@ public class SingleItemActivity extends AppCompatActivity {
 
     //Getting reviews from firebase
     private void fetchReviews() {
+        reviews.clear();
         reviewsRef = database.collection("locations/webshop/items/" + selectedItem.getModel() + "-" + selectedItem.getColor() +"/reviews");
         reviewsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -278,6 +286,7 @@ public class SingleItemActivity extends AppCompatActivity {
                 .asBitmap()
                 .load(imageReference)
                 .into(itemImage);
+        fetchReviews();
 
     }
 
