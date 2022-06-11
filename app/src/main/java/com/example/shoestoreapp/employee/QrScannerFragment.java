@@ -53,10 +53,9 @@ public class QrScannerFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
+                /*Bundle bundle = new Bundle();
                 bundle.putString("Qr code", "123");
-                getParentFragmentManager().setFragmentResult("Qr code", bundle);
-
+                getParentFragmentManager().setFragmentResult("Qr code", bundle);*/
                 getActivity().getSupportFragmentManager().popBackStackImmediate();
             }
         });
@@ -76,8 +75,7 @@ public class QrScannerFragment extends Fragment {
                     //Toast.makeText(getContext(), result.getText(), Toast.LENGTH_SHORT).show();
                     qrScanner.releaseResources();
                     /* CODE FORMAT:
-                           /locations/TestShop1/deliveries/delivery001
-                           CODE:5217183
+                           5217183
                      */
                     try {
                         String[] lines = result.getText().split(System.getProperty("line.separator"));
@@ -90,6 +88,8 @@ public class QrScannerFragment extends Fragment {
                         e.printStackTrace();
                         Toast.makeText(getContext(), "Neispravan kod", Toast.LENGTH_SHORT).show();
                     }
+
+                    getParentFragmentManager().popBackStack();
                 }
             });
         });

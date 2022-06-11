@@ -89,9 +89,9 @@ public class OrdersFragment extends Fragment {
         orderList = new ArrayList<>();
 
         user = getActivity().getIntent().getParcelableExtra("userData");
+
         //TODO:fetch
         storeID = "TestShop1";
-
         String collection = "/locations/" + "TestShop1" + "/items";
         itemsRef = database.collection(collection);
 
@@ -105,8 +105,13 @@ public class OrdersFragment extends Fragment {
         getParentFragmentManager().setFragmentResultListener("Qr code", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                qrCode = result.getString("Qr code");
-                Toast.makeText(getContext(), qrCode, Toast.LENGTH_SHORT).show();
+                //TODO: fix this hack
+                try {
+                    qrCode = result.getStringArray("Qr code")[0];
+                    Toast.makeText(getContext(), qrCode, Toast.LENGTH_SHORT).show();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -119,82 +124,82 @@ public class OrdersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         newDelivery = view.findViewById(R.id.orderFragmentNewOrderButton);
         pickUpDelivery = view.findViewById(R.id.orderFragmentPickupButton);
-        pickUpDelivery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Unesi broj narudžbe");
 
-                final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout,null);
-                builder.setView(customLayout);
+        pickUpDelivery.setOnClickListener(view1 -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Unesi broj narudžbe");
+
+            final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout,null);
+            builder.setView(customLayout);
 
 
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                        EditText editText = customLayout.findViewById(R.id.editText);
-                        m_Text = editText.getText().toString();
-                        boolean orderFound = false;
-                        OrderModel orderToRemove = null;
-                        for(OrderModel order : orderList){
-                            if(m_Text.equals(order.getOrderCode().toString())){
-                                orderFound = true;
-                                orderToRemove = order;
+                    EditText editText = customLayout.findViewById(R.id.editText);
+                    m_Text = editText.getText().toString();
+                    boolean orderFound = false;
+                    OrderModel orderToRemove = null;
+                    for(OrderModel order : orderList){
+                        if(m_Text.equals(order.getOrderCode().toString())){
+                            orderFound = true;
+                            orderToRemove = order;
 
+                        }
+                    }
+                    if(!orderFound){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Ne postojeći kod!")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //do things
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                    else{
+                        AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
+                        confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
+                        confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
+                        OrderModel finalOrderToRemove = orderToRemove;
+                        confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
+                                receipt.packItems();
+                                receipt.setTime();
+                                addReceiptToDB(receipt);
+                                adjustInventory(receipt);
+                                orderList.remove(finalOrderToRemove);
+                                parseOrderData();
+                                ordersRecycler.getAdapter().notifyDataSetChanged();
+                                dialogInterface.dismiss();
                             }
-                        }
-                        if(!orderFound){
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            builder.setMessage("Ne postojeći kod!")
-                                    .setCancelable(false)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            //do things
-                                        }
-                                    });
-                            AlertDialog alert = builder.create();
-                            alert.show();
-                        }
-                        else{
-                            AlertDialog.Builder confirmBulider = new AlertDialog.Builder(getContext());
-                            confirmBulider.setTitle("Potvrdite preuzimanje narudžbe " + orderToRemove.getOrderCode());
-                            confirmBulider.setMessage("Narudžba sadrži: \n" + orderToRemove.getItemContents());
-                            OrderModel finalOrderToRemove = orderToRemove;
-                            confirmBulider.setPositiveButton("Potvrdi", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    ReceiptModel receipt = (ReceiptModel) finalOrderToRemove;
-                                    receipt.packItems();
-                                    receipt.setTime();
-                                    addReceiptToDB(receipt);
-                                    adjustInventory(receipt);
-                                    orderList.remove(finalOrderToRemove);
-                                    parseOrderData();
-                                    ordersRecycler.getAdapter().notifyDataSetChanged();
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            confirmBulider.show();
-                        }
+                        });
+                        confirmBulider.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        confirmBulider.show();
                     }
-                });
-                builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
+                }
+            });
+            builder.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         });
+
         fetchItems(view);
+
         newDelivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
