@@ -43,6 +43,7 @@
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_admin_main.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_ceo_main.xml" value="0.3138586956521739" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_customer_main.xml" value="0.33" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_customer_order_history.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_customer_profile.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_employee_main.xml" value="0.3138586956521739" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_logged_in.xml" value="0.36367753623188404" />
@@ -57,6 +58,7 @@
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_employee_main.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_employee_management.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_first.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_item_management.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_receipt.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_sales_list.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_second.xml" value="0.36666666666666664" />
@@ -64,9 +66,11 @@
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_delivery_manual.xml" value="0.3099615220179564" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_employee_item.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_employee_list.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_item_management_menu.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_listitem.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_model_list_item.xml" value="0.30570652173913043" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_new_employee.xml" value="0.3009833262077811" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_new_item.xml" value="0.33" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_receipt_item.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/layout_receipt_list_item.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/nav_header.xml" value="0.30570652173913043" />

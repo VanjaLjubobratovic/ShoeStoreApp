@@ -76,7 +76,12 @@ public class AdminMainFragment extends Fragment {
         });
 
         itemsBtn.setOnClickListener(view1 -> {
-            //TODO: item management
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, ItemManagementFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
         });
 
         statsBtn.setOnClickListener(view1 -> {
