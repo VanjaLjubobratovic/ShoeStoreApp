@@ -131,7 +131,7 @@ public class EmployeeRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeRe
                             }
 
                             if (holder.stores.getText().equals("Trgovine: "))
-                                holder.background.setBackgroundColor(mContext.getColor(R.color.annulledRed));
+                                holder.itemView.setBackgroundColor(mContext.getColor(R.color.annulledRed));
                         }
                     }
                 });
@@ -150,6 +150,7 @@ public class EmployeeRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeRe
     }
 
     private void fireEmployee(UserModel employee, int position) {
+        //TODO: make admins unable to fire admins
         database.document("/users/" + employee.getEmail()).update("role", "customer")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.admin;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.shoestoreapp.R;
@@ -83,8 +87,46 @@ public class EmployeeManagementFragment extends Fragment {
         });
 
         addEmployee.setOnClickListener(view1 -> {
-            flipper.showNext();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Unesite email zaposlenika");
+
+            final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+            builder.setView(customLayout);
+
+            builder.setPositiveButton("DODAJ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    EditText et = customLayout.findViewById(R.id.editText);
+                    if(!et.getText().toString().equals(""))
+                        newEmployee(et.getText().toString());
+                    else Toast.makeText(getContext(), "Morate unijeti email", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            builder.setNegativeButton("ODUSTANI", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                }
+            });
+
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
+    }
+
+    private void newEmployee(String email) {
+        database.document("/users/" + email).update("role", "employee")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Zaposlenik uspješno dodan", Toast.LENGTH_SHORT).show();
+                            //TODO: ne ovako
+                            fetchEmployees();
+                        } else Toast.makeText(getContext(), "Neuspješno dodavanje zaposlenika", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void fetchEmployees() {
@@ -99,7 +141,8 @@ public class EmployeeManagementFragment extends Fragment {
                                 UserModel employee = document.toObject(UserModel.class);
                                 employeeList.add(employee);
                             }
-                            adapter.notifyDataSetChanged();
+                            //adapter.notifyDataSetChanged();
+                            initRecyclerView();
                         }
                     }
                 });
