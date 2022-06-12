@@ -19,9 +19,10 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 
-public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<CustomerOrderHistoryRecyclerAdapter.ViewHolder>{
+public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<CustomerOrderHistoryRecyclerAdapter.ViewHolder> implements CustomerSingleOrderRecyclerAdapter.onItemReviewListener{
     ArrayList<TestOrderModel> mOrders;
     Context mContext;
+    onItemReviewGet mOnItemReviewGet;
 
     @NonNull
     @Override
@@ -30,9 +31,10 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         return new ViewHolder(view);
     }
 
-    public CustomerOrderHistoryRecyclerAdapter(Context mContext, ArrayList<TestOrderModel> mOrders) {
+    public CustomerOrderHistoryRecyclerAdapter(Context mContext, ArrayList<TestOrderModel> mOrders, onItemReviewGet listener) {
         this.mOrders = mOrders;
         this.mContext = mContext;
+        mOnItemReviewGet = listener;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         ((SimpleItemAnimator)holder.orderItems.getItemAnimator()).setSupportsChangeAnimations(false);
         holder.orderItems.setLayoutManager(layoutManager);
 
-        CustomerSingleOrderRecyclerAdapter adapter = new CustomerSingleOrderRecyclerAdapter(mContext, currentOrder.getItems());
+        CustomerSingleOrderRecyclerAdapter adapter = new CustomerSingleOrderRecyclerAdapter(mContext, currentOrder.getItems(), this);
         holder.orderItems.setAdapter(adapter);
 
         boolean isVisible = currentOrder.isExpanded();
@@ -62,6 +64,16 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
     @Override
     public int getItemCount() {
         return mOrders.size();
+    }
+
+    @Override
+    public void OnItemReviewClick(ItemModel item) {
+        mOnItemReviewGet.itemReviewGet(item);
+    }
+
+    @Override
+    public void OnItemComplaintClick(ItemModel item) {
+        mOnItemReviewGet.itemComplaintGet(item);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -85,7 +97,6 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
             itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     TestOrderModel order = mOrders.get(getBindingAdapterPosition());
                     order.setExpanded(!order.isExpanded());
                     notifyItemChanged(getBindingAdapterPosition());
@@ -101,5 +112,11 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
 
         }
+
+    }
+
+    public interface onItemReviewGet{
+        public void itemReviewGet(ItemModel reviewItem);
+        public void itemComplaintGet(ItemModel reviewItem);
     }
 }

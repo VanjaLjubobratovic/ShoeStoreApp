@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -24,6 +26,7 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
     private Context mContext;
     private FirebaseStorage storage;
     private StorageReference storageRef;
+    private onItemReviewListener mOnItemReviewListener;
 
     @NonNull
     @Override
@@ -32,11 +35,12 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
         return new ViewHolder(view);
     }
 
-    public CustomerSingleOrderRecyclerAdapter(Context mContext, ArrayList<ItemModel> mPurchasedItems) {
+    public CustomerSingleOrderRecyclerAdapter(Context mContext, ArrayList<ItemModel> mPurchasedItems, onItemReviewListener listener) {
         this.mPurchasedItems = mPurchasedItems;
         this.mContext = mContext;
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
+        mOnItemReviewListener = listener;
     }
 
     @SuppressLint("RecyclerView")
@@ -65,6 +69,7 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
 
         TextView itemModelAndColor, itemSizeAndAmount, itemPrice;
         ImageView itemImage;
+        MaterialButton reviewBtn, complaintBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,23 +78,29 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
             itemSizeAndAmount = itemView.findViewById(R.id.orderedItemSizeAmountTextView);
             itemPrice = itemView.findViewById(R.id.orderedItemPriceTextView);
             itemImage = itemView.findViewById(R.id.orderedItemImageView);
+            complaintBtn = itemView.findViewById(R.id.orderedItemComplaintButton);
+            reviewBtn = itemView.findViewById(R.id.orderedItemReviewButton);
+            reviewBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemReviewListener.OnItemReviewClick(mPurchasedItems.get(getBindingAdapterPosition()));
+                }
+            });
+            complaintBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemReviewListener.OnItemComplaintClick(mPurchasedItems.get(getBindingAdapterPosition()));
+                }
+            });
 
         }
 
     }
 
-    /*public String getPurchasedSizes(ItemModel purchasedItem){
-        String sizesString = "";
-        ArrayList<Integer> sizes = purchasedItem.getSizes();
-        for(Integer size : sizes){
-            if(size > 0){
-                sizesString += Integer.toString(size);
-                sizesString += "\n \n";
-            }
-        }
-
-        return sizesString;
-    }*/
+    public interface onItemReviewListener{
+        void OnItemReviewClick(ItemModel item);
+        void OnItemComplaintClick(ItemModel item);
+    }
 
     public String getPurchasedAmounts(ItemModel purchasedItem){
         String amountsString = "";
