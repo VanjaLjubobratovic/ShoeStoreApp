@@ -33,9 +33,12 @@ public class InventoryPageFragment extends Fragment {
     TextView title;
     ArrayList<ItemModel> itemsList;
 
+    String userRole;
 
-    public InventoryPageFragment(ArrayList<ItemModel> itemsList) {
+
+    public InventoryPageFragment(ArrayList<ItemModel> itemsList, String userRole) {
         this.itemsList = itemsList;
+        this.userRole = userRole;
     }
 
 
@@ -73,7 +76,14 @@ public class InventoryPageFragment extends Fragment {
         //TODO: fetch this path
         Fragment fragment = InventoryAdjustmentFragment.newInstance(itemsList.get(position), "/locations/TestShop1/items");
 
-        ft.replace(R.id.employeeActivityLayout, fragment);
+        //Determining whether fragment was opened from admin or employee screen
+        //TODO: decide whether to show this or not
+        if(userRole.equals("admin")) {
+            //ft.replace(R.id.adminActivityLayout, fragment);
+            return;
+        } else ft.replace(R.id.employeeActivityLayout, fragment);
+
+        //Toast.makeText(getContext(), userRole, Toast.LENGTH_SHORT).show();
         ft.addToBackStack("name").commit();
     }
 }

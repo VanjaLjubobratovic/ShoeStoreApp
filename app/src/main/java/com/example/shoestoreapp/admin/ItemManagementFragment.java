@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -21,31 +23,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentItemManagementBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.example.shoestoreapp.employee.InventoryFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,6 +138,16 @@ public class ItemManagementFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
+        inventoryBtn.setOnClickListener(view12 -> {
+            Toast.makeText(getContext(), "pregled", Toast.LENGTH_SHORT).show();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, InventoryFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
+        });
+
         newBack.setOnClickListener(view1 -> {
             try {
                 getActivity().onBackPressed();
@@ -168,7 +179,7 @@ public class ItemManagementFragment extends Fragment {
         confirmItem.setOnClickListener(view1 -> {
             //TODO: add item to db
             if(inputsAreFilledOut()) {
-                addItemToDB();
+                setSizesAlert();
             } else Toast.makeText(getContext(), "Popunite sve podatke (model, boja, cijena, slika) prije dodavanja", Toast.LENGTH_SHORT).show();
         });
     }
@@ -202,12 +213,8 @@ public class ItemManagementFragment extends Fragment {
 
     }
 
-    private void addItemToDB() {
-        //TODO: add ability to set custom sizes and amounts
-        ArrayList<Integer> amounts = new ArrayList<>(Collections.nCopies(5, 0));
-        ArrayList<Integer> sizes = new ArrayList<>();
-        for(int i = 35; i < 40; i++)
-            sizes.add(i);
+    private void addItemToDB(ArrayList<Integer> sizes) {
+        ArrayList<Integer> amounts = new ArrayList<>(Collections.nCopies(sizes.size(), 0));
 
         //TODO: clean strings (toLower, strip...)
         ItemModel item = new ItemModel("shoe", colorSpinner.getSelectedItem() + ".jpg", Double.parseDouble(priceEt.getText().toString()),
@@ -301,12 +308,69 @@ public class ItemManagementFragment extends Fragment {
         modelSpinner.setAdapter(modelAdapter);
     }
 
+    private void setSizesAlert() {
+        ArrayList<Integer> sizes = new ArrayList<>();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Postavite veličine novog predmeta (ako nije obuća)");
+
+        final View customLayout = getLayoutInflater().inflate(R.layout.new_item_dialog, null);
+        builder.setView(customLayout);
+
+        EditText sizesEt = customLayout.findViewById(R.id.sizesEt);
+        CheckBox isFootwear = customLayout.findViewById(R.id.footwearCheck);
+        TextView sizesDesc = customLayout.findViewById(R.id.sizesTextView);
+
+        isFootwear.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (isFootwear.isChecked()) {
+                sizesEt.setVisibility(View.INVISIBLE);
+                sizesDesc.setVisibility(View.INVISIBLE);
+            } else {
+                sizesEt.setVisibility(View.VISIBLE);
+                sizesDesc.setVisibility(View.VISIBLE);
+            }
+        });
+
+        builder.setPositiveButton("POSTAVI", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //TODO: clean strings (toLower, strip...)
+                if (isFootwear.isChecked()) {
+                    for(int j = 35; j < 40; j++)
+                        sizes.add(j);
+                } else if(sizesEt.getText().toString().isEmpty()) {
+                    Toast.makeText(getContext(), "Morate unijeti veličine", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (!sizesEt.getText().toString().replace(" ", "").replace("-", "").matches("[0-9]+")) {
+                    Toast.makeText(getContext(), "Dopušteno korištenje samo brojeva za veličine", Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    String[] sizesArr = sizesEt.getText().toString().replace(" ", "").split("-");
+                    for(String size: sizesArr)
+                        sizes.add(Integer.parseInt(size));
+                }
+
+                addItemToDB(sizes);
+            }
+        });
+
+        builder.setNegativeButton("ODUSTANI", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void newValueAlert(String message, Spinner spinner) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(message);
 
         final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
         builder.setView(customLayout);
+
 
         builder.setPositiveButton("DODAJ", new DialogInterface.OnClickListener() {
             @Override
