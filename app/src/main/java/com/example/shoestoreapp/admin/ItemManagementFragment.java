@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -46,10 +45,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ItemManagementFragment extends Fragment {
     private FragmentItemManagementBinding binding;
@@ -62,6 +61,7 @@ public class ItemManagementFragment extends Fragment {
 
     private ArrayList<String> modelList;
     private ArrayList<String> colorList;
+    private ArrayList<String> typeList;
 
     private FirebaseFirestore database;
     private Uri itemImageUri;
@@ -187,6 +187,7 @@ public class ItemManagementFragment extends Fragment {
     private void fetchModelColor() {
         modelList = new ArrayList<>();
         colorList = new ArrayList<>();
+        typeList = new ArrayList<>();
 
         modelList.add("-");
         colorList.add("-");
@@ -204,6 +205,8 @@ public class ItemManagementFragment extends Fragment {
                                 colorList.add(item.getColor());
                             if(!modelList.contains(item.getModel()))
                                 modelList.add(item.getModel());
+                            if(!typeList.contains(item.getType()))
+                                typeList.add(item.getType());
                         }
                         modelList.add("NOVI MODEL");
                         colorList.add("NOVA BOJA");
@@ -213,11 +216,11 @@ public class ItemManagementFragment extends Fragment {
 
     }
 
-    private void addItemToDB(ArrayList<Integer> sizes) {
+    private void addItemToDB(ArrayList<Integer> sizes, String type) {
         ArrayList<Integer> amounts = new ArrayList<>(Collections.nCopies(sizes.size(), 0));
 
         //TODO: clean strings (toLower, strip...)
-        ItemModel item = new ItemModel("shoe", colorSpinner.getSelectedItem() + ".jpg", Double.parseDouble(priceEt.getText().toString()),
+        ItemModel item = new ItemModel(type, colorSpinner.getSelectedItem() + ".jpg", Double.parseDouble(priceEt.getText().toString()),
                 5, Timestamp.now(), sizes, amounts);
         //TODO: fix this
         item.parseModelColor(modelSpinner.getSelectedItem() + "-" + colorSpinner.getSelectedItem());
@@ -310,6 +313,7 @@ public class ItemManagementFragment extends Fragment {
 
     private void setSizesAlert() {
         ArrayList<Integer> sizes = new ArrayList<>();
+        AtomicReference<String> type = new AtomicReference<>("bag");
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Postavite veličine novog predmeta (ako nije obuća)");
 
@@ -324,11 +328,15 @@ public class ItemManagementFragment extends Fragment {
             if (isFootwear.isChecked()) {
                 sizesEt.setVisibility(View.INVISIBLE);
                 sizesDesc.setVisibility(View.INVISIBLE);
+                type.set("shoe");
             } else {
                 sizesEt.setVisibility(View.VISIBLE);
                 sizesDesc.setVisibility(View.VISIBLE);
+                type.set("bag");
             }
         });
+
+
 
         builder.setPositiveButton("POSTAVI", new DialogInterface.OnClickListener() {
             @Override
@@ -348,8 +356,7 @@ public class ItemManagementFragment extends Fragment {
                     for(String size: sizesArr)
                         sizes.add(Integer.parseInt(size));
                 }
-
-                addItemToDB(sizes);
+                addItemToDB(sizes, type.get());
             }
         });
 
