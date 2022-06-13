@@ -60,7 +60,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private ArrayList<ItemModel> items = new ArrayList<>();
     private FirebaseFirestore database;
-    private CollectionReference itemsRef;
+    private CollectionReference itemsRef, usersRef;
 
 
     @Override
@@ -74,7 +74,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         database = FirebaseFirestore.getInstance();
         itemsRef = database.collection("/locations/webshop/items");
-
+        usersRef = database.collection("users");
+        fetchUser();
         checkUser();
 
         //Navigation drawer
@@ -193,6 +194,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 //TODO order history on click
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
+                orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
                 startActivity(orderHistoryIntent);
                 break;
             case R.id.nav_payment_method:
@@ -257,5 +259,24 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         profileIntent.putExtra("selectedItem", items.get(position));
         profileIntent.putExtra("userData", user);
         startActivity(profileIntent);
+    }
+
+    public void fetchUser(){
+        usersRef.whereEqualTo("email", user.getEmail()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            if (task.getResult().size() == 0) {
+                                Log.d("FIRESTORE", "0 Results");
+                                return;
+                            }
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("FIRESTORE", "Fetch succesful");
+                                user = document.toObject(UserModel.class);
+                            }
+                        }
+                    }
+                });
     }
 }

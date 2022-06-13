@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.customer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,22 +11,34 @@ import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.employee.OrderModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firestore.v1.StructuredQuery;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -49,6 +62,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private MaterialButton reviewConfirm, reviewCancel, complaintConfirm, complaintCancel;
     private ArrayList<TestOrderModel> fillerOrders = new ArrayList<>();
     private ArrayList<ItemModel> orderItems = new ArrayList<>();
+    private ArrayList<OrderModel> orderList = new ArrayList<>();
     private ViewFlipper flipper;
     private static final int ORDER_MENU_SCREEN = 0;
     private static final int REVIEW_ITEM_SCREEN = 1;
@@ -59,10 +73,13 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private Spinner complaintTypeSpinner;
     private CheckBox complaintResend;
     private RatingBar reviewRating;
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
     private String storeID, reviewedItem;
     private FirebaseFirestore database;
+    private CollectionReference ordersRef;
+    private RecyclerView orderRecyclerView;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+    private ArrayList<String> userReviewed;
 
 
     @Override
@@ -71,12 +88,21 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         setContentView(R.layout.activity_customer_order_history);
 
         user=getIntent().getParcelableExtra("userData");
+        userReviewed = (ArrayList<String>) getIntent().getSerializableExtra("userReviews");
         firebaseAuth = FirebaseAuth.getInstance();
 
         checkUser();
 
-        storeID = "webshop";
+        storeID = "TestShop1";
         database = FirebaseFirestore.getInstance();
+
+
+        //TODO change once webshop gets some orders
+        String collection = "/locations/" + storeID + "/orders";
+        ordersRef = database.collection(collection);
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
 
         exit = findViewById(R.id.orderBackImageButton);
         exit.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +111,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 finish();
             }
         });
+
 
         flipper = findViewById(R.id.customerOrderFlipper);
         initOrderRecycler();
@@ -113,16 +140,20 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 complaint.setModel(complaintModelColor.getText().toString());
                 complaint.setResend(complaintResend.isChecked());
                 String complaintType;
-                if(complaintTypeSpinner.getSelectedItemPosition() == 4){
+                if(complaintTypeSpinner.getSelectedItemPosition() == complaintTypeSpinner.getAdapter().getCount() - 1){
                     complaintType = customComplaintType.getText().toString();
                 }
                 else{
                     complaintType = complaintTypeSpinner.getSelectedItem().toString();
                 }
                 complaint.setComplaintType(complaintType);
-
                 //TODO add code reading one orders are fetched
                 complaint.setOrderCode("random filler code");
+                addComplaintDB(complaint);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Prigovor uspješno zapisan");
+                builder.setPositiveButton("OK",null);
+                builder.show();
 
                 flipper.setDisplayedChild(ORDER_MENU_SCREEN);
         });
@@ -139,9 +170,11 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
             review.setRating((double)reviewRating.getRating());
             reviewedItem = reviewModelColor.getText().toString();
             addReviewToDB(review);
+            addReviewedItemUser();
+            userReviewed.add(reviewedItem.toString());
+            orderRecyclerView.getAdapter().notifyDataSetChanged();
             clearReviewData();
             flipper.setDisplayedChild(ORDER_MENU_SCREEN);
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Recenzija uspješno zapisana");
             builder.setPositiveButton("OK",null);
@@ -149,6 +182,25 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
         });
 
+        complaintTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(complaintTypeSpinner.getSelectedItemPosition() == complaintTypeSpinner.getAdapter().getCount() - 1){
+                    customComplaintType.setVisibility(View.VISIBLE);
+                }
+                else{
+                    customComplaintType.setVisibility(View.GONE);
+                    customComplaintType.setText("");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        fetchOrders();
     }
 
     private void addReviewToDB(ReviewModel review) {
@@ -175,8 +227,6 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     }
 
 
-
-
     private void checkUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         if(firebaseUser == null) {
@@ -188,30 +238,63 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         }
     }
 
-    private void initDummyData(){
-        ArrayList<Integer> sizes = new ArrayList<>(), amounts = new ArrayList<>();
-        sizes.add(39);
-        sizes.add(40);
-        sizes.add(41);
-        amounts.add(2);
-        amounts.add(1);
-        amounts.add(5);
-        ItemModel fillerItem = new ItemModel("shoe","imageLink",200.0,4.0, Timestamp.now(),sizes, amounts);
-        fillerItem.parseModelColor("501-crna");
-        orderItems.add(fillerItem);
-        orderItems.add(fillerItem);
-        TestOrderModel fillerOrder = new TestOrderModel("Vanja Ljubobratovic","12.17.2028","200.2", orderItems);
-        fillerOrders.add(fillerOrder);
-        fillerOrders.add(fillerOrder);
+    private void fetchOrders() {
+        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    if(task.getResult().size() == 0) {
+                        Log.d("FIRESTORE", "0 Results");
+                        return;
+                    }
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        OrderModel order = document.toObject(OrderModel.class);
+                        if(order == null || !order.getUser().equals(user.getEmail()))
+                            continue;
 
+                        order.setTotal(0);
+                        order.setReceiptID(document.getId());
+                        fetchItems(document.getId(), order);
+                        Log.d("FIRESTORE Single", order.toString());
+                    }
+                } else Log.d("FIRESTORE Single", "fetch failed");
+            }
+        });
+    }
+
+    private void fetchItems(String documentID, OrderModel order) {
+        ordersRef.document(documentID).collection("items").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("fetchItems query", "onComplete: ");
+
+                            for(DocumentSnapshot document : task.getResult()) {
+                                ItemModel item = document.toObject(ItemModel.class);
+                                if(item == null)
+                                    continue;
+
+                                item.parseModelColor(document.getId());
+                                order.addItem(item);
+                                Log.d("item fetched", item.toString());
+                            }
+                            order.unpackItems();
+                            orderList.add(order);
+                            initOrderRecycler();
+                        } else {
+                            Log.d("fetchItems query", "onFailure: ");
+                        }
+                    }
+                });
     }
 
     private void initOrderRecycler(){
-        initDummyData();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
-        RecyclerView orderRecyclerView = flipper.getRootView().findViewById(R.id.userOrdersRecyclerView);
+        orderRecyclerView = flipper.getRootView().findViewById(R.id.userOrdersRecyclerView);
         orderRecyclerView.setLayoutManager(layoutManager);
-        CustomerOrderHistoryRecyclerAdapter adapter = new CustomerOrderHistoryRecyclerAdapter(this, fillerOrders, this);
+        CustomerOrderHistoryRecyclerAdapter adapter = new CustomerOrderHistoryRecyclerAdapter(this, orderList, this, userReviewed);
         orderRecyclerView.setAdapter(adapter);
     }
 
@@ -220,14 +303,13 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     public void itemReviewGet(ItemModel reviewItem) {
         Toast.makeText(this, reviewItem.toString(), Toast.LENGTH_SHORT).show();
 
-        /*StorageReference imageReference = storageRef.child(reviewItem.getImage());
+        StorageReference imageReference = storageRef.child(reviewItem.getImage());
 
         Glide.with(this)
                 .asBitmap()
                 .load(imageReference)
-                .into(reviewModelImage);*/
+                .into(reviewModelImage);
         reviewModelColor.setText(reviewItem.toString());
-
         flipper.setDisplayedChild(REVIEW_ITEM_SCREEN);
     }
 
@@ -236,6 +318,21 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         complaintModelColor.setText(reviewItem.toString());
 
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
+    }
+
+    @Override
+    public void onConfirmClick(OrderModel confOrder) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Potvrda");
+        builder.setMessage("Jeste li sigurni da želite potvrditi dostavu nardudžbe " + confOrder.getOrderCode());
+        builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                confirmOrder(confOrder);
+            }
+        });
+        builder.setNegativeButton("Odustani", null);
+        builder.show();
     }
 
     public void clearReviewData(){
@@ -255,4 +352,56 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         complaintTypeSpinner.setAdapter(spinnerArrayAdapter);
     }
+
+    public void addComplaintDB(ComplaintModel complaint){
+        Map<String, Object> newComplaint = new HashMap<>();
+        newComplaint.put("email", complaint.getUser());
+        newComplaint.put("complaintType", complaint.getComplaintType());
+        newComplaint.put("orderCode", complaint.getOrderCode());
+        newComplaint.put("model", complaint.getModel());
+        newComplaint.put("resend", complaint.isResend());
+        newComplaint.put("complaint", complaint.getComplaint());
+
+        DocumentReference newReviewRef = database.collection("/complaints").document();
+
+        newReviewRef.set(newComplaint)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("addComplaintToDB", "onSuccess: ");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("addComplaintToDB", "onFailure: ");
+                    }
+                });
+
+    }
+
+    public void confirmOrder(OrderModel order){
+        order.setPickedUp(true);
+        order.setReviewEnabled(true);
+        DocumentReference orderRef = database.collection("/locations/" + storeID + "/orders").document(order.getReceiptID());
+        orderRef.update("pickedUp", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("orderPickedUp", "Order picked up");
+            }
+        });
+        orderRef.update("reviewEnabled", true).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("Review enabled", "rev enabled");
+            }
+        });
+        orderRecyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    public void addReviewedItemUser(){
+        DocumentReference userRef = database.collection("users").document(user.getEmail());
+        userRef.update("reviewedItems", FieldValue.arrayUnion(reviewedItem.toString()));
+    }
+
 }

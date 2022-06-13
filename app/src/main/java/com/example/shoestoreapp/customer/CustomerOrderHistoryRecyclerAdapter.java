@@ -15,14 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.employee.OrderModel;
 import com.google.android.material.button.MaterialButton;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<CustomerOrderHistoryRecyclerAdapter.ViewHolder> implements CustomerSingleOrderRecyclerAdapter.onItemReviewListener{
-    ArrayList<TestOrderModel> mOrders;
+    ArrayList<OrderModel> mOrders;
     Context mContext;
     onItemReviewGet mOnItemReviewGet;
+    UserModel user;
+    private ArrayList<String> mUserReviews;
 
     @NonNull
     @Override
@@ -31,29 +40,39 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         return new ViewHolder(view);
     }
 
-    public CustomerOrderHistoryRecyclerAdapter(Context mContext, ArrayList<TestOrderModel> mOrders, onItemReviewGet listener) {
+    public CustomerOrderHistoryRecyclerAdapter(Context mContext, ArrayList<OrderModel> mOrders, onItemReviewGet listener, ArrayList<String> userReviews) {
         this.mOrders = mOrders;
         this.mContext = mContext;
         mOnItemReviewGet = listener;
+        mUserReviews = userReviews;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TestOrderModel currentOrder = mOrders.get(position);
+        OrderModel currentOrder = mOrders.get(position);
 
-        holder.orderTime.setText(currentOrder.getTime());
-        holder.orderStatus.setText("Not delivered");
-        if(holder.orderStatus.getText().equals("Not delivered")){
+        Locale locale = new Locale("hr", "HR");
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        String date = dateFormat.format(currentOrder.getDateCreated().toDate());
+
+        holder.orderTime.setText(date);
+        if(currentOrder.isPickedUp()) {
+            holder.orderStatus.setText("Delivered");
+            holder.orderStatus.setTextColor(Color.GREEN);
+        }
+        else{
+            holder.orderStatus.setText("Not delivered");
             holder.orderStatus.setTextColor(Color.RED);
         }
-        holder.finalPrice.setText(currentOrder.getPrice());
-        holder.orderId.setText("Random id");
+        Integer tmpPrice = (int)currentOrder.getTotal();
+        holder.finalPrice.setText(tmpPrice.toString()+"kn");
+        holder.orderId.setText(currentOrder.getOrderCode().toString());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false);
         ((SimpleItemAnimator)holder.orderItems.getItemAnimator()).setSupportsChangeAnimations(false);
         holder.orderItems.setLayoutManager(layoutManager);
 
-        CustomerSingleOrderRecyclerAdapter adapter = new CustomerSingleOrderRecyclerAdapter(mContext, currentOrder.getItems(), this);
+        CustomerSingleOrderRecyclerAdapter adapter = new CustomerSingleOrderRecyclerAdapter(mContext, currentOrder, this, mUserReviews);
         holder.orderItems.setAdapter(adapter);
 
         boolean isVisible = currentOrder.isExpanded();
@@ -97,7 +116,7 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
             itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TestOrderModel order = mOrders.get(getBindingAdapterPosition());
+                    OrderModel order = mOrders.get(getBindingAdapterPosition());
                     order.setExpanded(!order.isExpanded());
                     notifyItemChanged(getBindingAdapterPosition());
                 }
@@ -105,10 +124,11 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
             confirmDelivery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    orderStatus.setText("Delivered");
-                    orderStatus.setTextColor(Color.GREEN);
+                    mOnItemReviewGet.onConfirmClick(mOrders.get(getBindingAdapterPosition()));
                 }
             });
+
+
 
 
         }
@@ -118,5 +138,6 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
     public interface onItemReviewGet{
         public void itemReviewGet(ItemModel reviewItem);
         public void itemComplaintGet(ItemModel reviewItem);
+        public void onConfirmClick(OrderModel order);
     }
 }

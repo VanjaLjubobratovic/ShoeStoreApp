@@ -22,6 +22,8 @@
             <TextView
                 android:id="@+id/orderHistoryTimeTextView"
                 android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Hello"></TextView>
@@ -38,9 +40,11 @@
             <TextView
                 android:id="@+id/orderHistoryIdTextView"
                 android:layout_width="0dp"
+                android:textColor="@color/black"
+                android:textSize="16dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_weight="0.3"
+                android:layout_weight="0.25"
                 android:gravity="center_horizontal|center_vertical"
                 android:text="TextView" />
 
@@ -48,6 +52,8 @@
             <TextView
                 android:id="@+id/orderHistoryStatusTextView"
                 android:layout_width="0dp"
+                android:textColor="@color/black"
+                android:textSize="16dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="0.2"
@@ -57,6 +63,8 @@
             <TextView
                 android:id="@+id/orderHistoryPriceTextView"
                 android:layout_width="0dp"
+                android:textColor="@color/black"
+                android:textSize="16dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="0.2"
@@ -68,17 +76,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_weight="0.3"
-                android:text="Potvrdi dostignuće narudžbe"
+                android:layout_weight="0.35"
+                android:text="Potvrdi dostignuće"
                 android:textAllCaps="false"
-                android:textSize="12dp"></com.google.android.material.button.MaterialButton>
+                android:textSize="14dp"></com.google.android.material.button.MaterialButton>
         </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/orderHistorySubLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

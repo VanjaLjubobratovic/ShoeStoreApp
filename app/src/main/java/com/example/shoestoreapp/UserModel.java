@@ -23,6 +23,10 @@ public class UserModel implements Parcelable{
         this.reviewedItems = reviewedItems;
     }
 
+    public void addReviewedItem(String item){
+        reviewedItems.add(item);
+    }
+
     public UserModel(String address, String email, String fullName, String role, String city, String phoneNumber, String postalNumber) {
         this.fullName = fullName;
         this.email = email;

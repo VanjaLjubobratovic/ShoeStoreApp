@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="1"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,11 +24,13 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_weight="0.3"
-            app:srcCompat="@drawable/bag_image" />
+            android:background="@drawable/bag_image"/>
 
         <TextView
             android:id="@+id/orderedItemModelColorTextView"
             android:layout_width="0dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.3"
@@ -37,6 +40,8 @@
         <TextView
             android:id="@+id/orderedItemSizeAmountTextView"
             android:layout_width="0dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.2"
@@ -49,6 +54,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.2"
+            android:textColor="@color/black"
+            android:textSize="16dp"
             android:gravity="center_horizontal|center_vertical"
             android:text="Price" />
     </LinearLayout>
@@ -70,7 +77,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:textSize="12dp"
-        android:text="Podnesi prizužbu"
+        android:text="Podnesi pritužbu"
         android:layout_marginRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
