@@ -1,5 +1,6 @@
 package com.example.shoestoreapp.employee;
 
+
 import android.os.Build;
 
 import com.google.firebase.Timestamp;
@@ -12,6 +13,15 @@ public class OrderModel extends ReceiptModel{
     private boolean expanded;
     private boolean inStore;
     private boolean pickedUp;
+    private boolean reviewEnabled;
+
+    @Override
+    public String toString() {
+        return "OrderModel{" +
+                "orderCode=" + orderCode +
+                '}';
+    }
+
 
     public boolean isInStore() {
         return inStore;
@@ -36,8 +46,6 @@ public class OrderModel extends ReceiptModel{
     public void setReviewEnabled(boolean reviewEnabled) {
         this.reviewEnabled = reviewEnabled;
     }
-
-    private boolean reviewEnabled;
 
     public boolean isExpanded() {
         return expanded;

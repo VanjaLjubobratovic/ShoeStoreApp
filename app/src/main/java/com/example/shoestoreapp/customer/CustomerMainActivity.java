@@ -1,17 +1,24 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.os.Parcelable;
@@ -58,13 +65,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private ArrayList<ItemModel> items = new ArrayList<>();
     private FirebaseFirestore database;
-    private CollectionReference itemsRef;
-
+    private CollectionReference itemsRef, usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCustomerMainBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
 
         user = getIntent().getParcelableExtra("userData");
@@ -72,11 +79,21 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         database = FirebaseFirestore.getInstance();
         itemsRef = database.collection("/locations/webshop/items");
-
+        usersRef = database.collection("users");
+        fetchUser();
         checkUser();
 
         //Navigation drawer
+        Toolbar toolbar = findViewById(R.id.customer_toolbar);
+        setSupportActionBar(toolbar);
+
         drawer = findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -113,6 +130,9 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             @Override
             public void onClick(View view) {
                 //TODO shopping cart onclick
+                Intent shoppingCartIntent = new Intent(CustomerMainActivity.this, ShoppingCartActivity.class);
+                shoppingCartIntent.putExtra("userData", user);
+                startActivity(shoppingCartIntent);
             }
         });
 
@@ -168,7 +188,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         switch (item.getItemId()){
             case R.id.nav_my_profile:
-                //TODO my profile on click
                 //Launching profile activity
                 Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
                 profileIntent.putExtra("userData", user);
@@ -176,13 +195,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                 break;
             case R.id.nav_oder_history:
-                //TODO order history on click
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
+                orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
                 startActivity(orderHistoryIntent);
                 break;
             case R.id.nav_payment_method:
                 //TODO payment method on click
+                Intent shopsMap = new Intent(this, ShopsMapActivity.class);
+                shopsMap.putExtra("userData", user);
+                startActivity(shopsMap);
+
+
                 break;
             case R.id.nav_logout:
                 //Logging out user and launching the login activity
@@ -243,5 +267,24 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         profileIntent.putExtra("selectedItem", items.get(position));
         profileIntent.putExtra("userData", user);
         startActivity(profileIntent);
+    }
+
+    public void fetchUser(){
+        usersRef.whereEqualTo("email", user.getEmail()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            if (task.getResult().size() == 0) {
+                                Log.d("FIRESTORE", "0 Results");
+                                return;
+                            }
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("FIRESTORE", "Fetch succesful");
+                                user = document.toObject(UserModel.class);
+                            }
+                        }
+                    }
+                });
     }
 }

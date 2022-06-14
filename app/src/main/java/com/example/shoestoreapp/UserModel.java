@@ -3,6 +3,8 @@ package com.example.shoestoreapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class UserModel implements Parcelable{
     private String fullName;
     private String email;
@@ -11,7 +13,19 @@ public class UserModel implements Parcelable{
     private String city;
     private String phoneNumber;
     private String postalNumber;
+    private ArrayList<String> reviewedItems;
 
+    public ArrayList<String> getReviewedItems() {
+        return reviewedItems;
+    }
+
+    public void setReviewedItems(ArrayList<String> reviewedItems) {
+        this.reviewedItems = reviewedItems;
+    }
+
+    public void addReviewedItem(String item){
+        reviewedItems.add(item);
+    }
 
     public UserModel(String address, String email, String fullName, String role, String city, String phoneNumber, String postalNumber) {
         this.fullName = fullName;

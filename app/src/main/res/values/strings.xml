@@ -29,6 +29,9 @@
     <string name="status_blagajne">STATUS BLAGAJNE</string>
     <string name="status_placeholder">status</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="google_maps_api_key">AIzaSyBWBnuA-1Kr7CZELiV6kferKc1-0LTB9LU</string>
     <string name="drawer_layout_open">Open navigation drawer</string>
     <string name="drawer_layout_close">Close navigation drawer</string>
 </resources>

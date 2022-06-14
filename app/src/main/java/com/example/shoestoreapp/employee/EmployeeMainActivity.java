@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 
 import com.google.android.material.navigation.NavigationView;

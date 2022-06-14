@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.admin.AdminMainActivity;
-import com.example.shoestoreapp.databinding.ActivityAdminMainBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,7 +25,6 @@ import android.widget.Toast;
 
 public class CustomerProfileActivity extends AppCompatActivity {
 
-    private ActivityAdminMainBinding binding;
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ImageButton exit;
@@ -60,7 +57,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_customer_profile);
 
         user=getIntent().getParcelableExtra("userData");
-        firebaseAuth = firebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
 
         checkUser();
