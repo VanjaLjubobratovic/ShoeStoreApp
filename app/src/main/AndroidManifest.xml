@@ -36,7 +36,8 @@
             android:exported="false" />
         <activity
             android:name=".admin.AdminMainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".LoginActivity"
             android:exported="false" />

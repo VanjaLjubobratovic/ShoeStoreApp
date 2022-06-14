@@ -322,7 +322,7 @@ public class InventoryFragment extends Fragment{
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return new InventoryPageFragment(filteredItemsList.get(position));
+            return new InventoryPageFragment(filteredItemsList.get(position), user.getRole());
         }
 
         @Override

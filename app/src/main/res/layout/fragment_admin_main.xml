@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.AdminMainFragment">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/employeeManagement"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Upravljanje\nradnicima"
+                app:icon="@drawable/ic_baseline_people_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/storeManagement"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Upravljanje\ntrgovinama"
+                app:icon="@drawable/ic_baseline_store_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemManagement"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Upravljanje\nproizvodima"
+                app:icon="@drawable/ic_baseline_checkroom_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/statistics"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Statistike\nPoslovanja"
+                app:icon="@drawable/ic_baseline_query_stats_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/orderManagement"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Upravljanje\nnarudžbama"
+                app:icon="@drawable/ic_baseline_shopping_bag_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/complaints"
+                android:layout_width="170dp"
+                android:layout_height="110dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Upravljanje\npritužbama"
+                app:icon="@drawable/ic_baseline_sentiment_dissatisfied_24"
+                app:iconGravity="top"
+                app:iconSize="40dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
