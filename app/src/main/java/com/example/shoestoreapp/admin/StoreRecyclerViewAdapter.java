@@ -7,6 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoestoreapp.R;
@@ -19,12 +23,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class StoreRecyclerViewAdapter extends RecyclerView.Adapter<StoreRecyclerViewAdapter.ViewHolder> {
     private Context mContext;
+    private FragmentActivity activity;
     private ArrayList<StoreModel> storeList;
     private FirebaseFirestore database;
 
-    public StoreRecyclerViewAdapter(Context mContext, ArrayList<StoreModel> storeList) {
+    public StoreRecyclerViewAdapter(Context mContext, ArrayList<StoreModel> storeList, FragmentActivity activity) {
         this.mContext = mContext;
         this.storeList = storeList;
+        this.activity = activity;
 
         database = FirebaseFirestore.getInstance();
     }
@@ -58,6 +64,31 @@ public class StoreRecyclerViewAdapter extends RecyclerView.Adapter<StoreRecycler
 
         if(!store.isEnabled())
             holder.itemView.setBackgroundColor(mContext.getColor(R.color.annulledRed));
+
+        holder.itemView.setOnClickListener(view -> {
+            if(holder.employeesBtn.getVisibility() == View.GONE) {
+                holder.employeesBtn.setVisibility(View.VISIBLE);
+                holder.relocateBtn.setVisibility(View.VISIBLE);
+            } else {
+                holder.employeesBtn.setVisibility(View.GONE);
+                holder.relocateBtn.setVisibility(View.GONE);
+            }
+        });
+
+        holder.employeesBtn.setOnClickListener(view -> {
+            StoreManageEmployeesFragment fragment = StoreManageEmployeesFragment.newInstance(storeList.get(holder.getAbsoluteAdapterPosition()).getStoreID(),
+                    storeList.get(holder.getAbsoluteAdapterPosition()).getEmployees());
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, fragment);
+            fragmentTransaction.addToBackStack("name").commit();
+        });
+
+        holder.relocateBtn.setOnClickListener(view -> {
+
+        });
     }
 
     @Override
