@@ -22,22 +22,28 @@
 
         <activity
             android:name=".customer.ShopsMapActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.ShoppingCartActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.CustomerOrderHistoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.SingleItemActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.CustomerProfileChangeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".customer.CustomerProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
