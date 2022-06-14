@@ -20,9 +20,8 @@ public class ItemModel implements Parcelable {
     private Timestamp added;
     private ArrayList<Integer> sizes;
     private ArrayList<Integer> amounts;
-    private boolean employeeOrderExpanded;
 
-//model and color are parsed from document name so we use separate function for that
+    //model and color are parsed from document name so we use separate function for that
 
 
     public ItemModel(String type, String image, double price, double rating, com.google.firebase.Timestamp added, ArrayList<Integer> sizes, ArrayList<Integer> amounts) {
@@ -68,14 +67,6 @@ public class ItemModel implements Parcelable {
             return new ItemModel[size];
         }
     };
-
-    public boolean isEmployeeOrderExpanded() {
-        return employeeOrderExpanded;
-    }
-
-    public void setEmployeeOrderExpanded(boolean employeeOrderExpanded) {
-        this.employeeOrderExpanded = employeeOrderExpanded;
-    }
 
     public String getModel() {
         return model;
