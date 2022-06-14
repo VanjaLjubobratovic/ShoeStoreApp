@@ -74,6 +74,14 @@ public class StoreManagementFragment extends Fragment {
         addStore = flipper.getRootView().findViewById(R.id.newStoreButton);
 
         fetchStores();
+
+        back.setOnClickListener(view1 -> {
+            try{
+                getActivity().onBackPressed();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void fetchStores() {
@@ -102,7 +110,7 @@ public class StoreManagementFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = flipper.findViewById(R.id.storeRecycler);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new StoreRecyclerViewAdapter(getContext(), storeList);
+        adapter = new StoreRecyclerViewAdapter(getContext(), storeList, getActivity());
         recyclerView.setAdapter(adapter);
     }
 }

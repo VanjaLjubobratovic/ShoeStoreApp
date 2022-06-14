@@ -90,7 +90,7 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.nav_item1:
+            case R.id.nav_employee_logout:
                 //TODO Drawer onclick
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = AdminMainActivity.this.getPreferences(Context.MODE_PRIVATE);
