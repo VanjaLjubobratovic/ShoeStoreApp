@@ -19,8 +19,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,8 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback {
@@ -58,6 +62,7 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
     private String storeType = "storefront";
     private String storeAddress;
     private LatLng storeLocation;
+    private HashMap<String, String> typeTranslation;
 
     //Google maps stuff
     private GoogleMap mGoogleMap;
@@ -75,6 +80,7 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
     private EditText newAddressEt, storeIDEt;
     private ImageButton searchAddress;
     private MaterialButton confirm;
+    private Spinner typeSpinner;
 
     private FirebaseFirestore database;
 
@@ -97,6 +103,10 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         database = FirebaseFirestore.getInstance();
+
+        typeTranslation = new HashMap<>();
+        typeTranslation.put("Štand", "storefront");
+        typeTranslation.put("Trgovina", "store");
     }
 
     @Override
@@ -114,8 +124,10 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
         searchAddress = binding.mapSearch;
         newAddressEt = binding.addressToSearch;
         storeIDEt = binding.newStoreID;
+        typeSpinner = binding.typeSpinner;
 
         initGoogleMap(savedInstanceState);
+        spinnerAddTypes();
 
         searchAddress.setOnClickListener(view1 -> {
             try {
@@ -158,6 +170,17 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
         });
     }
 
+    private void spinnerAddTypes() {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("Štand");
+        types.add("Trgovina");
+
+
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, types);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
+    }
+
     private boolean checkInputs() {
         storeID = storeIDEt.getText().toString();
         if(storeAddress != null && !storeID.isEmpty()) {
@@ -180,7 +203,7 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
         newStore.put("employees", new ArrayList<String>());
         newStore.put("enabled", true);
         newStore.put("location", new GeoPoint(storeLocation.latitude, storeLocation.longitude));
-        newStore.put("type", storeType);
+        newStore.put("type", typeTranslation.get(typeSpinner.getSelectedItem()));
 
         //TODO: check if store exists
         database.collection("/locations").document(storeID).set(newStore)

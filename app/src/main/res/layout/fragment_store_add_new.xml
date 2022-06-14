@@ -24,6 +24,7 @@
         android:layout_margin="20dp"/>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/newStoreCoordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,15 +34,24 @@
         android:textStyle="bold"
         android:layout_marginBottom="10dp"/>
 
-    <TextView
-        android:id="@+id/newStoreAddress"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Adresa: "
-        android:layout_marginHorizontal="20dp"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="20dp"/>
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/newStoreType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tip trgovine: "
+            android:layout_marginHorizontal="20dp"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"/>
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
