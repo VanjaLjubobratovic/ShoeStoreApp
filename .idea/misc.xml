@@ -12,6 +12,7 @@
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/drawable/ic_order_history.xml" value="0.3425" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/drawable/ic_paymet_method.xml" value="0.3425" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/drawable/image_border.xml" value="0.3425" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_admin_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_change_profile.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_customer_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_customer_order_history.xml" value="0.36666666666666664" />
@@ -23,6 +24,7 @@
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_register.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_shopping_cart.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_shops_map.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_single_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_splash_screen.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/customer_order_history_list_item.xml" value="0.3448275862068966" />

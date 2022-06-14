@@ -1,19 +1,24 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.os.Parcelable;
@@ -62,11 +67,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private FirebaseFirestore database;
     private CollectionReference itemsRef, usersRef;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCustomerMainBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
 
         user = getIntent().getParcelableExtra("userData");
@@ -183,7 +188,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         switch (item.getItemId()){
             case R.id.nav_my_profile:
-                //TODO my profile on click
                 //Launching profile activity
                 Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
                 profileIntent.putExtra("userData", user);
@@ -191,7 +195,6 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
                 break;
             case R.id.nav_oder_history:
-                //TODO order history on click
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
                 orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
@@ -199,6 +202,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 break;
             case R.id.nav_payment_method:
                 //TODO payment method on click
+                Intent shopsMap = new Intent(this, ShopsMapActivity.class);
+                shopsMap.putExtra("userData", user);
+                startActivity(shopsMap);
+
+
                 break;
             case R.id.nav_logout:
                 //Logging out user and launching the login activity
