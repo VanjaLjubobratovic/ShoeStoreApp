@@ -95,6 +95,7 @@ public class OrdersFragment extends Fragment {
                 try {
                     qrCode = result.getStringArray("Qr code")[0];
                     Toast.makeText(getContext(), qrCode, Toast.LENGTH_SHORT).show();
+                    removeScanned();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
@@ -149,7 +150,7 @@ public class OrdersFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.setReorderingAllowed(true);
 
-                fragmentTransaction.replace(R.id.employeeActivityLayout, QrScannerFragment.class, null);
+                fragmentTransaction.replace(R.id.employeeDrawerLayout, QrScannerFragment.class, null);
                 fragmentTransaction.addToBackStack("name").commit();
             }
         });

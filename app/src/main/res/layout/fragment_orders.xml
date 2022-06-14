@@ -17,9 +17,8 @@
         app:layout_constraintBottom_toTopOf="@id/orderFragmentQrButton"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        >
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/orderFragmentOrderRecyclerView"
