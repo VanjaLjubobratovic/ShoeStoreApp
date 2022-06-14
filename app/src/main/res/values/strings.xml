@@ -28,4 +28,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status_blagajne">STATUS BLAGAJNE</string>
     <string name="status_placeholder">status</string>
+
+    <string name="drawer_layout_open">Open navigation drawer</string>
+    <string name="drawer_layout_close">Close navigation drawer</string>
 </resources>
