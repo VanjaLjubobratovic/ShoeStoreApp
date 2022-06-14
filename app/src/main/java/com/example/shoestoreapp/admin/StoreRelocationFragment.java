@@ -179,7 +179,7 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
 
             if(!addressEt.getText().toString().isEmpty()) {
                 Geocoder geocoder = new Geocoder(getContext());
-                ArrayList<Address> addresList = null;
+                ArrayList<Address> addresList;
                 try {
                     addresList = new ArrayList<>(geocoder.getFromLocationName(addressEt.getText().toString(), 6));
                     if(addresList.isEmpty()) {
@@ -240,6 +240,7 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
         });
     }
 
+    //TODO: check permissions just in case
     @SuppressLint("MissingPermission")
     public void showLocationOnMap() {
         mGoogleMap.setMyLocationEnabled(true);
@@ -266,12 +267,12 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
                 mClusterManager.setRenderer(mClusterManagerRenderer);
             }
 
-            int avatar = R.drawable.launchericon1; // set the default avatar
+            int markerIcon = R.drawable.launchericon1; // set the default avatar
             ClusterMarker oldStore = new ClusterMarker(
                     new LatLng(lat, lng),
                     storeID,
                     address,
-                    avatar
+                    markerIcon
             );
 
             mClusterManager.addItem(oldStore);
@@ -281,7 +282,7 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
                         new LatLng(newLocation.latitude, newLocation.longitude),
                         storeID,
                         newAddress,
-                        avatar
+                        markerIcon
                 );
                 mClusterManager.addItem(newStore);
             }
@@ -295,13 +296,6 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
         mGoogleMap = googleMap;
         addMapMarkers();
         showLocationOnMap();
-
-        mGoogleMap.setOnMapClickListener(point -> {
-            Toast.makeText(getContext(), point.toString(), Toast.LENGTH_SHORT).show();
-            lat = point.latitude;
-            lng = point.longitude;
-            onMapReady(mGoogleMap);
-        });
     }
 
     @Override

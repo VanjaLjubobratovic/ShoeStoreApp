@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -81,6 +83,16 @@ public class StoreManagementFragment extends Fragment {
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+        });
+
+        addStore.setOnClickListener(view1 -> {
+            StoreAddNewFragment fragment = new StoreAddNewFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, fragment);
+            fragmentTransaction.addToBackStack("name").commit();
         });
     }
 
