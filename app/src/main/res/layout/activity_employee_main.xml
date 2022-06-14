@@ -5,6 +5,8 @@
     android:id="@+id/employeeDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".employee.EmployeeMainActivity">
     android:fitsSystemWindows="true"
     tools:context=".employee.EmployeeMainActivity"
     tools:openDrawer="start">
