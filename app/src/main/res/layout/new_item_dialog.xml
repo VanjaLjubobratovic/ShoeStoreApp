@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:id="@+id/footwearCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Artikl je obuća"/>
+
+    <TextView
+        android:id="@+id/sizesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Definirajte koje veličine artikla postoje"
+        android:textSize="15sp"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/sizesEt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="1, 2, 3, 4 (BROJEVI odvojeni zarezom)"/>
+</LinearLayout>

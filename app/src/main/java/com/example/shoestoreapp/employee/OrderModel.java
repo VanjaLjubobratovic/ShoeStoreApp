@@ -1,6 +1,11 @@
 package com.example.shoestoreapp.employee;
 
+
+import android.os.Build;
+
 import com.google.firebase.Timestamp;
+
+import java.time.LocalDate;
 
 public class OrderModel extends ReceiptModel{
     private Timestamp dateCreated;
@@ -16,6 +21,7 @@ public class OrderModel extends ReceiptModel{
                 "orderCode=" + orderCode +
                 '}';
     }
+
 
     public boolean isInStore() {
         return inStore;

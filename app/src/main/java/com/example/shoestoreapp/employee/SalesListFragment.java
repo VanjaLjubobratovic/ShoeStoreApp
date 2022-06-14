@@ -146,7 +146,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
                         if(receipt == null)
                             continue;
 
-                        receipt.setTotal(0);
+                        //receipt.setTotal(0);
                         receipt.setReceiptID(document.getId());
                         fetchItems(document.getId(), receipt);
                     }
@@ -157,13 +157,6 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
             }
         });
     }
-
-    /*private void unpackReceipts() {
-        for(ReceiptModel receipt : receiptList) {
-            if(receipt.isPacked())
-                receipt.unpackItems();
-        }
-    }*/
 
     private void fetchItems(String documentID, ReceiptModel receipt) {
         receiptsRef.document(documentID).collection("items").get()
@@ -179,7 +172,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
                                     continue;
 
                                 item.parseModelColor(document.getId());
-                                receipt.addItem(item);
+                                receipt.addItemNoPrice(item);
                             }
                             receipt.unpackItems();
                             receiptList.add(receipt);

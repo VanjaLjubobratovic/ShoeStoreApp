@@ -1,12 +1,18 @@
 package com.example.shoestoreapp.employee;
 
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
@@ -15,21 +21,23 @@ import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
 
-public class EmployeeMainActivity extends AppCompatActivity {
+public class EmployeeMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ActivityEmployeeMainBinding binding;
+    private DrawerLayout drawer;
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         binding = ActivityEmployeeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -44,8 +52,28 @@ public class EmployeeMainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.employeeActivityLayout, new EmployeeMainFragment())
                 .commit();
+
+        Toolbar toolbar = findViewById(R.id.employeeToolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.employeeDrawerLayout);
+        NavigationView navigationView = findViewById(R.id.employeeNavView);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.drawer_layout_open, R.string.drawer_layout_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(drawer.isDrawerOpen(GravityCompat.START)){
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     private void checkUser() {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -58,5 +86,21 @@ public class EmployeeMainActivity extends AppCompatActivity {
             String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
             Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_employee_logout:
+                //TODO Drawer onclick
+                firebaseAuth.signOut();
+                SharedPreferences sharedPreferences = EmployeeMainActivity.this.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("userData");
+                editor.apply();
+                startActivity(new Intent(EmployeeMainActivity.this, LoginActivity.class));
+                break;
+        }
+        return true;
     }
 }

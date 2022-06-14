@@ -131,6 +131,10 @@ public class ReceiptModel implements Cloneable, Parcelable {
         this.items.add(item);
     }
 
+    public void addItemNoPrice(ItemModel item) {
+        this.items.add(item);
+    }
+
     public void removeAt(int position) {
         this.total -= this.items.get(position).getPrice();
         this.items.remove(position);
@@ -205,5 +209,19 @@ public class ReceiptModel implements Cloneable, Parcelable {
         parcel.writeList(items);
         parcel.writeBoolean(packed);
         parcel.writeBoolean(annulled);
+    }
+
+    public String getItemContents(){
+        String contents = "";
+        for(ItemModel item : items){
+            ArrayList<Integer> tmpAmounts = item.getAmounts();
+            contents += item.toString();
+            for(Integer amount : tmpAmounts){
+                if(amount != 0){
+                    contents += " " + item.getSizes().get(tmpAmounts.indexOf(amount)) + " x" + amount + "\n";
+                }
+            }
+        }
+        return contents;
     }
 }
