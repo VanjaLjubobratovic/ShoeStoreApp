@@ -21,6 +21,9 @@
         android:theme="@style/Theme.ShoeStoreApp">
 
         <activity
+            android:name=".customer.CustomerPurchaseActivity"
+            android:exported="false" />
+        <activity
             android:name=".customer.ShopsMapActivity"
             android:exported="false" />
         <activity
@@ -78,7 +81,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
     </application>
 
 </manifest>
