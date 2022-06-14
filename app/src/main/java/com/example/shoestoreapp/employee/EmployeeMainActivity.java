@@ -8,7 +8,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -88,8 +90,14 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.nav_item1:
+            case R.id.nav_employee_logout:
                 //TODO Drawer onclick
+                firebaseAuth.signOut();
+                SharedPreferences sharedPreferences = EmployeeMainActivity.this.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("userData");
+                editor.apply();
+                startActivity(new Intent(EmployeeMainActivity.this, LoginActivity.class));
                 break;
         }
         return true;
