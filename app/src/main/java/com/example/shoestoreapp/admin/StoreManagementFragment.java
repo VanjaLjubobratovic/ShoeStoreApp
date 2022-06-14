@@ -77,6 +77,7 @@ public class StoreManagementFragment extends Fragment {
     }
 
     private void fetchStores() {
+        database = FirebaseFirestore.getInstance();
         storeList = new ArrayList<>();
         database.collection("/locations").get()
                 .addOnCompleteListener(task -> {

@@ -36,6 +36,8 @@ import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentItemManagementBinding;
 import com.example.shoestoreapp.employee.InventoryFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ItemManagementFragment extends Fragment {
@@ -218,6 +221,7 @@ public class ItemManagementFragment extends Fragment {
 
     private void addItemToDB(ArrayList<Integer> sizes, String type) {
         ArrayList<Integer> amounts = new ArrayList<>(Collections.nCopies(sizes.size(), 0));
+        AtomicBoolean itemExists = new AtomicBoolean(false);
 
         //TODO: clean strings (toLower, strip...)
         ItemModel item = new ItemModel(type, colorSpinner.getSelectedItem() + ".jpg", Double.parseDouble(priceEt.getText().toString()),
@@ -225,7 +229,7 @@ public class ItemManagementFragment extends Fragment {
         //TODO: fix this
         item.parseModelColor(modelSpinner.getSelectedItem() + "-" + colorSpinner.getSelectedItem());
 
-        uploadImageToDB();
+        //uploadImageToDB();
 
         database.collection("/locations").get()
                 .addOnCompleteListener(task -> {
@@ -235,6 +239,8 @@ public class ItemManagementFragment extends Fragment {
                         }
                     }
                 });
+
+        uploadImageToDB();
     }
 
     private void addItemToStore(String storeID, ItemModel item) {
@@ -249,23 +255,34 @@ public class ItemManagementFragment extends Fragment {
         newItem.put("model", item.getModel());
         newItem.put("color", item.getColor());
 
-        //TODO: more precise error check
+        //check if item exists (by document ID), if not -> add it
         database.collection("/locations/" + storeID + "/items").document(item.toString())
-                .set(newItem)
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Uspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
-                        clearDataAndUI();
-                    } else Toast.makeText(getContext(), "Neuspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Predmet već postoji", Toast.LENGTH_SHORT).show();
+                .get().addOnCompleteListener(task1 -> {
+                    if(task1.isSuccessful()) {
+                        DocumentSnapshot document = task1.getResult();
+                        if(document.exists()) {
+                            Toast.makeText(getContext(), "Artikl već postoji", Toast.LENGTH_SHORT).show();
+                        } else {
+                            database.collection("/locations/" + storeID + "/items").document(item.toString())
+                                    .set(newItem)
+                                    .addOnCompleteListener(task -> {
+                                        if(task.isSuccessful()) {
+                                            Toast.makeText(getContext(), "Uspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
+                                            clearDataAndUI();
+                                        } else Toast.makeText(getContext(), "Neuspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getContext(), "Predmet već postoji", Toast.LENGTH_SHORT).show();
+                                    });
+                        }
+                    }
                 });
     }
 
     private void uploadImageToDB() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference newImage = storage.getReference().child(colorSpinner.getSelectedItem() + ".jpg");
+        StorageReference newImage = storage.getReference().child(modelSpinner.getSelectedItem().toString() +
+                colorSpinner.getSelectedItem().toString() + ".jpg");
 
         UploadTask uploadTask = newImage.putFile(itemImageUri);
 
