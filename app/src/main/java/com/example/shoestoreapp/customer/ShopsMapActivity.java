@@ -3,14 +3,18 @@ package com.example.shoestoreapp.customer;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.StoreModel;
+import com.example.shoestoreapp.employee.OrderModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,28 +22,40 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private MapView mMapView;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -51,12 +67,31 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private LatLngBounds mMapBoundary;
+    private FirebaseFirestore database;
+    private ArrayList<StoreModel> storesList = new ArrayList<>();
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops_map);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            //TODO: deprecated
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            //TODO: deprecated
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_REQUEST_CODE);
+            return;
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        database = FirebaseFirestore.getInstance();
         initGoogleMap(savedInstanceState);
+
     }
 
     private void initGoogleMap(Bundle savedInstanceState) {
@@ -83,20 +118,26 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
         mMapView.onSaveInstanceState(mapViewBundle);
     }
 
-    public void showLocationOnMap(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
-            return;
-        }
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_REQUEST_CODE);
-            return;
-        }
+    @SuppressLint("MissingPermission")
+    public void showLocationOnMap() {
         mGoogleMap.setMyLocationEnabled(true);
+        LatLng myLocation = new LatLng(45.333781614474205, 14.425587816563203);
+
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),
+                                    9));
+                        }else{
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
+                                    9));
+                        }
+                    }
+                });
+
     }
 
     @Override
@@ -119,9 +160,8 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap map) {
-        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         mGoogleMap = map;
-        addMapMarkers();
+        fetchLocations();
         showLocationOnMap();
     }
 
@@ -142,6 +182,7 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -164,14 +205,13 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    private void addMapMarkers(){
+    private void addMapMarkers() {
+        if (mGoogleMap != null && !storesList.isEmpty()) {
 
-        if(mGoogleMap != null){
-
-            if(mClusterManager == null){
+            if (mClusterManager == null) {
                 mClusterManager = new ClusterManager<ClusterMarker>(this, mGoogleMap);
             }
-            if(mClusterManagerRenderer == null){
+            if (mClusterManagerRenderer == null) {
                 mClusterManagerRenderer = new MyClusterManagerRenderer(
                         this,
                         mGoogleMap,
@@ -180,32 +220,52 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
                 mClusterManager.setRenderer(mClusterManagerRenderer);
             }
 
+            for (StoreModel store : storesList) {
+                Log.d(TAG, "addMapMarkers: location: " + "store location");
+                try {
+                    int avatar = R.drawable.launchericon1; // set the default avatar
+                    ClusterMarker newClusterMarker = new ClusterMarker(
+                            new LatLng(store.getLocation().getLatitude(), store.getLocation().getLongitude()),
+                            store.getName(),
+                            store.getAddress(),
+                            avatar
+                    );
+                    mClusterManager.addItem(newClusterMarker);
+                    mClusterMarkers.add(newClusterMarker);
 
-            Log.d(TAG, "addMapMarkers: location: " + "store location");
-            try{
-                String snippet = "Store address";
-                int avatar = R.drawable.ic_paymet_method; // set the default avatar
-                ClusterMarker newClusterMarker = new ClusterMarker(
-                        new LatLng(45.303988, 14.711322),
-                        "Ducan 1",
-                        snippet,
-                        avatar
-                );
-                mClusterManager.addItem(newClusterMarker);
-                mClusterMarkers.add(newClusterMarker);
-
-            }catch (NullPointerException e){
-                Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage() );
+                } catch (NullPointerException e) {
+                    Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage());
+                }
+                mClusterManager.cluster();
             }
-            mClusterManager.cluster();
 
-            mMapBoundary = new LatLngBounds(
-                    new LatLng(44.803988, 15.011322),
-                    new LatLng(45.503988, 15.311322)
-            );
-
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0));
         }
+    }
+
+    private void fetchLocations() {
+        CollectionReference locationsRef = database.collection("locations");
+        locationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()) {
+                    if(task.getResult().size() == 0) {
+                        Log.d("FIRESTORE", "0 Results");
+                        return;
+                    }
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        StoreModel location = document.toObject(StoreModel.class);
+                        if(location == null || location.getType().equals("webshop"))
+                            continue;
+
+                        location.setName(document.getId());
+                        storesList.add(location);
+                        Log.d("FIRESTORE Single", location.toString());
+                    }
+                } else Log.d("FIRESTORE Single", "fetch failed");
+                addMapMarkers();
+            }
+        });
     }
 }
 
