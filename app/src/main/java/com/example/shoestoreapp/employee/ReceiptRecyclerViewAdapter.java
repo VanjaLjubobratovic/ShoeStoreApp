@@ -1,10 +1,13 @@
 package com.example.shoestoreapp.employee;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.customer.ShoppingCartActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -84,6 +89,21 @@ public class ReceiptRecyclerViewAdapter extends RecyclerView.Adapter<ReceiptRecy
         itemsToRemove.add(receipt.getItems().get(position));
         receipt.removeAt(position);
 
+        //Checking if the remove was called from shoppingCartActivity
+        //If so, remove the item from SharedPreferences as well
+        if(mContext.getClass().equals(ShoppingCartActivity.class)){
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
+            SharedPreferences.Editor editor = sharedPref.edit();
+            if(receipt.getItems().size() > 0) {
+                Gson receiptGson = new Gson();
+                String receiptJson = receiptGson.toJson(receipt);
+                editor.putString("ShoppingCartReceipt", receiptJson);
+            }
+            else{
+                editor.remove("ShoppingCartReceipt");
+            }
+            editor.apply();
+        }
         checkIfNoData();
 
         notifyItemRemoved(position);

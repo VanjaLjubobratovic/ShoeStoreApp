@@ -94,9 +94,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Kupi"
-        android:layout_marginRight="60dp"
+        android:text="Dodaj"
+        android:layout_marginRight="40dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:icon="@drawable/ic_cart"
+        app:iconSize="30dp"
+        app:iconGravity="textStart"
         app:layout_constraintTop_toBottomOf="@+id/itemSizeLabel" />
 
     <androidx.recyclerview.widget.RecyclerView

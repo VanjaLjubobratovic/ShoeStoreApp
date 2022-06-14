@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_margin="20dp"
+        android:id="@+id/itemReviewImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/running_shoe_icon" />
+
+    <TextView
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="55dp"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:id="@+id/itemReviewModelColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/itemReviewImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/itemReviewRatingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:text="Ocjena"
+        android:layout_margin="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewImage" />
+
+    <RatingBar
+        android:id="@+id/itemReviewRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintStart_toEndOf="@+id/itemReviewRatingLabel"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewModelColor" />
+
+    <TextView
+        android:id="@+id/itemReviewReviewLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recenzija"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewRatingBar" />
+
+
+    <EditText
+        android:id="@+id/itemReviewReviewEditText"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edit_text_borde"
+        android:ems="10"
+        android:gravity="start"
+        android:inputType="textMultiLine"
+        android:lines="8"
+        android:maxLines="15"
+        android:minLines="7"
+        android:hint="Vaša recenzija"
+        android:layout_marginRight="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewReviewLabel" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/itemReviewCancelButton"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Odustani"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewReviewEditText" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/itemReviewConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Potvrdi"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemReviewReviewEditText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

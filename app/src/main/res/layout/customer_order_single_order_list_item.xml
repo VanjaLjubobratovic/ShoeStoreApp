@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayout8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/orderedItemImageView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_weight="0.3"
+            android:background="@drawable/bag_image"/>
+
+        <TextView
+            android:id="@+id/orderedItemModelColorTextView"
+            android:layout_width="0dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.3"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Model name and color" />
+
+        <TextView
+            android:id="@+id/orderedItemSizeAmountTextView"
+            android:layout_width="0dp"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.2"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Size and amount" />
+
+        <TextView
+            android:id="@+id/orderedItemPriceTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.2"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="Price" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/orderedItemReviewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Ocjeni proizvod"
+        android:layout_marginLeft="10dp"
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/orderedItemComplaintButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="12dp"
+        android:text="Podnesi pritužbu"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
+</androidx.constraintlayout.widget.ConstraintLayout>
