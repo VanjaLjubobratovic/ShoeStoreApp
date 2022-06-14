@@ -39,7 +39,8 @@ import java.util.HashMap;
 public class EmployeeMainFragment extends Fragment {
 
     private BarChart barChart;
-    private MaterialButton newReceiptBtn, salesListBtn, deliveryBtn, inventoryBtn;
+
+    private MaterialButton newReceiptBtn, salesListBtn, deliveryBtn, inventoryBtn, orderBtn;
 
     private UserModel user;
 
@@ -81,6 +82,7 @@ public class EmployeeMainFragment extends Fragment {
         newReceiptBtn = view.findViewById(R.id.newSale);
         salesListBtn = view.findViewById(R.id.salesList);
         deliveryBtn = view.findViewById(R.id.acceptDelivery);
+        orderBtn = view.findViewById(R.id.rezervacije);
         inventoryBtn = view.findViewById(R.id.searchInventory);
 
         Intent intent = getActivity().getIntent();
@@ -123,6 +125,19 @@ public class EmployeeMainFragment extends Fragment {
                 fragmentTransaction.setReorderingAllowed(true);
 
                 fragmentTransaction.replace(R.id.employeeActivityLayout, DeliveryFragment.class, null);
+                fragmentTransaction.addToBackStack("name").commit();
+            }
+        });
+
+
+        orderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.setReorderingAllowed(true);
+
+                fragmentTransaction.replace(R.id.employeeActivityLayout, OrdersFragment.class, null);
                 fragmentTransaction.addToBackStack("name").commit();
             }
         });
