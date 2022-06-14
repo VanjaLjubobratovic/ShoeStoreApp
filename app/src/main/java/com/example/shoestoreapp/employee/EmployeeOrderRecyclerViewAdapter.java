@@ -63,7 +63,7 @@ public class EmployeeOrderRecyclerViewAdapter extends RecyclerView.Adapter<Emplo
         holder.customerName.setText(mOrders.get(position).getUser());
         long miliCreated = mOrders.get(position).getDateCreated().toDate().getTime();
         long miliNow = System.currentTimeMillis();
-        long dayDiff = (miliCreated - miliNow) / (24*60*60*1000);
+        long dayDiff = (miliNow - miliCreated) / (24*60*60*1000);
         holder.orderAge.setText(Long.toString(dayDiff) + " dana");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
