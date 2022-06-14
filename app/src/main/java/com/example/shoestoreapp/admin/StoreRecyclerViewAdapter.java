@@ -85,6 +85,10 @@ public class StoreRecyclerViewAdapter extends RecyclerView.Adapter<StoreRecycler
             fragmentTransaction.replace(R.id.adminActivityLayout, fragment);
             fragmentTransaction.addToBackStack("name").commit();
         });
+
+        holder.relocateBtn.setOnClickListener(view -> {
+
+        });
     }
 
     @Override
