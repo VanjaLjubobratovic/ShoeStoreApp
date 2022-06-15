@@ -1,9 +1,11 @@
 package com.example.shoestoreapp.admin;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,11 @@ import com.example.shoestoreapp.employee.DatePicker;
 import com.example.shoestoreapp.employee.ReceiptListRecyclerViewAdapter;
 import com.example.shoestoreapp.employee.ReceiptModel;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -36,9 +43,14 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 
 public class BusinessStatsFragment extends Fragment {
     private FragmentBusinessStatsBinding binding;
@@ -50,7 +62,9 @@ public class BusinessStatsFragment extends Fragment {
     private FirebaseFirestore database;
     private ArrayList<String> storeList;
     private ArrayList<String> timeSpans;
+    private ArrayList<ReceiptModel> receiptsList;
     private ReceiptModel itemsMerged;
+    private HashMap<Date, Double> trafficMap;
 
     private DatePicker datePicker;
 
@@ -96,6 +110,7 @@ public class BusinessStatsFragment extends Fragment {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 fetchReceipts();
@@ -141,9 +156,11 @@ public class BusinessStatsFragment extends Fragment {
         periodSpinner.setAdapter(dropdownAdapter);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void fetchReceipts() {
         database = FirebaseFirestore.getInstance();
         itemsMerged = new ReceiptModel();
+        receiptsList = new ArrayList<>();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         Date startDate = new Date();
@@ -163,6 +180,8 @@ public class BusinessStatsFragment extends Fragment {
             return;
         }
 
+        Date finalStartDate = startDate;
+        Date finalEndDate = endDate;
         database.collection("/receipts").whereEqualTo("storeID", storeSpinner.getSelectedItem()).orderBy("time")
                 .startAt(startDate).endAt(endDate).get()
                 .addOnCompleteListener(task -> {
@@ -174,8 +193,10 @@ public class BusinessStatsFragment extends Fragment {
 
                             receipt.setReceiptID(document.getId());
                             fetchItems(document.getId(), receipt);
+                            receiptsList.add(receipt);
                         }
                         initRecyclerView();
+                        initChart(finalStartDate, finalEndDate);
                     }
                 })
                 .addOnFailureListener(task ->{
@@ -215,6 +236,128 @@ public class BusinessStatsFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         totalTV.setText("Ukupni promet: " + itemsMerged.getTotal() + "kn");
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void initChart(Date startDate, Date endDate) {
+        int period = -parsePeriod();
+        ArrayList<Date> keys = new ArrayList<>();
+        if(period == 1)
+            sortByHour();
+        else if(period == 7 || period == 30)
+            sortByDay(period, startDate, endDate);
+        else sortByMonth(startDate, endDate);
+    }
+
+    private void sortByHour() {
+        ArrayList<Integer> hours = new ArrayList<>();
+        for(int i = 0; i < 24; i++)
+            hours.add(i);
+        ArrayList<Double> totals = new ArrayList<>(Collections.nCopies(hours.size(), 0.0));
+
+        for (ReceiptModel receipt : receiptsList) {
+            Date receiptTime = new Date(receipt.getTime().getSeconds() * 1000);
+            int hour = receiptTime.getHours();
+            int index = hours.indexOf(hour);
+
+            Log.d("HOURS", "receipt time: " + receiptTime);
+            Log.d("HOURS", "hour: " + hour);
+            totals.set(index, totals.get(index) + receipt.getTotal());
+        }
+
+        Log.d("HOURS", hours.toString());
+        Log.d("HOURS", totals.toString());
+        setGraph(hours, totals);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void sortByDay(int steps, Date startDate, Date endDate) {
+        ArrayList<Integer> days = new ArrayList<>();
+        ArrayList<Double> totals = new ArrayList<>(Collections.nCopies(steps, 0.0));
+        LocalDate startLocal = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endLocal = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        for (LocalDate date = startLocal; date.isBefore(endLocal); date = date.plusDays(1)) {
+            days.add(date.getDayOfMonth());
+        }
+
+        for(ReceiptModel receipt : receiptsList) {
+            LocalDate receiptTime = Instant.ofEpochSecond(receipt.getTime().getSeconds()).atZone(ZoneId.systemDefault()).toLocalDate();
+            int day = receiptTime.getDayOfMonth();
+            Log.d("DAYS", "receipt date: " + receiptTime);
+            Log.d("DAYS", "receipt day: " + day);
+            int index = days.indexOf(day);
+
+            if(receiptTime.getMonthValue() == endLocal.getMonthValue())
+                index = days.lastIndexOf(day);
+
+            totals.set(index, totals.get(index) + receipt.getTotal());
+        }
+
+        Log.d("DAYS", days.toString());
+        Log.d("DAYS", totals.toString());
+
+        setGraph(days, totals);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void sortByMonth(Date startDate, Date endDate) {
+        ArrayList<Integer> months = new ArrayList<>();
+        ArrayList<Double> totals = new ArrayList<>(Collections.nCopies(12, 0.0));
+        LocalDate startLocal = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endLocal = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        for (LocalDate date = startLocal; date.isBefore(endLocal); date = date.plusMonths(1)) {
+            months.add(date.getMonthValue());
+        }
+
+        for(ReceiptModel receipt : receiptsList) {
+            Date receiptTime = new Date(receipt.getTime().getSeconds() * 1000);
+            int month = receiptTime.getMonth();
+            int index = months.indexOf(month);
+
+            if(receiptTime.getYear() == endDate.getYear())
+                index = months.lastIndexOf(month);
+
+            totals.set(index, totals.get(index) + receipt.getTotal());
+        }
+
+        setGraph(months, totals);
+    }
+
+    private void setGraph(ArrayList<Integer> xAxisVals, ArrayList<Double> yAxisVals) {
+        ArrayList<BarEntry> saleSumList = new ArrayList<>();
+        for(int i = 0; i < xAxisVals.size(); i++)
+            saleSumList.add(new BarEntry(i, yAxisVals.get(i).intValue()));
+
+        BarDataSet barDataSet = new BarDataSet(saleSumList, "Promet");
+        barDataSet.setColor(R.color.purple_500);
+
+        Log.d("SET_GRAPH", xAxisVals.toString());
+        Log.d("SET_GRAPH", yAxisVals.toString());
+        BarData barData = new BarData(barDataSet);
+        dataChart.setData(barData);
+
+        dataChart.setTouchEnabled(true);
+        dataChart.setDragEnabled(false);
+        dataChart.getXAxis().setDrawGridLines(false);
+        dataChart.getAxisRight().setDrawGridLines(false);
+        dataChart.getAxisLeft().setDrawGridLines(false);
+        XAxis xAxis = dataChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);;
+
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(getDate(xAxisVals)));
+
+        dataChart.invalidate();
+        dataChart.refreshDrawableState();
+    }
+
+    private ArrayList<String> getDate(ArrayList<Integer> xAxisVals) {
+        ArrayList<String> labels = new ArrayList<>();
+        for (Integer i : xAxisVals)
+            labels.add(i.toString());
+
+        return labels;
     }
 
 
