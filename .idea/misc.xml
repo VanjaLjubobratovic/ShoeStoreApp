@@ -3,16 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_customer_complaints.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_customer_main.xml" value="0.26766304347826086" />
-        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_employee_main.xml" value="0.26766304347826086" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/admin_complaints_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/custom_dialog_layout.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/cutomer_complaints_item.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/item_complaint_layout.xml" value="0.33" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_complaints.xml" value="0.33" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_admin_main.xml" value="0.28785131459655483" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_employee_main.xml" value="0.28785131459655483" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/activity_shops_map.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/custom_dialog_layout.xml" value="0.28785131459655483" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_admin_main.xml" value="0.28785131459655483" />
+        <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_business_stats.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_orders.xml" value="0.29193109700815956" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_store_add_new.xml" value="0.3009833262077811" />
         <entry key="..\:/Users/vanja/Desktop/ShoeStoreApp/app/src/main/res/layout/fragment_store_manage_employees.xml" value="0.3009833262077811" />

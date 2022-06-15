@@ -41,11 +41,13 @@ public class CustomerComplaintsAdapter extends RecyclerView.Adapter<CustomerComp
         holder.complaintType.setText("Vrsta: " + curComp.getComplaintType());
         holder.status.setText("Status: " + curComp.getResolved());
         holder.item.setText(curComp.getModel() + " broj " + curComp.getSize());
-        if(curComp.getResolved().equals("Accepted")){
+        if(curComp.getResolved().equals("Approved")){
             holder.compLayout.setBackgroundColor(Color.GREEN);
         }
-        else if(curComp.getResolved().equals("Rejected")){
+        else if(curComp.getResolved().equals("Denied")){
             holder.compLayout.setBackgroundColor(Color.RED);
+            holder.denyReason.setText("Razlog: " + curComp.getReason());
+            holder.denyReason.setVisibility(View.VISIBLE);
         }
         else{
             holder.compLayout.setBackgroundColor(Color.YELLOW);
@@ -60,7 +62,7 @@ public class CustomerComplaintsAdapter extends RecyclerView.Adapter<CustomerComp
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView orderCode, complaint, complaintType, status, item;
+        TextView orderCode, complaint, complaintType, status, item, denyReason;
         ConstraintLayout compLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +71,7 @@ public class CustomerComplaintsAdapter extends RecyclerView.Adapter<CustomerComp
             complaintType = itemView.findViewById(R.id.complaintItemReason);
             status = itemView.findViewById(R.id.complaintItemStatus);
             item = itemView.findViewById(R.id.complaintItemModel);
+            denyReason = itemView.findViewById(R.id.complaintItemDenyReason);
             compLayout = itemView.findViewById(R.id.complaintItemLayout);
         }
     }

@@ -8,6 +8,15 @@ public class ComplaintModel {
     private boolean resend;
     private String complaint;
     private String resolved;
+    private String reason;
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 
     public String getResolved() {
         return resolved;

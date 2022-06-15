@@ -130,10 +130,10 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),
-                                    9));
+                                    10));
                         }else{
                             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
-                                    9));
+                                    10));
                         }
                     }
                 });
