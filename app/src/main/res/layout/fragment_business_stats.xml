@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.BusinessStatsFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Poslovne statistike"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_margin="20dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trgovina"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"/>
+
+            <Spinner
+                android:id="@+id/statsStoreSpinner"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:textAlignment="center"
+                android:dropDownWidth="90dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Period"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"/>
+
+            <Spinner
+                android:id="@+id/statsTimeSpinner"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown"
+                android:textAlignment="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Period"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/statsDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Datum"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/statsTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="Ukupni promet: "
+        android:layout_margin="20dp"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/statsChart"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_marginHorizontal="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/statsItemsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"/>
+
+</LinearLayout>

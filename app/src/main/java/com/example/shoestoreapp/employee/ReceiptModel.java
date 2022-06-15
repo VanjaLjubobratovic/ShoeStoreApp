@@ -149,7 +149,7 @@ public class ReceiptModel implements Cloneable, Parcelable {
             }
             else {
                 int index = packedItems.indexOf(item);
-                for(int i = 0; i < receiptItems.get(0).getSizes().size(); i++) {
+                for(int i = 0; i < receiptItems.get(index).getSizes().size(); i++) {
                     int sizeAmount = packedItems.get(index).getAmounts().get(i) + item.getAmounts().get(i);
                     packedItems.get(index).getAmounts().set(i, sizeAmount);
                 }
