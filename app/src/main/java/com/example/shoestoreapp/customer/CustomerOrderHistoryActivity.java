@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -29,11 +28,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.StructuredQuery;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -135,7 +132,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
         complaintConfirm.setOnClickListener(view ->{
                 ComplaintModel complaint = new ComplaintModel();
-                complaint.setUser(user.getEmail());
+                complaint.setEmail(user.getEmail());
                 complaint.setComplaint(complaintText.getText().toString());
                 complaint.setModel(complaintModelColor.getText().toString());
                 complaint.setResend(complaintResend.isChecked());
@@ -355,7 +352,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
     public void addComplaintDB(ComplaintModel complaint){
         Map<String, Object> newComplaint = new HashMap<>();
-        newComplaint.put("email", complaint.getUser());
+        newComplaint.put("email", complaint.getEmail());
         newComplaint.put("complaintType", complaint.getComplaintType());
         newComplaint.put("orderCode", complaint.getOrderCode());
         newComplaint.put("model", complaint.getModel());

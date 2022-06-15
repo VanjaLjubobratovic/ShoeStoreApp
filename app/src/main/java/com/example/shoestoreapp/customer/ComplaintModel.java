@@ -1,23 +1,59 @@
 package com.example.shoestoreapp.customer;
 
 public class ComplaintModel {
-    private String user;
+    private String email;
     private String complaintType;
     private String orderCode;
     private String model;
     private boolean resend;
     private String complaint;
+    private String resolved;
+    private Integer size;
+    private String complaintId;
+    private String reason;
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getComplaintId() {
+        return complaintId;
+    }
+
+    public void setComplaintId(String complaintId) {
+        this.complaintId = complaintId;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public String getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(String resolved) {
+        this.resolved = resolved;
+    }
 
     public ComplaintModel(){
 
     }
 
-    public String getUser() {
-        return user;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getComplaintType() {
