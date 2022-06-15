@@ -1,29 +1,20 @@
 package com.example.shoestoreapp.customer;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -45,7 +36,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
@@ -85,7 +75,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         //Navigation drawer
         Toolbar toolbar = findViewById(R.id.customer_toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
 
@@ -194,7 +184,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 startActivity(profileIntent);
 
                 break;
-            case R.id.nav_oder_history:
+            case R.id.nav_store_locations:
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
                 orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
@@ -217,6 +207,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 editor.apply();
                 startActivity(new Intent(CustomerMainActivity.this, LoginActivity.class));
                 finish();
+                break;
+
+            case R.id.nav_complaints:
+                Intent custComp = new Intent(this, CustomerComplaintsActivity.class);
+                custComp.putExtra("userData", user);
+                startActivity(custComp);
+
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
