@@ -134,7 +134,8 @@
             android:text="Povrat robe"
             app:icon="@drawable/refundicon"
             app:iconSize="40dp"
-            app:iconGravity="textTop"/>
+            app:iconGravity="textTop"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton

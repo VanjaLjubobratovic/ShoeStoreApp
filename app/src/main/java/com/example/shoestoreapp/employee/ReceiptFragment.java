@@ -78,6 +78,7 @@ public class ReceiptFragment extends Fragment {
     private UserModel user;
 
     private boolean editReceipt = false;
+    private String storeID;
 
     public ReceiptFragment() {
     }
@@ -95,9 +96,9 @@ public class ReceiptFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         database = FirebaseFirestore.getInstance();
-        //TODO:Replace this placeholder after you implement employee to store binding in login
-        //String collection = "/locations/" + getIntent().getStringExtra("shopID") + "/items";
-        String collection = "/locations/" + "TestShop1" + "/items";
+        //TODO:exception management
+        storeID = getActivity().getIntent().getStringExtra("storeID");
+        String collection = "/locations/" + storeID + "/items";
         itemsRef = database.collection(collection);
 
         user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
@@ -115,8 +116,7 @@ public class ReceiptFragment extends Fragment {
             receipt.setEmployee(user.getEmail());
             receipt.setUser("");
             receipt.setReceiptID("");
-            //TODO:get real value
-            receipt.setStoreID("TestShop1");
+            receipt.setStoreID(storeID);
         }
     }
 
@@ -484,7 +484,7 @@ public class ReceiptFragment extends Fragment {
         receipt = new ReceiptModel();
         receipt.setEmployee(user.getEmail());
         receipt.setUser("");
-        receipt.setStoreID("TestShop1");
+        receipt.setStoreID(storeID);
         itemsToRemove = new ArrayList<>();
         editReceipt = false;
 

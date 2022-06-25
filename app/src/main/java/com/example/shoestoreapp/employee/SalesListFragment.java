@@ -74,8 +74,8 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
         receiptList = new ArrayList<>();
 
         user = getActivity().getIntent().getParcelableExtra("userData");
-        //TODO:fetch
-        storeID = "TestShop1";
+        //TODO:exception management
+        storeID = getActivity().getIntent().getStringExtra("storeID");
     }
 
     @Override

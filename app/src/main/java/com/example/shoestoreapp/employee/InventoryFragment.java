@@ -60,6 +60,7 @@ public class InventoryFragment extends Fragment{
     private CollectionReference itemsRef;
 
     private UserModel user;
+    private String storeID;
 
     public InventoryFragment() {
         // Required empty public constructor
@@ -80,8 +81,9 @@ public class InventoryFragment extends Fragment{
         listOfModels = new ArrayList<>();
 
         database = FirebaseFirestore.getInstance();
-        //TODO: fetch store attribute
-        String collection = "/locations/" + "TestShop1" + "/items";
+        //TODO: exception management
+        storeID = getActivity().getIntent().getStringExtra("storeID");
+        String collection = "/locations/" + storeID + "/items";
         itemsRef = database.collection(collection);
 
         user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
@@ -322,7 +324,7 @@ public class InventoryFragment extends Fragment{
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return new InventoryPageFragment(filteredItemsList.get(position), user.getRole());
+            return new InventoryPageFragment(filteredItemsList.get(position), user.getRole(), storeID);
         }
 
         @Override
