@@ -85,7 +85,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         //Navigation drawer
         Toolbar toolbar = findViewById(R.id.customer_toolbar);
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
 

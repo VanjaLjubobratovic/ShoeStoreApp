@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -16,10 +17,12 @@ import com.google.firebase.auth.FirebaseUser;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private UserModel user;
     private ImageButton exit;
+    private ImageView profilePic;
     private MaterialButton logoutBtn, changeBtn;
     private String fullName,name,surname,email,address,city,postalCode,phone;
     private String[] names;
@@ -67,7 +71,11 @@ public class CustomerProfileActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                Intent intent = new Intent();
+                intent.putExtra("userResult", user);
+                setResult(88, intent);
+
+                CustomerProfileActivity.super.onBackPressed();
             }
         });
 
@@ -121,9 +129,13 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private void setUserData(){
         fullName = user.getFullName();
         names = fullName.split(" ");
-        if(names.length > 0){
+        if(names.length > 1){
             name = names[0];
             surname = names[1];
+        }
+        else{
+            name = names[0];
+            surname = "";
         }
         email = user.getEmail();
         address = user.getAddress();
@@ -144,5 +156,9 @@ public class CustomerProfileActivity extends AppCompatActivity {
         profileAddress.setText(address);
         profilePhone = findViewById(R.id.textViewProfilePhone);
         profilePhone.setText(phone);
+        profilePic = findViewById(R.id.imageViewProfilePic);
+        if(user.getProfileImage() != null){
+            Glide.with(CustomerProfileActivity.this).load(Uri.parse(user.getProfileImage())).into(profilePic);
+        }
     }
 }

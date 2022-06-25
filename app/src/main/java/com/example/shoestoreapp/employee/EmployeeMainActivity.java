@@ -1,6 +1,10 @@
 package com.example.shoestoreapp.employee;
 
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +23,8 @@ import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
+import com.example.shoestoreapp.customer.CustomerProfileActivity;
+import com.example.shoestoreapp.customer.ShopsMapActivity;
 import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 
 import com.google.android.material.navigation.NavigationView;
@@ -36,6 +42,20 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     private String storeID;
 
 
+
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if(result.getResultCode() == 88){
+                Intent intent = result.getData();
+
+                if(intent != null){
+                    user = intent.getParcelableExtra("userResult");
+                }
+            }
+
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -108,6 +128,12 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 editor.remove("storeID");
                 editor.apply();
                 startActivity(new Intent(EmployeeMainActivity.this, LoginActivity.class));
+                break;
+            case R.id.nav_employee_profile:
+                //TODO Drawer onclick
+                Intent myProfile = new Intent(this, CustomerProfileActivity.class);
+                myProfile.putExtra("userData", user);
+                activityLauncher.launch(myProfile);
                 break;
         }
         return true;

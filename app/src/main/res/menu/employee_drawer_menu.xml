@@ -4,9 +4,16 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_employee_profile"
+            android:icon="@drawable/ic_my_profile"
+            android:title="My Profile" />
+
         <item
             android:id="@+id/nav_employee_logout"
             android:icon="@drawable/ic_logout"
             android:title="Logout" />
+
     </group>
 </menu>
