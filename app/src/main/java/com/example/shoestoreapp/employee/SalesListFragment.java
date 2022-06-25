@@ -108,6 +108,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 progressBar.setVisibility(View.VISIBLE);
