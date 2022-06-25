@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -84,32 +85,50 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
 
-        binding.googleSignInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "BEGIN SIGN IN");
-                Intent intent = googleSignInClient.getSignInIntent();
-                startActivityForResult(intent, RC_SIGN_IN);
-            }
+        binding.googleSignInBtn.setOnClickListener(view -> {
+            Log.d(TAG, "BEGIN SIGN IN");
+            Intent intent = googleSignInClient.getSignInIntent();
+            startActivityForResult(intent, RC_SIGN_IN);
         });
 
         binding.loginBtn.setEnabled(true);
-        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
-                checkCredentials();
-            }
+        binding.loginBtn.setOnClickListener(view -> {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
+            checkCredentials();
         });
 
-        binding.registerTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.registerTextView.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        binding.forgotPassText.setOnClickListener(view1 -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Unesite vašu email adresu");
+
+            final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+            builder.setView(customLayout);
+            builder.setPositiveButton("OK", null)
+                    .setNegativeButton("Odustani", null);
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+            positiveButton.setOnClickListener(view -> {
+                EditText et = customLayout.findViewById(R.id.editText);
+                String email = et.getText().toString();
+                if(email.isEmpty() || !email.contains("@") || !email.contains(".")) {
+                    showErrorCredentials(et, "Invalid email format");
+                } else {
+                    sendPasswordReset(email);
+                    dialog.dismiss();
+                }
+            });
         });
     }
 
@@ -297,6 +316,25 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             Log.d("CHECK USER", "User email not verified");
+        }
+    }
+
+    public void sendPasswordReset(String email) {
+        try {
+            AlertDialog.Builder resetAlert = new AlertDialog.Builder(LoginActivity.this);
+            resetAlert.setCancelable(true);
+
+            firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    resetAlert.setMessage("Password reset email has been sent!");
+                    resetAlert.show();
+                } else {
+                    resetAlert.setMessage("Account with given email does not exist.");
+                    resetAlert.show();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

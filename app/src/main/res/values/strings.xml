@@ -34,4 +34,5 @@
     <string name="google_maps_api_key">AIzaSyBWBnuA-1Kr7CZELiV6kferKc1-0LTB9LU</string>
     <string name="drawer_layout_open">Open navigation drawer</string>
     <string name="drawer_layout_close">Close navigation drawer</string>
+    <string name="forgot_password">Forgot password?</string>
 </resources>
