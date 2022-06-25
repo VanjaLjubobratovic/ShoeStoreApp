@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -49,6 +50,7 @@ public class EmployeeMainFragment extends Fragment {
 
     private HashMap<Integer, Double> trafficMap;
     private String storeID;
+    private String storeID2;
     private final Integer START_HOUR = 8;
     private final Integer CLOSING_HOUR = 23;
 
@@ -62,10 +64,9 @@ public class EmployeeMainFragment extends Fragment {
         database = FirebaseFirestore.getInstance();
         receiptsRef = database.collection("/receipts");
 
+        //TODO: exception management
         user = getActivity().getIntent().getParcelableExtra("userData");
-
-        //TODO: fetch this
-        storeID = "TestShop1";
+        storeID = getActivity().getIntent().getStringExtra("storeID");
     }
 
     @Override

@@ -101,6 +101,7 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
 
     private boolean codeScanned = false;
     private DocumentReference deliveryRef;
+    private String storeID;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int INPUT_MENU_SCREEN = 0;
@@ -122,9 +123,9 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         super.onCreate(savedInstanceState);
 
         database = FirebaseFirestore.getInstance();
-        //TODO:Replace this placeholder after you implement employee to store binding in login
-        //String collection = "/locations/" + getIntent().getStringExtra("shopID") + "/items";
-        String collection = "/locations/" + "TestShop1" + "/items";
+        //TODO:exception handling
+        storeID = getActivity().getIntent().getStringExtra("storeID");
+        String collection = "/locations/" + storeID + "/items";
         itemsRef = database.collection(collection);
 
         storage = FirebaseStorage.getInstance();
@@ -148,6 +149,8 @@ public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAd
         flipper = binding.deliveryUpperFlipper;
         confirmBtn = binding.deliveryConfirmButton;
         loading = binding.deliveryProgressBar;
+
+        Toast.makeText(getContext(), "Store: " + storeID, Toast.LENGTH_SHORT).show();
 
         manualAddBtn = flipper.getRootView().findViewById(R.id.manualDeliveryAdd);
         codeScanBtn = flipper.getRootView().findViewById(R.id.scanDeliveryCode);

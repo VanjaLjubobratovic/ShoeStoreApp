@@ -33,6 +33,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     private UserModel user;
     private ActivityEmployeeMainBinding binding;
     private DrawerLayout drawer;
+    private String storeID;
 
 
 
@@ -42,13 +43,20 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
         binding = ActivityEmployeeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        user = getIntent().getParcelableExtra("userData");
+        try {
+            user = getIntent().getParcelableExtra("userData");
+            storeID = getIntent().getStringExtra("storeID");
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         //TODO: rest of the code here
         checkUser();
 
         getIntent().putExtra("userData", user);
+        getIntent().putExtra("storeID", storeID);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.employeeActivityLayout, new EmployeeMainFragment())
                 .commit();
@@ -83,7 +91,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
             finish();
         } else {
             //TODO: replace this placeholder with actual UI changes
-            String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole();
+            String toast = "Hello " + user.getFullName() + "\nEmail: " + user.getEmail() + "\nRole: " + user.getRole() + "\nStoreID: " + storeID;
             Toast.makeText(this, toast, Toast.LENGTH_SHORT).show();
         }
     }
@@ -97,6 +105,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 SharedPreferences sharedPreferences = EmployeeMainActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.remove("userData");
+                editor.remove("storeID");
                 editor.apply();
                 startActivity(new Intent(EmployeeMainActivity.this, LoginActivity.class));
                 break;

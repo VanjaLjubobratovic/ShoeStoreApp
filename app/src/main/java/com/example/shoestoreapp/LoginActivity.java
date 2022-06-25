@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.admin.AdminMainActivity;
@@ -40,10 +42,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -219,7 +224,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                                         //chosing appropriate activity based on user role
                                                         Intent intent = choseIntentByRole(user);
-                                                        if(intent == null)
+                                                        //TODO: employee thing is kind of a hack, but it works
+                                                        if(intent == null || user.getRole().equals("employee"))
                                                             return;
 
                                                         Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
@@ -280,10 +286,80 @@ public class LoginActivity extends AppCompatActivity {
             intent = new Intent(LoginActivity.this, AdminMainActivity.class);
         } else if(user.getRole().equals("employee")) {
             intent = new Intent(LoginActivity.this, EmployeeMainActivity.class);
+            pickStore(intent);
         } else {
             Log.d("FIRESTORE", "invalid user role");
         }
         return intent;
+    }
+
+    private void pickStore(Intent intent) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberite trgovinu");
+
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_store_picker, null);
+        Spinner storeDropdown = customLayout.findViewById(R.id.storeSpinner);
+
+        builder.setView(customLayout);
+        builder.setPositiveButton("Login", null)
+                .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        ArrayList<String> stores = new ArrayList<>();
+        database.collection("/locations").whereArrayContains("employees", user.getEmail())
+                .get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            stores.add(document.getId());
+                        }
+                        dropdownAddStores(stores, storeDropdown);
+                    } else {
+                        Toast.makeText(this, "Zaposlenik ne radi niti u jednoj trgovini", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        positiveButton.setOnClickListener(view -> {
+            if(storeDropdown.getSelectedItem() != null) {
+                employeeLogin(intent, storeDropdown.getSelectedItem().toString());
+                dialog.dismiss();
+            }
+        });
+
+        negativeButton.setOnClickListener(view -> {
+            loadingBar.dismiss();
+            dialog.dismiss();
+        });
+    }
+
+    private void employeeLogin(Intent intent, String storeID) {
+        Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
+        loadingBar.dismiss();
+
+        //write user data to SharedPreferences
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        editor.putString("userData", json);
+        editor.putString("storeID", storeID);
+        editor.apply();
+
+        //activity switch
+        intent.putExtra("userData", user);
+        intent.putExtra("storeID", storeID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void dropdownAddStores(ArrayList<String> stores, Spinner storeDropdown) {
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, stores);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        storeDropdown.setAdapter(dropdownAdapter);
     }
 
     private void showErrorCredentials(EditText input, String s) {
@@ -309,7 +385,8 @@ public class LoginActivity extends AppCompatActivity {
         } else if(firebaseUser.isEmailVerified()) {
             //redirect user to appropriate activity
             Intent intent = choseIntentByRole(user);
-            if(intent == null)
+            //TODO: maybe check sharedPref
+            if(intent == null || user.getRole().equals("employee"))
                 return;
             intent.putExtra("userData", user);
             startActivity(intent);

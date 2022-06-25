@@ -34,11 +34,16 @@ public class InventoryPageFragment extends Fragment {
     ArrayList<ItemModel> itemsList;
 
     String userRole;
+    String storeID;
 
 
-    public InventoryPageFragment(ArrayList<ItemModel> itemsList, String userRole) {
+    public InventoryPageFragment(ArrayList<ItemModel> itemsList, String userRole, String storeID) {
         this.itemsList = itemsList;
         this.userRole = userRole;
+
+        //TODO: exception management
+        this.storeID = storeID;
+
     }
 
 
@@ -74,7 +79,7 @@ public class InventoryPageFragment extends Fragment {
     public void onItemClick(int position) {
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         //TODO: fetch this path
-        Fragment fragment = InventoryAdjustmentFragment.newInstance(itemsList.get(position), "/locations/TestShop1/items");
+        Fragment fragment = InventoryAdjustmentFragment.newInstance(itemsList.get(position), "/locations/" + storeID + "/items");
 
         //Determining whether fragment was opened from admin or employee screen
         //TODO: decide whether to show this or not
