@@ -1,10 +1,13 @@
 package com.example.shoestoreapp.employee;
 
 import android.app.DatePickerDialog;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,6 +46,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class SalesListFragment extends Fragment implements ReceiptListRecyclerViewAdapter.OnReceiptListener {
@@ -104,6 +109,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 progressBar.setVisibility(View.VISIBLE);
@@ -161,6 +167,7 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
     private void fetchItems(String documentID, ReceiptModel receipt) {
         receiptsRef.document(documentID).collection("items").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
@@ -184,8 +191,13 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
                 });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRecyclerView() {
         Log.d("RECYCLER VIEW", "initRecyclerView: ");
+        if(receiptList != null) {
+            Comparator<ReceiptModel> timeSorter = Comparator.comparing(ReceiptModel::getTime, Comparator.reverseOrder());
+            Collections.sort(receiptList, timeSorter);
+        }
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptListRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
