@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -29,11 +28,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firestore.v1.StructuredQuery;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,7 +65,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private static final int REVIEW_ITEM_SCREEN = 1;
     private static final int COMPLAINT_MENU_SCREEN = 2;
     private ImageView reviewModelImage;
-    private TextView reviewModelColor, complaintModelColor;
+    private TextView reviewModelColor, complaintModelColor, complaintItemSize;
     private EditText reviewText, complaintText, customComplaintType;
     private Spinner complaintTypeSpinner;
     private CheckBox complaintResend;
@@ -122,6 +119,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         reviewRating = flipper.getRootView().findViewById(R.id.itemReviewRatingBar);
         reviewText = flipper.getRootView().findViewById(R.id.itemReviewReviewEditText);
 
+
+        complaintItemSize = flipper.getRootView().findViewById(R.id.itemComplaintHiddenSize);
         complaintModelColor = flipper.getRootView().findViewById(R.id.itemComplaintModelTextView);
         complaintText = flipper.getRootView().findViewById(R.id.itemComplaintEditText);
         complaintCancel = flipper.getRootView().findViewById(R.id.itemComplaintCancelButton);
@@ -135,10 +134,12 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
         complaintConfirm.setOnClickListener(view ->{
                 ComplaintModel complaint = new ComplaintModel();
-                complaint.setUser(user.getEmail());
+                complaint.setEmail(user.getEmail());
                 complaint.setComplaint(complaintText.getText().toString());
                 complaint.setModel(complaintModelColor.getText().toString());
                 complaint.setResend(complaintResend.isChecked());
+                complaint.setResolved("U razradi");
+                complaint.setSize(Integer.parseInt(complaintItemSize.getText().toString()));
                 String complaintType;
                 if(complaintTypeSpinner.getSelectedItemPosition() == complaintTypeSpinner.getAdapter().getCount() - 1){
                     complaintType = customComplaintType.getText().toString();
@@ -316,7 +317,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     @Override
     public void itemComplaintGet(ItemModel reviewItem) {
         complaintModelColor.setText(reviewItem.toString());
-
+        complaintItemSize.setText(reviewItem.getSizes().get(reviewItem.getAmounts().indexOf(1)).toString());
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
     }
 
@@ -355,12 +356,14 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
     public void addComplaintDB(ComplaintModel complaint){
         Map<String, Object> newComplaint = new HashMap<>();
-        newComplaint.put("email", complaint.getUser());
+        newComplaint.put("email", complaint.getEmail());
         newComplaint.put("complaintType", complaint.getComplaintType());
         newComplaint.put("orderCode", complaint.getOrderCode());
         newComplaint.put("model", complaint.getModel());
         newComplaint.put("resend", complaint.isResend());
         newComplaint.put("complaint", complaint.getComplaint());
+        newComplaint.put("resolved", complaint.getResolved());
+        newComplaint.put("size", complaint.getSize());
 
         DocumentReference newReviewRef = database.collection("/complaints").document();
 

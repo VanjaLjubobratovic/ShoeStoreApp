@@ -1,29 +1,20 @@
 package com.example.shoestoreapp.customer;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import android.os.Parcelable;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -45,7 +36,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
@@ -197,22 +187,22 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
                 profileIntent.putExtra("userData", user);
                 startActivity(profileIntent);
-
                 break;
-            case R.id.nav_oder_history:
+            
+            case R.id.nav_store_locations:
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
                 orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
                 startActivity(orderHistoryIntent);
                 break;
+            
             case R.id.nav_payment_method:
                 //TODO payment method on click
                 Intent shopsMap = new Intent(this, ShopsMapActivity.class);
                 shopsMap.putExtra("userData", user);
                 startActivity(shopsMap);
-
-
                 break;
+            
             case R.id.nav_logout:
                 //Logging out user and launching the login activity
                 firebaseAuth.signOut();
@@ -224,8 +214,13 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 finish();
                 break;
 
+            case R.id.nav_complaints:
+                Intent custComp = new Intent(this, CustomerComplaintsActivity.class);
+                custComp.putExtra("userData", user);
+                startActivity(custComp);
+                break;
+
             case R.id.nav_leave_customer:
-                //TODO payment method on click
                 finish();
         }
         drawer.closeDrawer(GravityCompat.START);
