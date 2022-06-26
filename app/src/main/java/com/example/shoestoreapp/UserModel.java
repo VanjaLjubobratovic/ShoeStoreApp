@@ -14,6 +14,7 @@ public class UserModel implements Parcelable{
     private String phoneNumber;
     private String postalNumber;
     private ArrayList<String> reviewedItems;
+    private String profileImage = null;
 
     public ArrayList<String> getReviewedItems() {
         return reviewedItems;
@@ -48,6 +49,7 @@ public class UserModel implements Parcelable{
         this.city = in.readString();
         this.phoneNumber = in.readString();
         this.postalNumber = in.readString();
+        this.profileImage = in.readString();
     }
 
     public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
@@ -119,6 +121,14 @@ public class UserModel implements Parcelable{
         return 0;
     }
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(address);
@@ -128,5 +138,6 @@ public class UserModel implements Parcelable{
         parcel.writeString(city);
         parcel.writeString(phoneNumber);
         parcel.writeString(postalNumber);
+        parcel.writeString(profileImage);
     }
 }

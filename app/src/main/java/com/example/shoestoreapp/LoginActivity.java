@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
+import com.example.shoestoreapp.customer.CustomerProfileChangeActivity;
 import com.example.shoestoreapp.databinding.ActivityLoginBinding;
 import com.example.shoestoreapp.employee.EmployeeMainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -61,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
 
         database = FirebaseFirestore.getInstance();
         usersRef = database.collection("users");
-        sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
 
         setContentView(binding.getRoot());
 
