@@ -133,9 +133,6 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
                 }
             });
 
-
-
-
         }
 
     }

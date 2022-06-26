@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.StoreModel;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.employee.OrderModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -202,7 +204,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
             }
         });
 
-        fetchOrders();
+        fetchLocations();
     }
 
     private void addReviewToDB(ReviewModel review) {
@@ -240,9 +242,10 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         }
     }
 
-    private void fetchOrders() {
-        ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
+    private void fetchLocations(){
+        CollectionReference locationsRef = database.collection("locations");
+        ArrayList<String> locations = new ArrayList<>();
+        locationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
@@ -251,18 +254,41 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                         return;
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        OrderModel order = document.toObject(OrderModel.class);
-                        if(order == null)
-                            continue;
-
-                        order.setTotal(0);
-                        order.setReceiptID(document.getId());
-                        fetchItems(document.getId(), order);
-                        Log.d("FIRESTORE Single", order.toString());
+                        locations.add(document.getId());
                     }
-                } else Log.d("FIRESTORE Single", "fetch failed");
+                    fetchOrders(locations);
+                }else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
+
+    }
+
+    private void fetchOrders(ArrayList<String> locations) {
+        for(String location : locations) {
+            ordersRef = database.collection("/locations/" + location + "/orders");
+            ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().size() == 0) {
+                            Log.d("FIRESTORE", "0 Results");
+                            return;
+                        }
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            OrderModel order = document.toObject(OrderModel.class);
+                            if (order == null)
+                                continue;
+
+                            order.setTotal(0);
+                            order.setReceiptID(document.getId());
+                            fetchItems(document.getId(), order);
+                            Log.d("FIRESTORE Single", order.toString());
+                        }
+                    } else Log.d("FIRESTORE Single", "fetch failed");
+                }
+            });
+        }
     }
 
     private void fetchItems(String documentID, OrderModel order) {
