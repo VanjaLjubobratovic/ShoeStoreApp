@@ -257,7 +257,16 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
                 newOrderItem.put("rating", item.getRating());
                 newOrderItem.put("type", item.getType());
                 newOrderItem.put("sizes", item.getSizes());
-                newOrderItem.put("amounts", item.getAmounts());
+                ArrayList<Integer> tmpAmounts = new ArrayList<>();
+                for(Integer i : item.getSizes()){
+                    if(i == complaint.getSize()){
+                        tmpAmounts.add(1);
+                    }
+                    else{
+                        tmpAmounts.add(0);
+                    }
+                }
+                newOrderItem.put("amounts", tmpAmounts);
 
                 newOrderRef.collection("items").document(item.toString())
                         .set(newOrderItem)

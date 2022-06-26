@@ -120,7 +120,7 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
             complaintBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mOnItemReviewListener.OnItemComplaintClick(mPurchasedOrder.getItems().get(getBindingAdapterPosition()));
+                    mOnItemReviewListener.OnItemComplaintClick(mPurchasedOrder.getItems().get(getBindingAdapterPosition()), mPurchasedOrder.getOrderCode().toString());
                 }
             });
 
@@ -130,7 +130,7 @@ public class CustomerSingleOrderRecyclerAdapter extends RecyclerView.Adapter<Cus
 
     public interface onItemReviewListener{
         void OnItemReviewClick(ItemModel item);
-        void OnItemComplaintClick(ItemModel item);
+        void OnItemComplaintClick(ItemModel item, String orderCode);
     }
 
     public String getPurchasedAmounts(ItemModel purchasedItem){

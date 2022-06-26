@@ -194,7 +194,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
             String json = sharedPref.getString("ShoppingCartReceipt","NoItems");
             order = (OrderModel) gson.fromJson(json, OrderModel.class);
             Random rand = new Random();
-            order.setOrderCode(rand.nextInt());
+            order.setOrderCode(Math.abs(rand.nextInt()));
             order.setTime();
             order.setDateCreated(Timestamp.now());
             order.setUser(user.getEmail());

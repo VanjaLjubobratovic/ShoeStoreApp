@@ -77,6 +77,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private ArrayList<String> userReviewed;
+    private String complaintOrderCode;
 
 
     @Override
@@ -149,7 +150,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 }
                 complaint.setComplaintType(complaintType);
                 //TODO add code reading one orders are fetched
-                complaint.setOrderCode("random filler code");
+                complaint.setOrderCode(complaintOrderCode);
                 addComplaintDB(complaint);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Prigovor uspješno zapisan");
@@ -316,9 +317,12 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     }
 
     @Override
-    public void itemComplaintGet(ItemModel reviewItem) {
+    public void itemComplaintGet(ItemModel reviewItem, String orderCode) {
+        complaintOrderCode = orderCode;
         complaintModelColor.setText(reviewItem.toString());
         complaintItemSize.setText(reviewItem.getSizes().get(reviewItem.getAmounts().indexOf(1)).toString());
+
+
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
     }
 

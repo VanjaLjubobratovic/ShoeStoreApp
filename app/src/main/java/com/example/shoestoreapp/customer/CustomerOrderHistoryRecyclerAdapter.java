@@ -78,6 +78,11 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         boolean isVisible = currentOrder.isExpanded();
         holder.expandedLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
 
+        if(currentOrder.isPickedUp()){
+            holder.confirmDelivery.setClickable(false);
+            holder.confirmDelivery.setAlpha(0.5f);
+        }
+
     }
 
     @Override
@@ -91,8 +96,8 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
     }
 
     @Override
-    public void OnItemComplaintClick(ItemModel item) {
-        mOnItemReviewGet.itemComplaintGet(item);
+    public void OnItemComplaintClick(ItemModel item, String orderCode) {
+        mOnItemReviewGet.itemComplaintGet(item, orderCode);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -137,7 +142,7 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
     public interface onItemReviewGet{
         public void itemReviewGet(ItemModel reviewItem);
-        public void itemComplaintGet(ItemModel reviewItem);
+        public void itemComplaintGet(ItemModel reviewItem, String orderCode);
         public void onConfirmClick(OrderModel order);
     }
 }
