@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -29,6 +30,7 @@ import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.customer.CustomerProfileActivity;
 import com.example.shoestoreapp.databinding.ActivityAdminMainBinding;
+import com.example.shoestoreapp.employee.EmployeeMainActivity;
 import com.example.shoestoreapp.employee.EmployeeMainFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -94,6 +96,9 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
                 R.string.drawer_layout_open, R.string.drawer_layout_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        Menu nav_Menu = navigationView.getMenu();
+        nav_Menu.findItem(R.id.nav_leave_employee).setVisible(false);
     }
 
     private void checkUser() {
@@ -142,6 +147,20 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
             case R.id.nav_change_store:
                 //TODO Drawer onclick
                 pickStore();
+                break;
+
+            case R.id.nav_employee_customer:
+                //TODO Drawer onclick
+                Intent myCustomer = new Intent(this, CustomerMainActivity.class);
+                myCustomer.putExtra("userData", user);
+                startActivity(myCustomer);
+                break;
+
+            case R.id.nav_admin_employee:
+                //TODO Drawer onclick
+                Intent myEmployee = new Intent(this, EmployeeMainActivity.class);
+                myEmployee.putExtra("userData", user);
+                startActivity(myEmployee);
                 break;
         }
         return true;

@@ -122,6 +122,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
         });
 
+        Menu nav_Menu = navigationView.getMenu();
+        if(user.getRole().equals("customer")) {
+            nav_Menu.findItem(R.id.nav_leave_customer).setVisible(false);
+        }
+
         //fetch inventory data from db
         fetchItems();
 
@@ -218,6 +223,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 startActivity(new Intent(CustomerMainActivity.this, LoginActivity.class));
                 finish();
                 break;
+
+            case R.id.nav_leave_customer:
+                //TODO payment method on click
+                finish();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;

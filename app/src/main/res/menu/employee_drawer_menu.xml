@@ -16,6 +16,22 @@
             android:title="Change store" />
 
         <item
+            android:id="@+id/nav_admin_employee"
+            android:icon="@drawable/ic_employee_switch"
+            android:title="Go to employee" />
+
+        <item
+            android:id="@+id/nav_employee_customer"
+            android:icon="@drawable/ic_switch_customer"
+            android:title="Go to webshop" />
+
+        <item
+            android:id="@+id/nav_leave_employee"
+            android:icon="@drawable/ic_back_admin"
+            android:title="Back to admin" />
+
+
+        <item
             android:id="@+id/nav_employee_logout"
             android:icon="@drawable/ic_logout"
             android:title="Logout" />

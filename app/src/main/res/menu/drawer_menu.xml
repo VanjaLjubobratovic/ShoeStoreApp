@@ -17,6 +17,11 @@
             android:icon="@drawable/ic_paymet_method"
             android:title="PaymentMethod" />
         <item
+            android:id="@+id/nav_leave_customer"
+            android:icon="@drawable/ic_back_original"
+            android:title="Leave customer role" />
+
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="Logout" />
