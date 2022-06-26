@@ -12,6 +12,9 @@ public class ComplaintModel {
     private String complaintId;
     private String reason;
 
+    public ComplaintModel(){
+    }
+
     public String getReason() {
         return reason;
     }
@@ -25,16 +28,9 @@ public class ComplaintModel {
         return complaintId;
     }
 
+
     public void setComplaintId(String complaintId) {
         this.complaintId = complaintId;
-
-    public String getResolved() {
-        return resolved;
-    }
-
-    public void setResolved(String resolved) {
-        this.resolved = resolved;
-
     }
 
     public Integer getSize() {
@@ -51,10 +47,6 @@ public class ComplaintModel {
 
     public void setResolved(String resolved) {
         this.resolved = resolved;
-    }
-
-    public ComplaintModel(){
-
     }
 
     public String getEmail() {
