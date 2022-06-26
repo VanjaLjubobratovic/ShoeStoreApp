@@ -18,11 +18,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.remote.WatchChangeAggregator;
+import com.google.gson.Gson;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -109,7 +113,15 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
                 //TODO save user data to database
 
                 //nisam siguran ako ovo radi pa nisam htio sjebat usere, morat ces ti provjerit
-                //addUserToDatabase();
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomerProfileChangeActivity.this);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(user);
+                editor.putString("userData", json);
+                editor.apply();
+
+                addUserToDatabase();
 
 
                 Intent intent = new Intent();
@@ -124,10 +136,15 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         //Reading user data from userDetails and writing it to appropriate elements
         fullName = user.getFullName();
         names = fullName.split(" ");
-        if(names.length > 0){
+        if(names.length > 1){
             name = names[0];
             surname = names[1];
         }
+        else{
+            name = names[0];
+            surname = "";
+        }
+
         email = user.getEmail();
         address = user.getAddress();
         city = user.getCity();
@@ -147,6 +164,10 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         profilePhone = findViewById(R.id.editTxtProfilePhone);
         profilePhone.setText(phone);
         profilePicture = findViewById(R.id.imageViewProfilePicChange);
+        if(user.getProfileImage() != null){
+
+            Glide.with(CustomerProfileChangeActivity.this).load(Uri.parse(user.getProfileImage())).into(profilePicture);
+        }
 
         ActivityResultLauncher<Intent> profilePictureResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -154,6 +175,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
                 if(result.getResultCode() == Activity.RESULT_OK){
                     Intent data = result.getData();
                     selectedImage = data.getData();
+                    user.setProfileImage(selectedImage.toString());
                     Glide.with(CustomerProfileChangeActivity.this).load(selectedImage).into(profilePicture);
 
                 }
@@ -182,6 +204,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         }
     }
     private void addUserToDatabase() {
+
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("fullName", user.getFullName());
         newUser.put("address", user.getAddress());
@@ -190,6 +213,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         newUser.put("postalNumber", user.getPostalNumber());
         newUser.put("city", user.getCity());
         newUser.put("phoneNumber", user.getPhoneNumber());
+        newUser.put("profileImage", user.getProfileImage());
 
         database.collection("users").document(user.getEmail())
                 .set(newUser)

@@ -31,5 +31,4 @@
         android:textSize="17sp"
         android:textStyle="bold"
         android:layout_marginBottom="10dp"/>
-
 </LinearLayout>

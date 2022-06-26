@@ -69,13 +69,11 @@ public class OrdersFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         database = FirebaseFirestore.getInstance();
-        //TODO fetch orders once implemented
-        //ordersRef = database.collection("/orders");
 
         user = getActivity().getIntent().getParcelableExtra("userData");
 
-        //TODO:fetch
-        storeID = "TestShop1";
+        //TODO: exception management
+        storeID = getActivity().getIntent().getStringExtra("storeID");
         String collection = "/locations/" + storeID + "/orders";
         ordersRef = database.collection(collection);
         String itemCollection = "/locations/" + storeID + "/items";
@@ -328,8 +326,8 @@ public class OrdersFragment extends Fragment {
         Map<String, Object> newReceipt = new HashMap<>();
         newReceipt.put("time", receipt.getTime());
         newReceipt.put("user", receipt.getUser());
-        newReceipt.put("employee", receipt.getEmployee());
-        newReceipt.put("storeID", receipt.getStoreID());
+        newReceipt.put("employee", user.getEmail());
+        newReceipt.put("storeID", storeID);
         newReceipt.put("total", receipt.getTotal());
         newReceipt.put("annulled", false);
 
@@ -394,7 +392,7 @@ public class OrdersFragment extends Fragment {
         }
         if(!orderFound){
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Ne postojeći kod!")
+            builder.setMessage("Nepostojeći kod!")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -447,7 +445,6 @@ public class OrdersFragment extends Fragment {
     public void deleteOrderFromDB(OrderModel orderToDelete){
         DocumentReference orderRef = database.collection("/locations/" + storeID + "/orders").document(orderToDelete.getReceiptID());
         orderRef.delete();
-
     }
 
 }

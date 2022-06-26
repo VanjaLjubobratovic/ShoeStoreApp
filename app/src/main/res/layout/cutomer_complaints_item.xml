@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/complaintItemLayout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="1dp"
+    android:background="@drawable/image_border"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp">
+
+    <TextView
+        android:id="@+id/complaintItemOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OrderCode"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/complaintItemModel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="itemModel"
+        android:textSize="18dp"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complaintItemOrder" />
+
+    <TextView
+        android:id="@+id/complaintItemReason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ComplaintType"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complaintItemModel" />
+
+    <TextView
+        android:id="@+id/complaintItemComplaint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Coplaint"
+        android:textSize="18dp"
+        android:minLines="5"
+        android:maxLines="10"
+        android:padding="10dp"
+        android:background="@drawable/edit_text_borde"
+        android:textColor="@color/black"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complaintItemReason" />
+
+    <TextView
+        android:id="@+id/complaintItemStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Status"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@id/complaintItemDenyReason"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complaintItemComplaint" />
+
+    <TextView
+        android:id="@+id/complaintItemDenyReason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Razlog"
+        android:visibility="gone"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

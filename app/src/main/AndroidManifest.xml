@@ -2,15 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.shoestoreapp">
 
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -19,48 +17,57 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ShoeStoreApp">
-
+        <activity
+            android:name=".customer.CustomerComplaintsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
+        <activity
+            android:name=".customer.CustomerPurchaseActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".customer.ShopsMapActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".customer.ShoppingCartActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".customer.CustomerOrderHistoryActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".customer.SingleItemActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".customer.CustomerProfileChangeActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppLogin"/>
         <activity
             android:name=".customer.CustomerProfileActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreAppNoToolbar"/>
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreAppLogin"/>
         <activity
             android:name=".employee.EmployeeMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreApp" />
         <activity
             android:name=".customer.CustomerMainActivity"
             android:exported="false" />
         <activity
             android:name=".admin.AdminMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar"/>
+            android:theme="@style/Theme.ShoeStoreApp" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreAppLogin"/>
         <activity
             android:name=".LoggedInActivity"
             android:exported="false" />
@@ -84,7 +91,6 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
     </application>
 
 </manifest>

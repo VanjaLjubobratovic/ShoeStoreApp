@@ -20,12 +20,21 @@ public class ComplaintModel {
         this.reason = reason;
     }
 
+
     public String getComplaintId() {
         return complaintId;
     }
 
     public void setComplaintId(String complaintId) {
         this.complaintId = complaintId;
+
+    public String getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(String resolved) {
+        this.resolved = resolved;
+
     }
 
     public Integer getSize() {

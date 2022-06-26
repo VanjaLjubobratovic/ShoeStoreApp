@@ -65,7 +65,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private static final int REVIEW_ITEM_SCREEN = 1;
     private static final int COMPLAINT_MENU_SCREEN = 2;
     private ImageView reviewModelImage;
-    private TextView reviewModelColor, complaintModelColor;
+    private TextView reviewModelColor, complaintModelColor, complaintItemSize;
     private EditText reviewText, complaintText, customComplaintType;
     private Spinner complaintTypeSpinner;
     private CheckBox complaintResend;
@@ -90,7 +90,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
         checkUser();
 
-        storeID = "TestShop1";
+        storeID = "webshop";
         database = FirebaseFirestore.getInstance();
 
 
@@ -119,6 +119,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         reviewRating = flipper.getRootView().findViewById(R.id.itemReviewRatingBar);
         reviewText = flipper.getRootView().findViewById(R.id.itemReviewReviewEditText);
 
+
+        complaintItemSize = flipper.getRootView().findViewById(R.id.itemComplaintHiddenSize);
         complaintModelColor = flipper.getRootView().findViewById(R.id.itemComplaintModelTextView);
         complaintText = flipper.getRootView().findViewById(R.id.itemComplaintEditText);
         complaintCancel = flipper.getRootView().findViewById(R.id.itemComplaintCancelButton);
@@ -136,6 +138,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 complaint.setComplaint(complaintText.getText().toString());
                 complaint.setModel(complaintModelColor.getText().toString());
                 complaint.setResend(complaintResend.isChecked());
+                complaint.setResolved("U razradi");
+                complaint.setSize(Integer.parseInt(complaintItemSize.getText().toString()));
                 String complaintType;
                 if(complaintTypeSpinner.getSelectedItemPosition() == complaintTypeSpinner.getAdapter().getCount() - 1){
                     complaintType = customComplaintType.getText().toString();
@@ -236,7 +240,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     }
 
     private void fetchOrders() {
-        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -247,7 +251,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         OrderModel order = document.toObject(OrderModel.class);
-                        if(order == null || !order.getUser().equals(user.getEmail()))
+                        if(order == null)
                             continue;
 
                         order.setTotal(0);
@@ -279,6 +283,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                             }
                             order.unpackItems();
                             orderList.add(order);
+                            Log.d("ORDER-STATUS", String.valueOf(order.isReviewEnabled()));
                             initOrderRecycler();
                         } else {
                             Log.d("fetchItems query", "onFailure: ");
@@ -313,7 +318,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     @Override
     public void itemComplaintGet(ItemModel reviewItem) {
         complaintModelColor.setText(reviewItem.toString());
-
+        complaintItemSize.setText(reviewItem.getSizes().get(reviewItem.getAmounts().indexOf(1)).toString());
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
     }
 
@@ -358,6 +363,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         newComplaint.put("model", complaint.getModel());
         newComplaint.put("resend", complaint.isResend());
         newComplaint.put("complaint", complaint.getComplaint());
+        newComplaint.put("resolved", complaint.getResolved());
+        newComplaint.put("size", complaint.getSize());
 
         DocumentReference newReviewRef = database.collection("/complaints").document();
 
@@ -393,6 +400,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 Log.d("Review enabled", "rev enabled");
             }
         });
+
         orderRecyclerView.getAdapter().notifyDataSetChanged();
     }
 

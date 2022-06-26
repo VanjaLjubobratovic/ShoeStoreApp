@@ -13,52 +13,45 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
+import com.example.shoestoreapp.customer.CustomerProfileChangeActivity;
 import com.example.shoestoreapp.databinding.ActivityLoginBinding;
 import com.example.shoestoreapp.employee.EmployeeMainActivity;
-import com.firebase.ui.auth.data.model.User;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
     private ProgressDialog loadingBar;
-    private static final int RC_SIGN_IN = 100;
-
-    private GoogleSignInClient googleSignInClient;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore database;
     private CollectionReference usersRef;
     private UserModel user;
     private SharedPreferences sharedPref;
-
-    private static final String TAG ="GOOGLE_SIGN_IN";
 
 
 
@@ -70,46 +63,51 @@ public class LoginActivity extends AppCompatActivity {
 
         database = FirebaseFirestore.getInstance();
         usersRef = database.collection("users");
-        sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
 
         setContentView(binding.getRoot());
-
-        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestIdToken(getString(com.firebase.ui.auth.R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
 
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
 
-        binding.googleSignInBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "BEGIN SIGN IN");
-                Intent intent = googleSignInClient.getSignInIntent();
-                startActivityForResult(intent, RC_SIGN_IN);
-            }
-        });
-
         binding.loginBtn.setEnabled(true);
-        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
-                checkCredentials();
-            }
+        binding.loginBtn.setOnClickListener(view -> {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
+            checkCredentials();
         });
 
-        binding.registerTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        binding.registerTextView.setOnClickListener(view -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        binding.forgotPassText.setOnClickListener(view1 -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Unesite vašu email adresu");
+
+            final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout, null);
+            builder.setView(customLayout);
+            builder.setPositiveButton("OK", null)
+                    .setNegativeButton("Odustani", null);
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+            positiveButton.setOnClickListener(view -> {
+                EditText et = customLayout.findViewById(R.id.editText);
+                String email = et.getText().toString();
+                if(email.isEmpty() || !email.contains("@") || !email.contains(".")) {
+                    showErrorCredentials(et, "Invalid email format");
+                } else {
+                    sendPasswordReset(email);
+                    dialog.dismiss();
+                }
+            });
         });
     }
 
@@ -200,7 +198,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                                         //chosing appropriate activity based on user role
                                                         Intent intent = choseIntentByRole(user);
-                                                        if(intent == null)
+                                                        //TODO: employee thing is kind of a hack, but it works
+                                                        if(intent == null || user.getRole().equals("employee"))
                                                             return;
 
                                                         Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
@@ -261,10 +260,80 @@ public class LoginActivity extends AppCompatActivity {
             intent = new Intent(LoginActivity.this, AdminMainActivity.class);
         } else if(user.getRole().equals("employee")) {
             intent = new Intent(LoginActivity.this, EmployeeMainActivity.class);
+            pickStore(intent);
         } else {
             Log.d("FIRESTORE", "invalid user role");
         }
         return intent;
+    }
+
+    private void pickStore(Intent intent) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberite trgovinu");
+
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_store_picker, null);
+        Spinner storeDropdown = customLayout.findViewById(R.id.storeSpinner);
+
+        builder.setView(customLayout);
+        builder.setPositiveButton("Login", null)
+                .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        ArrayList<String> stores = new ArrayList<>();
+        database.collection("/locations").whereArrayContains("employees", user.getEmail())
+                .get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            stores.add(document.getId());
+                        }
+                        dropdownAddStores(stores, storeDropdown);
+                    } else {
+                        Toast.makeText(this, "Zaposlenik ne radi niti u jednoj trgovini", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        positiveButton.setOnClickListener(view -> {
+            if(storeDropdown.getSelectedItem() != null) {
+                employeeLogin(intent, storeDropdown.getSelectedItem().toString());
+                dialog.dismiss();
+            }
+        });
+
+        negativeButton.setOnClickListener(view -> {
+            loadingBar.dismiss();
+            dialog.dismiss();
+        });
+    }
+
+    private void employeeLogin(Intent intent, String storeID) {
+        Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
+        loadingBar.dismiss();
+
+        //write user data to SharedPreferences
+        SharedPreferences.Editor editor = sharedPref.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(user);
+        editor.putString("userData", json);
+        editor.putString("storeID", storeID);
+        editor.apply();
+
+        //activity switch
+        intent.putExtra("userData", user);
+        intent.putExtra("storeID", storeID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void dropdownAddStores(ArrayList<String> stores, Spinner storeDropdown) {
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, stores);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        storeDropdown.setAdapter(dropdownAdapter);
     }
 
     private void showErrorCredentials(EditText input, String s) {
@@ -290,7 +359,8 @@ public class LoginActivity extends AppCompatActivity {
         } else if(firebaseUser.isEmailVerified()) {
             //redirect user to appropriate activity
             Intent intent = choseIntentByRole(user);
-            if(intent == null)
+            //TODO: maybe check sharedPref
+            if(intent == null || user.getRole().equals("employee"))
                 return;
             intent.putExtra("userData", user);
             startActivity(intent);
@@ -300,54 +370,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void sendPasswordReset(String email) {
+        try {
+            AlertDialog.Builder resetAlert = new AlertDialog.Builder(LoginActivity.this);
+            resetAlert.setCancelable(true);
 
-        if(requestCode == RC_SIGN_IN) {
-            Log.d(TAG, "onActivityResult: Google Sign In intent Result");
-            Task<GoogleSignInAccount> accountTask = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = accountTask.getResult(ApiException.class);
-                firebaseAuthWithGoogleAccount(account);
-            } catch (Exception e) {
-                Log.d(TAG, "onActivityResult: Error " + e.getMessage());
-            }
+            firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    resetAlert.setMessage("Password reset email has been sent!");
+                    resetAlert.show();
+                } else {
+                    resetAlert.setMessage("Account with given email does not exist.");
+                    resetAlert.show();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void firebaseAuthWithGoogleAccount(GoogleSignInAccount account) {
-        Log.d(TAG, "firebaseAuthWithGoogleAccount: begin firebase auth");
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        firebaseAuth.signInWithCredential(credential)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Log.d(TAG, "onSuccess: Logged in");
-                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                        String uid = firebaseUser.getUid();
-                        String email = firebaseUser.getEmail();
-
-                        Log.d(TAG, "onSuccess: Email " + email);
-                        Log.d(TAG, "onSuccess: UID " + uid);
-                        
-                        //check if user is new
-                        if(authResult.getAdditionalUserInfo().isNewUser()) {
-                            Log.d(TAG, "onSuccess: Account Created... " + email);
-                            Toast.makeText(LoginActivity.this, "Account Created... \n" + email, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d(TAG, "onSuccess: Existing user " + email);
-                        }
-
-                        startActivity(new Intent(LoginActivity.this, LoggedInActivity.class));
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onSuccess: Login failed " + e.getMessage());
-                    }
-                });
     }
 }

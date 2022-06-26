@@ -50,6 +50,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
     private MaterialButton proceedToCheck;
     private ConstraintLayout emptyCartLayout, notEmptyLayout;
     private Spinner deliverySpinner;
+    private RecyclerView shoppingCartRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         user = getIntent().getParcelableExtra("userData");
 
         //Init of all the views
+        shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
         totalPrice = findViewById(R.id.textViewTotalPrice);
         proceedToCheck = findViewById(R.id.buttonProceedToCheck);
         emptyCartLayout = findViewById(R.id.emptyCartLayout);
@@ -133,13 +135,21 @@ public class ShoppingCartActivity extends AppCompatActivity {
 
         initCartRecycler();
 
+        proceedToCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent purchaseActivity = new Intent(getApplicationContext(), CustomerPurchaseActivity.class);
+                purchaseActivity.putExtra("userData", user);
+                startActivity(purchaseActivity);
+            }
+        });
+
     }
 
     //Initialization of the Item Recycler View
     public void initCartRecycler(){
         readData();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
-        RecyclerView shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
         shoppingCartRecyclerView.setLayoutManager(layoutManager);
         ReceiptRecyclerViewAdapter adapter = new ReceiptRecyclerViewAdapter(this, receipt, totalPrice, proceedToCheck, itemsToRemove);
         shoppingCartRecyclerView.setAdapter(adapter);
@@ -191,4 +201,11 @@ public class ShoppingCartActivity extends AppCompatActivity {
         deliverySpinner.setAdapter(spinnerArrayAdapter);
     }
 
+    @Override
+    protected void onResume() {
+        readData();
+        shoppingCartRecyclerView.getAdapter().notifyDataSetChanged();
+
+        super.onResume();
+    }
 }

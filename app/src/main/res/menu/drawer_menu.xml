@@ -9,13 +9,22 @@
             android:icon="@drawable/ic_my_profile"
             android:title="MyProfile" />
         <item
-            android:id="@+id/nav_oder_history"
+            android:id="@+id/nav_store_locations"
             android:icon="@drawable/ic_order_history"
             android:title="OrderHistory" />
         <item
             android:id="@+id/nav_payment_method"
-            android:icon="@drawable/ic_paymet_method"
-            android:title="PaymentMethod" />
+            android:icon="@drawable/ic_store_locations"
+            android:title="Store locations" />
+        <item
+            android:id="@+id/nav_complaints"
+            android:icon="@drawable/ic_complaints"
+            android:title="My complaints" />
+        <item
+            android:id="@+id/nav_leave_customer"
+            android:icon="@drawable/ic_back_original"
+            android:title="Leave customer role" />
+
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
