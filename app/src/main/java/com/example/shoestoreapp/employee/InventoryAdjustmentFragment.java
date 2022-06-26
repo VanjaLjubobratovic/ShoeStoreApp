@@ -1,6 +1,8 @@
 package com.example.shoestoreapp.employee;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -138,7 +140,25 @@ public class InventoryAdjustmentFragment extends Fragment {
             if(!user.getRole().equals("admin"))
                 Toast.makeText(getContext(), "Dopušteno samo voditelju poslovanja", Toast.LENGTH_SHORT).show();
             else {
-                //TODO:group edit
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Jeste li sigurni?");
+                builder.setMessage("Ovime ćete postaviti količine za svaku veličinu predmeta na 0");
+                AlertDialog dialog = builder.create();
+
+                builder.setPositiveButton("OK", (dialogInterface, i) -> {
+                    ArrayList<Integer> amountDiff = new ArrayList<>();
+                    for(Integer amount : itemToEdit.getAmounts())
+                        amountDiff.add(-amount);
+
+                    adjustItemAmounts(amountDiff);
+                    updateInventory();
+                    fetchAmounts();
+                    dialogInterface.dismiss();
+                });
+
+                builder.setNegativeButton("Odustani", (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                });
             }
         });
 

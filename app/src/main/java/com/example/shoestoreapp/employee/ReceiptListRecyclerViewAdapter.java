@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.employee;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,12 +39,14 @@ public class ReceiptListRecyclerViewAdapter extends RecyclerView.Adapter<Receipt
     private Context mContext;
     private ArrayList<ReceiptModel> receiptList;
     private OnReceiptListener onReceiptListener;
+    private FragmentActivity activity;
 
 
-    public ReceiptListRecyclerViewAdapter(Context mContext, ArrayList<ReceiptModel> receiptList, OnReceiptListener onReceiptListener) {
+    public ReceiptListRecyclerViewAdapter(Context mContext, ArrayList<ReceiptModel> receiptList, OnReceiptListener onReceiptListener, FragmentActivity activity) {
         this.mContext = mContext;
         this.receiptList = receiptList;
         this.onReceiptListener = onReceiptListener;
+        this.activity = activity;
 
 
         for(ReceiptModel receipt : receiptList)
@@ -64,6 +78,89 @@ public class ReceiptListRecyclerViewAdapter extends RecyclerView.Adapter<Receipt
             int size = item.getSizes().get(item.getAmounts().indexOf(1));
             holder.itemList.append(item + " " + size + "\n");
         }
+
+        holder.itemView.setOnClickListener(view -> {
+            if (receiptList.get(position).isAnnulled()) {
+                Toast.makeText(mContext, "Ne možete uređivati stornirani račun", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(holder.editButton.getVisibility() == View.GONE) {
+                holder.editButton.setVisibility(View.VISIBLE);
+                holder.annulButton.setVisibility(View.VISIBLE);
+            } else {
+                holder.editButton.setVisibility(View.GONE);
+                holder.annulButton.setVisibility(View.GONE);
+            }
+        });
+
+        holder.editButton.setOnClickListener(view -> {
+            FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
+            Fragment fragment = ReceiptFragment.newInstance(receiptList.get(position));
+
+            ft.replace(R.id.employeeActivityLayout, fragment);
+            ft.addToBackStack("name").commit();
+        });
+
+        holder.annulButton.setOnClickListener(view -> {
+            annulReceipt(holder.getAbsoluteAdapterPosition(), holder);
+        });
+    }
+
+    private void annulReceipt(int position, ViewHolder holder) {
+        FirebaseFirestore.getInstance().document("/receipts/" + receiptList.get(position).getReceiptID())
+                .update("annulled", true)
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        Toast.makeText(mContext, "Račun uspješno storniran", Toast.LENGTH_SHORT).show();
+                        adjustInventory(position);
+                        receiptList.get(position).setAnnulled(true);
+                        buttonsGone(holder);
+                        notifyItemChanged(position);
+                    }
+                });
+    }
+
+    private void buttonsGone(ViewHolder holder) {
+        holder.editButton.setVisibility(View.GONE);
+        holder.annulButton.setVisibility(View.GONE);
+    }
+
+    private void adjustInventory(int position) {
+        ArrayList<ItemModel> itemsToAdjust = receiptList.get(position).getItems();
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        String storeID = receiptList.get(position).getStoreID();
+
+        //TODO: find if there's a better method
+        for(ItemModel item : itemsToAdjust) {
+            DocumentReference itemDocumentRef = database.document("/locations/" + storeID + "/items/" + item.toString());
+            ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
+
+            //TODO: Generalise this boilerplate code
+            itemDocumentRef.get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    Log.d("FIRESTORE", task.getResult().toString());
+                    ItemModel itemToEdit = task.getResult().toObject(ItemModel.class);
+                    if(itemToEdit == null)
+                        return;
+
+                    for(int i = 0; i < itemToEdit.getAmounts().size(); i++) {
+                        int adjustedAmount = itemToEdit.getAmounts().get(i) + item.getAmounts().get(i);
+                        adjustedAmountsList.add(adjustedAmount);
+
+                        //TODO:Merge this with fetchItem method
+                    }
+
+                    itemDocumentRef.update("amounts", adjustedAmountsList)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.d("adjustInventory", "Succesful amount update");
+                                }
+                            });
+                }
+            }).addOnFailureListener(e -> Log.d("FIRESTORE", "task not successful"));
+        }
     }
 
     @Override
@@ -75,6 +172,7 @@ public class ReceiptListRecyclerViewAdapter extends RecyclerView.Adapter<Receipt
         TextView receiptID, receiptTotal, receiptTime, itemList;
         LinearLayout parentLayout;
         OnReceiptListener onReceiptListener;
+        MaterialButton editButton, annulButton;
 
         public ViewHolder(View itemView, OnReceiptListener onReceiptListener) {
             super(itemView);
@@ -83,6 +181,11 @@ public class ReceiptListRecyclerViewAdapter extends RecyclerView.Adapter<Receipt
             receiptTime = itemView.findViewById(R.id.receiptTime);
             itemList = itemView.findViewById(R.id.receiptItemList);
             parentLayout = itemView.findViewById(R.id.receiptListItemLinearLayout);
+            editButton = itemView.findViewById(R.id.editButton);
+            annulButton = itemView.findViewById(R.id.annulButton);
+
+            editButton.setVisibility(View.GONE);
+            annulButton.setVisibility(View.GONE);
 
             this.onReceiptListener = onReceiptListener;
 
