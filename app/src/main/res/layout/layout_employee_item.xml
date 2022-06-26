@@ -63,14 +63,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Otkaz"
-            android:layout_marginHorizontal="30dp"/>
+            android:layout_marginHorizontal="20dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/promoteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unaprijedi"
-            android:layout_marginHorizontal="30dp"/>
+            android:layout_marginHorizontal="20dp"/>
     </LinearLayout>
 
     <View

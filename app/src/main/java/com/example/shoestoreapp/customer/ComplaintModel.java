@@ -8,6 +8,8 @@ public class ComplaintModel {
     private boolean resend;
     private String complaint;
     private String resolved;
+    private Integer size;
+    private String complaintId;
     private String reason;
 
     public String getReason() {
@@ -18,12 +20,21 @@ public class ComplaintModel {
         this.reason = reason;
     }
 
+
+    public String getComplaintId() {
+        return complaintId;
+    }
+
+    public void setComplaintId(String complaintId) {
+        this.complaintId = complaintId;
+
     public String getResolved() {
         return resolved;
     }
 
     public void setResolved(String resolved) {
         this.resolved = resolved;
+
     }
 
     public Integer getSize() {
@@ -34,7 +45,13 @@ public class ComplaintModel {
         this.size = size;
     }
 
-    private Integer size;
+    public String getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(String resolved) {
+        this.resolved = resolved;
+    }
 
     public ComplaintModel(){
 

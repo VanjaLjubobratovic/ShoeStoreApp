@@ -1,10 +1,14 @@
 package com.example.shoestoreapp.admin;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -14,6 +18,14 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.customer.MyClusterManagerRenderer;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -87,7 +99,18 @@ public class StoreRecyclerViewAdapter extends RecyclerView.Adapter<StoreRecycler
         });
 
         holder.relocateBtn.setOnClickListener(view -> {
+            StoreModel storeTmp = storeList.get(holder.getAbsoluteAdapterPosition());
+            if (storeTmp.getAddress() == null || storeTmp.getLocation() == null) {
+                Toast.makeText(mContext, "Navedena trgovina nema lokaciju", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            StoreRelocationFragment fragment = StoreRelocationFragment.newInstance(storeTmp.getStoreID(), storeTmp.getLocation(), storeTmp.getAddress());
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
 
+            fragmentTransaction.replace(R.id.adminActivityLayout, fragment);
+            fragmentTransaction.addToBackStack("name").commit();
         });
     }
 

@@ -90,7 +90,12 @@ public class AdminMainFragment extends Fragment {
         });
 
         statsBtn.setOnClickListener(view1 -> {
-            //TODO: statistics
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, BusinessStatsFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
         });
 
         ordersBtn.setOnClickListener(view1 ->  {
@@ -98,6 +103,12 @@ public class AdminMainFragment extends Fragment {
         });
 
         complaintsBtn.setOnClickListener(view1 -> {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, ComplaintsFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
             //TODO: complaints
         });
     }
