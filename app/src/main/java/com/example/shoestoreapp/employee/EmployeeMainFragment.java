@@ -213,9 +213,9 @@ public class EmployeeMainFragment extends Fragment {
                         if(task.isSuccessful()) {
                             for(DocumentSnapshot document : task.getResult()) {
                                 ReceiptModel receipt = document.toObject(ReceiptModel.class);
-                                if(receipt == null)
-                                    return;
-
+                                if(receipt == null || receipt.isAnnulled())
+                                    continue;
+                                Log.d("GET_RECEIPTS", String.valueOf(receipt.isAnnulled()));
                                 //sorting receipts by hour
                                 Date receiptTime = new Date(receipt.getTime().getSeconds() * 1000);
                                 int hour = receiptTime.getHours();

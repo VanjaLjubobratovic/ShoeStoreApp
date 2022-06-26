@@ -39,6 +39,7 @@ public class ReceiptModel implements Cloneable, Parcelable {
     public ReceiptModel(){
         this.total = 0;
         this.packed = false;
+        this.annulled = false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
