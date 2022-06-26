@@ -47,17 +47,18 @@
         <activity
             android:name=".employee.EmployeeMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar" />
+            android:theme="@style/Theme.ShoeStoreApp" />
         <activity
             android:name=".customer.CustomerMainActivity"
             android:exported="false" />
         <activity
             android:name=".admin.AdminMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.ShoeStoreApp.NoActionBar" />
+            android:theme="@style/Theme.ShoeStoreApp" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.ShoeStoreAppLogin"/>
         <activity
             android:name=".LoggedInActivity"
             android:exported="false" />

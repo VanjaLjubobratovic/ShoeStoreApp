@@ -90,7 +90,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
         checkUser();
 
-        storeID = "TestShop1";
+        storeID = "webshop";
         database = FirebaseFirestore.getInstance();
 
 
@@ -240,7 +240,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     }
 
     private void fetchOrders() {
-        ordersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -251,7 +251,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
                         OrderModel order = document.toObject(OrderModel.class);
-                        if(order == null || !order.getUser().equals(user.getEmail()))
+                        if(order == null)
                             continue;
 
                         order.setTotal(0);
@@ -283,6 +283,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                             }
                             order.unpackItems();
                             orderList.add(order);
+                            Log.d("ORDER-STATUS", String.valueOf(order.isReviewEnabled()));
                             initOrderRecycler();
                         } else {
                             Log.d("fetchItems query", "onFailure: ");
@@ -399,6 +400,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 Log.d("Review enabled", "rev enabled");
             }
         });
+
         orderRecyclerView.getAdapter().notifyDataSetChanged();
     }
 

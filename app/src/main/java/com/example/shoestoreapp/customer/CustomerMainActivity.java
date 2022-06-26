@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -75,7 +76,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
         //Navigation drawer
         Toolbar toolbar = findViewById(R.id.customer_toolbar);
-        //setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
 

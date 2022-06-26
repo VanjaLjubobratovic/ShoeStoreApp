@@ -22,6 +22,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
         newUser.put("postalNumber", user.getPostalNumber());
         newUser.put("city", user.getCity());
         newUser.put("phoneNumber", user.getPhoneNumber());
+        newUser.put("reviewedItems", new ArrayList<String>());
 
         database.collection("users").document(user.getEmail())
                 .set(newUser)
