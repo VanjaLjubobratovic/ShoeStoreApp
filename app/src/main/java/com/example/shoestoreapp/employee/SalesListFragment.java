@@ -201,21 +201,12 @@ public class SalesListFragment extends Fragment implements ReceiptListRecyclerVi
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         RecyclerView recyclerView = this.getView().findViewById(R.id.receiptListRecyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        ReceiptListRecyclerViewAdapter adapter = new ReceiptListRecyclerViewAdapter(getContext(), receiptList, this);
+        ReceiptListRecyclerViewAdapter adapter = new ReceiptListRecyclerViewAdapter(getContext(), receiptList, this, getActivity());
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onReceiptClick(int position) {
-        if (receiptList.get(position).isAnnulled()) {
-            Toast.makeText(getContext(), "Ne možete uređivati stornirani račun", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ReceiptFragment.newInstance(receiptList.get(position));
-
-        ft.replace(R.id.employeeActivityLayout, fragment);
-        ft.addToBackStack("name").commit();
     }
 }
