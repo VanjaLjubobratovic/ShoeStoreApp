@@ -11,6 +11,11 @@
             android:title="My Profile" />
 
         <item
+            android:id="@+id/nav_change_store"
+            android:icon="@drawable/ic_store"
+            android:title="Change store" />
+
+        <item
             android:id="@+id/nav_employee_logout"
             android:icon="@drawable/ic_logout"
             android:title="Logout" />

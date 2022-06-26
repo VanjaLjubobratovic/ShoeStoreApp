@@ -12,11 +12,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.LoginActivity;
@@ -30,6 +35,10 @@ import com.example.shoestoreapp.databinding.ActivityEmployeeMainBinding;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
@@ -40,6 +49,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     private ActivityEmployeeMainBinding binding;
     private DrawerLayout drawer;
     private String storeID;
+    private FirebaseFirestore database;
 
 
 
@@ -60,6 +70,9 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        database = FirebaseFirestore.getInstance();
+
         binding = ActivityEmployeeMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -135,7 +148,64 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 myProfile.putExtra("userData", user);
                 activityLauncher.launch(myProfile);
                 break;
+
+            case R.id.nav_change_store:
+                //TODO Drawer onclick
+                pickStore();
+                break;
         }
         return true;
+    }
+
+    private void pickStore() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Odaberite trgovinu");
+
+        final View customLayout = getLayoutInflater().inflate(R.layout.dialog_store_picker, null);
+        Spinner storeDropdown = customLayout.findViewById(R.id.storeSpinner);
+
+        builder.setView(customLayout);
+        builder.setPositiveButton("Login", null)
+                .setNegativeButton("Cancel", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+        ArrayList<String> stores = new ArrayList<>();
+        database.collection("/locations").whereArrayContains("employees", user.getEmail())
+                .get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    stores.add(document.getId());
+                }
+                dropdownAddStores(stores, storeDropdown);
+            } else {
+                Toast.makeText(this, "Zaposlenik ne radi niti u jednoj trgovini", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        positiveButton.setOnClickListener(view -> {
+            if(storeDropdown.getSelectedItem() != null) {
+                //TODO actually use the storeId
+                Toast.makeText(this, storeDropdown.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                storeID = storeDropdown.getSelectedItem().toString();
+                dialog.dismiss();
+            }
+        });
+
+        negativeButton.setOnClickListener(view -> {
+
+
+            dialog.dismiss();
+        });
+    }
+
+    private void dropdownAddStores(ArrayList<String> stores, Spinner storeDropdown) {
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, stores);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        storeDropdown.setAdapter(dropdownAdapter);
     }
 }
