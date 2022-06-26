@@ -78,6 +78,7 @@ public class ReceiptFragment extends Fragment {
     private UserModel user;
 
     private boolean editReceipt = false;
+    private String storeID;
 
     public ReceiptFragment() {
     }
@@ -95,9 +96,9 @@ public class ReceiptFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         database = FirebaseFirestore.getInstance();
-        //TODO:Replace this placeholder after you implement employee to store binding in login
-        //String collection = "/locations/" + getIntent().getStringExtra("shopID") + "/items";
-        String collection = "/locations/" + "TestShop1" + "/items";
+        //TODO:exception management
+        storeID = getActivity().getIntent().getStringExtra("storeID");
+        String collection = "/locations/" + storeID + "/items";
         itemsRef = database.collection(collection);
 
         user = (UserModel) getActivity().getIntent().getParcelableExtra("userData");
@@ -115,8 +116,7 @@ public class ReceiptFragment extends Fragment {
             receipt.setEmployee(user.getEmail());
             receipt.setUser("");
             receipt.setReceiptID("");
-            //TODO:get real value
-            receipt.setStoreID("TestShop1");
+            receipt.setStoreID(storeID);
         }
     }
 
@@ -129,10 +129,6 @@ public class ReceiptFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        /*modelEt = view.findViewById(R.id.modelEditText);
-        colorEt = view.findViewById(R.id.colorEditText);
-        sizeEt = view.findViewById(R.id.sizeEditText);*/
 
         modelSpinner = view.findViewById(R.id.receiptModelDropdown);
         colorSpinner = view.findViewById(R.id.receiptColorDropdown);
@@ -216,7 +212,7 @@ public class ReceiptFragment extends Fragment {
 
                 //TODO:make dedicated constructor after merge
                 ArrayList<Integer> sizeList = new ArrayList<>(Collections.nCopies(currentItem.getSizes().size(), 0));
-                sizeList.set(sizeIndex, 1);
+                sizeList.set(sizeSpinner.getSelectedItemPosition(), 1);
 
                 ItemModel receiptItem = new ItemModel(currentItem.getType(), currentItem.getImage(), currentItem.getPrice(),
                 currentItem.getRating(), currentItem.getAdded(), currentItem.getSizes(), sizeList);
@@ -348,7 +344,7 @@ public class ReceiptFragment extends Fragment {
         itemsToAdjust.addAll(itemsToRemove);
 
         //TODO: find if there's a better method
-        for(ItemModel item : itemsToRemove) {
+        for(ItemModel item : itemsToAdjust) {
             DocumentReference itemDocumentRef = itemsRef.document(item.toString());
             ArrayList<Integer> adjustedAmountsList = new ArrayList<>();
 
@@ -365,15 +361,16 @@ public class ReceiptFragment extends Fragment {
                             adjustedAmountsList.add(adjustedAmount);
 
                             //TODO:Merge this with fetchItem method
-
-                            itemDocumentRef.update("amounts", adjustedAmountsList)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            Log.d("adjustInventory", "Succesful amount update");
-                                        }
-                                    });
+                            Log.d("adjustInventory", "adjustedAmounts: " + adjustedAmountsList);
                         }
+
+                        itemDocumentRef.update("amounts", adjustedAmountsList)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Log.d("adjustInventory", "Succesful amount update");
+                                    }
+                                });
                     }
                 }
             })
@@ -484,7 +481,7 @@ public class ReceiptFragment extends Fragment {
         receipt = new ReceiptModel();
         receipt.setEmployee(user.getEmail());
         receipt.setUser("");
-        receipt.setStoreID("TestShop1");
+        receipt.setStoreID(storeID);
         itemsToRemove = new ArrayList<>();
         editReceipt = false;
 

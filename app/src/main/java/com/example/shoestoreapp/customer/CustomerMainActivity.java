@@ -112,6 +112,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
         });
 
+        Menu nav_Menu = navigationView.getMenu();
+        if(user.getRole().equals("customer")) {
+            nav_Menu.findItem(R.id.nav_leave_customer).setVisible(false);
+        }
+
         //fetch inventory data from db
         fetchItems();
 
@@ -182,22 +187,22 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
                 profileIntent.putExtra("userData", user);
                 startActivity(profileIntent);
-
                 break;
+            
             case R.id.nav_store_locations:
                 Intent orderHistoryIntent = new Intent(this, CustomerOrderHistoryActivity.class);
                 orderHistoryIntent.putExtra("userData", user);
                 orderHistoryIntent.putExtra("userReviews",user.getReviewedItems());
                 startActivity(orderHistoryIntent);
                 break;
+            
             case R.id.nav_payment_method:
                 //TODO payment method on click
                 Intent shopsMap = new Intent(this, ShopsMapActivity.class);
                 shopsMap.putExtra("userData", user);
                 startActivity(shopsMap);
-
-
                 break;
+            
             case R.id.nav_logout:
                 //Logging out user and launching the login activity
                 firebaseAuth.signOut();
@@ -213,8 +218,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 Intent custComp = new Intent(this, CustomerComplaintsActivity.class);
                 custComp.putExtra("userData", user);
                 startActivity(custComp);
-
                 break;
+
+            case R.id.nav_leave_customer:
+                finish();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
