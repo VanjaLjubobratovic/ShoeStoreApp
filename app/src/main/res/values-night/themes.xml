@@ -22,6 +22,5 @@
     </style>
 
     <style name="Theme.ShoeStoreApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="Theme.ShoeStoreApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

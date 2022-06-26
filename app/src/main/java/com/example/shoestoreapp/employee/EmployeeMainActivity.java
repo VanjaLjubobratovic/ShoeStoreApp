@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
 import com.example.shoestoreapp.customer.CustomerProfileActivity;
 import com.example.shoestoreapp.customer.ShopsMapActivity;
@@ -38,6 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -64,7 +66,6 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                     user = intent.getParcelableExtra("userResult");
                 }
             }
-
         }
     });
 
@@ -143,7 +144,6 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_employee_logout:
-                //TODO Drawer onclick
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = EmployeeMainActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -153,30 +153,37 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 startActivity(new Intent(EmployeeMainActivity.this, LoginActivity.class));
                 break;
             case R.id.nav_employee_profile:
-                //TODO Drawer onclick
                 Intent myProfile = new Intent(this, CustomerProfileActivity.class);
                 myProfile.putExtra("userData", user);
                 activityLauncher.launch(myProfile);
                 break;
 
             case R.id.nav_change_store:
-                //TODO Drawer onclick
                 pickStore();
                 break;
 
             case R.id.nav_employee_customer:
-                //TODO Drawer onclick
                 Intent myCustomer = new Intent(this, CustomerMainActivity.class);
                 myCustomer.putExtra("userData", user);
                 startActivity(myCustomer);
                 break;
 
             case R.id.nav_leave_employee:
-                //TODO Drawer onclick
-                finish();
+                backToAdmin();
                 break;
         }
         return true;
+    }
+
+    private void backToAdmin() {
+        Intent intent = new Intent(EmployeeMainActivity.this, AdminMainActivity.class);
+
+        //activity switch
+        intent.putExtra("userData", user);
+        intent.putExtra("storeID", storeID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void pickStore() {
@@ -215,6 +222,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 Toast.makeText(this, storeDropdown.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
                 storeID = storeDropdown.getSelectedItem().toString();
                 dialog.dismiss();
+                employeeLogin();
             }
         });
 
@@ -223,6 +231,17 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
 
             dialog.dismiss();
         });
+    }
+
+    private void employeeLogin() {
+        Intent intent = new Intent(EmployeeMainActivity.this, EmployeeMainActivity.class);
+
+        //activity switch
+        intent.putExtra("userData", user);
+        intent.putExtra("storeID", storeID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void dropdownAddStores(ArrayList<String> stores, Spinner storeDropdown) {

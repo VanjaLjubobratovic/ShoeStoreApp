@@ -99,6 +99,7 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
 
         Menu nav_Menu = navigationView.getMenu();
         nav_Menu.findItem(R.id.nav_leave_employee).setVisible(false);
+        nav_Menu.findItem(R.id.nav_change_store).setVisible(false);
     }
 
     private void checkUser() {
@@ -127,7 +128,6 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_employee_logout:
-                //TODO Drawer onclick
                 firebaseAuth.signOut();
                 SharedPreferences sharedPreferences = AdminMainActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -138,29 +138,24 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
                 break;
 
             case R.id.nav_employee_profile:
-                //TODO Drawer onclick
                 Intent myProfile = new Intent(this, CustomerProfileActivity.class);
                 myProfile.putExtra("userData", user);
                 activityLauncher.launch(myProfile);
                 break;
 
             case R.id.nav_change_store:
-                //TODO Drawer onclick
-                pickStore();
+                //PICK STORE BUTTON
                 break;
 
             case R.id.nav_employee_customer:
-                //TODO Drawer onclick
                 Intent myCustomer = new Intent(this, CustomerMainActivity.class);
                 myCustomer.putExtra("userData", user);
                 startActivity(myCustomer);
                 break;
 
             case R.id.nav_admin_employee:
-                //TODO Drawer onclick
-                Intent myEmployee = new Intent(this, EmployeeMainActivity.class);
-                myEmployee.putExtra("userData", user);
-                startActivity(myEmployee);
+                //SWITCH TO EMPLOYEE BUTTON
+                pickStore();
                 break;
         }
         return true;
@@ -198,10 +193,10 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
 
         positiveButton.setOnClickListener(view -> {
             if(storeDropdown.getSelectedItem() != null) {
-                //TODO actually use the storeId
                 Toast.makeText(this, storeDropdown.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
                 storeID = storeDropdown.getSelectedItem().toString();
                 dialog.dismiss();
+                employeeLogin();
             }
         });
 
@@ -210,6 +205,17 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
 
             dialog.dismiss();
         });
+    }
+
+    private void employeeLogin() {
+        Intent intent = new Intent(AdminMainActivity.this, EmployeeMainActivity.class);
+
+        //activity switch
+        intent.putExtra("userData", user);
+        intent.putExtra("storeID", storeID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void dropdownAddStores(ArrayList<String> stores, Spinner storeDropdown) {
