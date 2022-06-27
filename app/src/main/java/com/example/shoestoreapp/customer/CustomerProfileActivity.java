@@ -4,27 +4,36 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class CustomerProfileActivity extends AppCompatActivity {
 
@@ -37,6 +46,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
     private String[] names;
     private TextView profileName, profileSurname, profileEmail, profileAddress, profileCityAndCode,
             profilePhone;
+    private final Integer EXT_REQUEST_CODE = 71;
 
 
     //Getting new details after changing user profile details
@@ -54,6 +64,14 @@ public class CustomerProfileActivity extends AppCompatActivity {
 
         }
     });
+
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent();
+        intent.putExtra("userResult", user);
+        setResult(49, intent);
+        super.onDestroy();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +123,6 @@ public class CustomerProfileActivity extends AppCompatActivity {
                 Intent profileChangeIntent = new Intent(CustomerProfileActivity.this, CustomerProfileChangeActivity.class);
                 profileChangeIntent.putExtra("userData", user);
                 activityLauncher.launch(profileChangeIntent);
-
             }
         });
 
@@ -157,8 +174,31 @@ public class CustomerProfileActivity extends AppCompatActivity {
         profilePhone = findViewById(R.id.textViewProfilePhone);
         profilePhone.setText(phone);
         profilePic = findViewById(R.id.imageViewProfilePic);
-        if(user.getProfileImage() != null){
-            Glide.with(CustomerProfileActivity.this).load(Uri.parse(user.getProfileImage())).into(profilePic);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED){
+            if(user.getProfileImage() != null){
+                File file = new File(user.getProfileImage());
+                Uri imageUri = Uri.fromFile(file);
+                Glide.with(CustomerProfileActivity.this).load(imageUri).into(profilePic);
+            }
+        }
+        else{
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXT_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == EXT_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("REQUEST", "onRequestPermissionsResult: ");
+                File file = new File(user.getProfileImage());
+                Uri imageUri = Uri.fromFile(file);
+                Glide.with(CustomerProfileActivity.this).load(imageUri).into(profilePic);
+            } else {
+                Toast.makeText(this, "Odbijeno dopuštenje za slike", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

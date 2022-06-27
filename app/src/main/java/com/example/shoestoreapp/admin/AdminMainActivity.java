@@ -8,22 +8,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -38,6 +45,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
 import java.util.ArrayList;
 
 //Remember that this is a separate package when trying to use something from outside
@@ -60,6 +68,7 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
 
                 if(intent != null){
                     user = intent.getParcelableExtra("userResult");
+                    drawer.close();
                 }
             }
 
@@ -100,6 +109,40 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
         Menu nav_Menu = navigationView.getMenu();
         nav_Menu.findItem(R.id.nav_leave_employee).setVisible(false);
         nav_Menu.findItem(R.id.nav_change_store).setVisible(false);
+
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                TextView userName = findViewById(R.id.employeeNavName);
+                userName.setText(user.getFullName());
+                TextView userEmail = findViewById(R.id.employeeNavEmail);
+                userEmail.setText(user.getEmail());
+                ImageView userImage = findViewById(R.id.employeeNavImage);
+                if(ContextCompat.checkSelfPermission(AdminMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED){
+                    if(user.getProfileImage() != null){
+                        File file = new File(user.getProfileImage());
+                        Uri imageUri = Uri.fromFile(file);
+                        Glide.with(AdminMainActivity.this).load(imageUri).into(userImage);
+                    }
+                }
+            }
+        });
     }
 
     private void checkUser() {

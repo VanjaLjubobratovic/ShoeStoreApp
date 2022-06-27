@@ -1,18 +1,27 @@
 package com.example.shoestoreapp.customer;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
@@ -39,6 +49,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,7 +66,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private final static String TAG = "CustomerMainActivity";
     private ImageButton shoppingCart;
-    private ImageView bag, shoe;
+    private ImageView bag, shoe, userProfilePic;
     private TextView userName, userEmail;
 
     private ArrayList<ItemModel> items = new ArrayList<>();
@@ -110,12 +121,22 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onDrawerStateChanged(int newState) {
                 userName = findViewById(R.id.textViewUsername);
                 userName.setText(user.getFullName());
                 userEmail = findViewById(R.id.textViewEmail);
                 userEmail.setText(user.getEmail());
+                userProfilePic = findViewById(R.id.imageViewProfile);
+                if(ContextCompat.checkSelfPermission(CustomerMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED){
+                    if(user.getProfileImage() != null){
+                        File file = new File(user.getProfileImage());
+                        Uri imageUri = Uri.fromFile(file);
+                        Glide.with(CustomerMainActivity.this).load(imageUri).into(userProfilePic);
+                    }
+                }
             }
         });
 
@@ -183,6 +204,14 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
 
+    ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            Intent intent = result.getData();
+            user = intent.getParcelableExtra("userResult");
+
+        }
+    });
 
 
     //Drawer onclick
@@ -194,7 +223,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 //Launching profile activity
                 Intent profileIntent = new Intent(this, CustomerProfileActivity.class);
                 profileIntent.putExtra("userData", user);
-                startActivity(profileIntent);
+                activityLauncher.launch(profileIntent);
                 break;
             
             case R.id.nav_store_locations:
