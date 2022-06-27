@@ -125,7 +125,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         }
 
         //fetch inventory data from db
-        fetchItems();
+        //fetchItems();
 
         shoppingCart = findViewById(R.id.imageButtonCart);
         shoppingCart.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +251,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRecyclerViewPopular(){
-        popularItems = new ArrayList<>();
+        popularItems.clear();
         popularItems.addAll(items);
         Collections.sort(popularItems, Comparator.comparing(ItemModel::getRating, Comparator.reverseOrder()));
 
@@ -265,7 +265,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRecyclerViewRecent(){
-        recentItems = new ArrayList<>();
+        recentItems.clear();
         recentItems.addAll(items);
         Collections.sort(recentItems, Comparator.comparing(ItemModel::getAdded, Comparator.reverseOrder()));
 
