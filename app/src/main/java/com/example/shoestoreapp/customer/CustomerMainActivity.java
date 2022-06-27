@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.customer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -38,6 +40,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 //Remember that this is a separate package when trying to use something from outside
 //Take a look at how R had to be imported above this comment
@@ -55,6 +59,8 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     private TextView userName, userEmail;
 
     private ArrayList<ItemModel> items = new ArrayList<>();
+    private ArrayList<ItemModel> popularItems = new ArrayList<>();
+    private ArrayList<ItemModel> recentItems = new ArrayList<>();
     private FirebaseFirestore database;
     private CollectionReference itemsRef, usersRef;
 
@@ -154,6 +160,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
 
     private void fetchItems() {
         itemsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
@@ -242,34 +249,43 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRecyclerViewPopular(){
-        Log.d(TAG, "initRecyclerView");
+        popularItems = new ArrayList<>();
+        popularItems.addAll(items);
+        Collections.sort(popularItems, Comparator.comparing(ItemModel::getRating, Comparator.reverseOrder()));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewPopularProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, popularItems, this);
         recyclerView.setAdapter(adapter);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void initRecyclerViewRecent(){
-        Log.d(TAG, "initRecyclerView");
+        recentItems = new ArrayList<>();
+        recentItems.addAll(items);
+        Collections.sort(recentItems, Comparator.comparing(ItemModel::getAdded, Comparator.reverseOrder()));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewRecentProducts);
         recyclerView.setLayoutManager(layoutManager);
         //TODO: pass filtered array
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, items, this);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, recentItems, this);
         recyclerView.setAdapter(adapter);
     }
 
     //starting new activity and sending item selected
     @Override
     public void onItemClick(int position, String id) {
-
+        Log.d("CUSTOMER-ITEM-CLICK", id);
         Intent profileIntent = new Intent(this, SingleItemActivity.class);
-        profileIntent.putExtra("selectedItem", items.get(position));
+
+        if(id.equals("recyclerViewRecentProducts"))
+            profileIntent.putExtra("selectedItem", recentItems.get(position));
+        else profileIntent.putExtra("selectedItem", popularItems.get(position));
         profileIntent.putExtra("userData", user);
         startActivity(profileIntent);
     }
@@ -291,5 +307,12 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        items.clear();
+        fetchItems();
     }
 }

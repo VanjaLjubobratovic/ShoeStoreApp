@@ -96,7 +96,6 @@ public class SingleItemActivity extends AppCompatActivity {
         fetchItems();
 
         //filling the views with data
-        //TODO fix first item spinner onclick
         fillElements();
 
         //Changing the selected item on new color selection
@@ -216,7 +215,7 @@ public class SingleItemActivity extends AppCompatActivity {
                     //Initialization of spinners and Review Recycler
                     initColorSpinner();
                     initSizeSpinner();
-                    fetchReviews();
+                    //fetchReviews();
                 } else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
@@ -225,24 +224,21 @@ public class SingleItemActivity extends AppCompatActivity {
     //Getting reviews from firebase
     private void fetchReviews() {
         reviews.clear();
-        reviewsRef = database.collection("locations/webshop/items/" + selectedItem.getModel() + "-" + selectedItem.getColor() +"/reviews");
-        reviewsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    if(task.getResult().size() == 0) {
-                        Log.d("FIRESTORE", "0 Results");
-                        return;
-                    }
-                    //Writing the results to a ArrayList
-                    for(QueryDocumentSnapshot document : task.getResult()) {
-                        ReviewModel newReview = document.toObject(ReviewModel.class);
-                        reviews.add(newReview);
-                        Log.d("FIRESTORE Single", newReview.toString());
-                    }
-                    initReviewRecycler();
-                } else Log.d("FIRESTORE Single", "fetch failed");
-            }
+        reviewsRef = database.collection("locations/webshop/items/" + selectedItem +"/reviews");
+        reviewsRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                if(task.getResult().size() == 0) {
+                    Log.d("FIRESTORE", "0 Results");
+                    return;
+                }
+                //Writing the results to a ArrayList
+                for(QueryDocumentSnapshot document : task.getResult()) {
+                    ReviewModel newReview = document.toObject(ReviewModel.class);
+                    reviews.add(newReview);
+                    Log.d("FIRESTORE-SINGLE", newReview.toString());
+                }
+                initReviewRecycler();
+            } else Log.d("FIRESTORE Single", "fetch failed");
         });
     }
 
@@ -276,7 +272,6 @@ public class SingleItemActivity extends AppCompatActivity {
 
     //Method to fill all the elements with the selected item
     private void fillElements(){
-
         itemName.setText("Model " + selectedItem.toString());
         itemPrice.setText(String.valueOf(selectedItem.getPrice()) + " Kn");
         itemRating.setRating((float) selectedItem.getRating());
@@ -286,8 +281,9 @@ public class SingleItemActivity extends AppCompatActivity {
                 .asBitmap()
                 .load(imageReference)
                 .into(itemImage);
-        fetchReviews();
 
+
+        fetchReviews();
     }
 
 
@@ -296,7 +292,7 @@ public class SingleItemActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false);
         RecyclerView reviewRecyclerView = findViewById(R.id.itemReviewsRecyclerView);
         reviewRecyclerView.setLayoutManager(layoutManager);
-        ReviewsRecycleViewAdapter adapter = new ReviewsRecycleViewAdapter(this,reviews);
+        ReviewsRecycleViewAdapter adapter = new ReviewsRecycleViewAdapter(this, reviews);
         reviewRecyclerView.setAdapter(adapter);
     }
 }
