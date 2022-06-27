@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.employee;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class InventoryGridAdapter extends ArrayAdapter<ItemModel> {
 
         ItemModel item = getItem(position);
         StorageReference imageRef = storageRef.child(item.getImage());
+        Log.d("GRID-ADAPTER", items.toString());
+        Log.d("GRID-ITEM", item.toString());
 
         TextView itemDesc = listItemView.findViewById(R.id.gridItemDescription);
         ImageView itemImage = listItemView.findViewById(R.id.gridItemImage);

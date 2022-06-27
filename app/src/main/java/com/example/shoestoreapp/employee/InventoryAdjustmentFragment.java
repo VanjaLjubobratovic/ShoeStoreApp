@@ -137,13 +137,13 @@ public class InventoryAdjustmentFragment extends Fragment {
         });
 
         groupEditBtn.setOnClickListener(view1 -> {
+            Log.d("RESET-AMOUNTS", "Reset amounts click");
             if(!user.getRole().equals("admin"))
                 Toast.makeText(getContext(), "Dopušteno samo voditelju poslovanja", Toast.LENGTH_SHORT).show();
             else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Jeste li sigurni?");
                 builder.setMessage("Ovime ćete postaviti količine za svaku veličinu predmeta na 0");
-                AlertDialog dialog = builder.create();
 
                 builder.setPositiveButton("OK", (dialogInterface, i) -> {
                     ArrayList<Integer> amountDiff = new ArrayList<>();
@@ -159,6 +159,9 @@ public class InventoryAdjustmentFragment extends Fragment {
                 builder.setNegativeButton("Odustani", (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                 });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
