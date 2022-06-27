@@ -10,9 +10,9 @@
     tools:context=".admin.AdminMainActivity"
     tools:openDrawer="start">
 
-    <ScrollView
+    <!--<ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent">-->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
-    </ScrollView>
+    <!--</ScrollView>-->
 
     <!-- TODO: Make admin specific navigation -->
     <com.google.android.material.navigation.NavigationView
