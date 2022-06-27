@@ -207,7 +207,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
             order.setUser(user.getEmail());
             order.setEmployee("webshop");
             order.setStoreID("webshop");
-            order.setInStore(true);
+            order.setInStore(false);
             order.setReviewEnabled(false);
             order.setPickedUp(false);
             Integer total = (int) order.getTotal();
