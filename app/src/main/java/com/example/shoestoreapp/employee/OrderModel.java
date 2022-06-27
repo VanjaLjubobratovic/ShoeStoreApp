@@ -14,6 +14,7 @@ public class OrderModel extends ReceiptModel{
     private boolean inStore;
     private boolean pickedUp;
     private boolean reviewEnabled;
+    private String deliveryAddress;
 
     @Override
     public String toString() {
@@ -22,6 +23,13 @@ public class OrderModel extends ReceiptModel{
                 '}';
     }
 
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
 
     public boolean isInStore() {
         return inStore;

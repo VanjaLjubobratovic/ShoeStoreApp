@@ -159,6 +159,13 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
                     builder.show();
                 }
                 else{
+                    if(deliverySpinner.getSelectedItemPosition() == 1){
+                        String[] tmpAddress = locationSpinner.getSelectedItem().toString().split(" ");
+                        order.setDeliveryAddress(tmpAddress[0]);
+                    }
+                    else{
+                        order.setDeliveryAddress(deliveryPostalNumber.getText().toString() +" "+ deliveryCity.getText().toString() +" "+ deliveryAddress.getText().toString());
+                    }
                     addOrderToDB();
                     addReceiptToDB();
                     editor.remove("ShoppingCartReceipt");
@@ -318,6 +325,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
         newOrder.put("pickedUp", order.isPickedUp());
         newOrder.put("reviewEnabled", order.isReviewEnabled());
         newOrder.put("user", order.getUser());
+        newOrder.put("deliveryAddress", order.getDeliveryAddress());
 
         DocumentReference newOrderRef = database.collection("locations/" + storeId + "/orders").document();
 

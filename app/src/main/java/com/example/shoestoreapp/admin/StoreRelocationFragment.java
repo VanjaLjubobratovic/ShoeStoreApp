@@ -101,18 +101,6 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
             this.address = getArguments().getString("address");
         } else Toast.makeText(getContext(), "No Arguments", Toast.LENGTH_SHORT).show();
 
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_REQUEST_CODE);
-            return;
-        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
@@ -295,7 +283,15 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
         addMapMarkers();
-        showLocationOnMap();
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            //TODO: deprecated
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
+            return;
+        }
+        else {
+            showLocationOnMap();
+        }
     }
 
     @Override
@@ -308,14 +304,6 @@ public class StoreRelocationFragment extends Fragment implements OnMapReadyCallb
                 showLocationOnMap();
             } else {
                 Toast.makeText(getContext(), "Odbijeno dopuštenje za fine", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == COARSE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("REQUEST", "onRequestPermissionsResult: ");
-                Toast.makeText(getContext(), "Dodijeljeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
-                showLocationOnMap();
-            } else {
-                Toast.makeText(getContext(), "Odbijeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
             }
         }
     }
