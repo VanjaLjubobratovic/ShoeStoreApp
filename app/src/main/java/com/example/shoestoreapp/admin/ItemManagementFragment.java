@@ -262,6 +262,8 @@ public class ItemManagementFragment extends Fragment {
         newItem.put("type", item.getType());
         newItem.put("model", item.getModel());
         newItem.put("color", item.getColor());
+        newItem.put("numberOfRatings", item.getNumberOfRatings());
+        newItem.put("ratingSum", item.getRatingSum());
 
         //check if item exists (by document ID), if not -> add it
         database.collection("/locations/" + storeID + "/items").document(item.toString())

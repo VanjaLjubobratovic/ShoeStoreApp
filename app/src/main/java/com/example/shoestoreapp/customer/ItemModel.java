@@ -34,6 +34,8 @@ public class ItemModel implements Parcelable {
         this.added = added;
         this.sizes = sizes;
         this.amounts = amounts;
+        this.ratingSum = 0;
+        this.numberOfRatings = 0;
     }
 
     public ItemModel(ItemModel itemModel) {
