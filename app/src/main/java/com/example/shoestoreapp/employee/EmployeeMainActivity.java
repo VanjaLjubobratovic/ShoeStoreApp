@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -112,10 +114,31 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
         if(user.getRole().equals("employee")) {
             nav_Menu.findItem(R.id.nav_leave_employee).setVisible(false);
             nav_Menu.findItem(R.id.nav_admin_employee).setVisible(false);
+
+            subToDeliveries();
         }
         if(user.getRole().equals("admin")){
             nav_Menu.findItem(R.id.nav_admin_employee).setVisible(false);
         }
+
+    }
+
+    private void subToDeliveries() {
+        FirebaseMessaging.getInstance().subscribeToTopic(storeID + "-delivery")
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        Log.d("DELIVERY-SUB", "Success");
+                    } else Log.d("DELIVERY-SUB", "Failed");
+                });
+    }
+
+    private void unsubFromDeliveries() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(storeID + "-delivery")
+                .addOnCompleteListener(task -> {
+                   if(task.isSuccessful()) {
+                       Log.d("DELIVERY-UNSUB", "Success");
+                   }else Log.d("DELIVERY-UNSUB", "Failed");
+                });
     }
 
     @Override
@@ -145,6 +168,8 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
         switch (item.getItemId()){
             case R.id.nav_employee_logout:
                 firebaseAuth.signOut();
+                //TODO: unsub from all store topics
+                unsubFromDeliveries();
                 SharedPreferences sharedPreferences = EmployeeMainActivity.this.getPreferences(Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.remove("userData");

@@ -96,5 +96,4 @@
                 app:iconSize="40dp" />
         </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
