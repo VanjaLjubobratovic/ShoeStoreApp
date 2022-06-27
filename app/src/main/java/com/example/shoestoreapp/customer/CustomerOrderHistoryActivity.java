@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.StoreModel;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
 import com.example.shoestoreapp.employee.OrderModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,6 +50,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,6 +81,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private ArrayList<String> userReviewed;
+    private String complaintOrderCode;
 
 
     @Override
@@ -150,7 +154,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 }
                 complaint.setComplaintType(complaintType);
                 //TODO add code reading one orders are fetched
-                complaint.setOrderCode("random filler code");
+                complaint.setOrderCode(complaintOrderCode);
                 addComplaintDB(complaint);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Prigovor uspješno zapisan");
@@ -202,7 +206,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
             }
         });
 
-        fetchOrders();
+        fetchLocations();
     }
 
     private void addReviewToDB(ReviewModel review) {
@@ -261,9 +265,10 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         }
     }
 
-    private void fetchOrders() {
-        ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
+    private void fetchLocations(){
+        CollectionReference locationsRef = database.collection("locations");
+        ArrayList<String> locations = new ArrayList<>();
+        locationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
@@ -272,18 +277,41 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                         return;
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        OrderModel order = document.toObject(OrderModel.class);
-                        if(order == null)
-                            continue;
-
-                        order.setTotal(0);
-                        order.setReceiptID(document.getId());
-                        fetchItems(document.getId(), order);
-                        Log.d("FIRESTORE Single", order.toString());
+                        locations.add(document.getId());
                     }
-                } else Log.d("FIRESTORE Single", "fetch failed");
+                    fetchOrders(locations);
+                }else Log.d("FIRESTORE Single", "fetch failed");
             }
         });
+
+    }
+
+    private void fetchOrders(ArrayList<String> locations) {
+        for(String location : locations) {
+            ordersRef = database.collection("/locations/" + location + "/orders");
+            ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @RequiresApi(api = Build.VERSION_CODES.O)
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().size() == 0) {
+                            Log.d("FIRESTORE", "0 Results");
+                            return;
+                        }
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            OrderModel order = document.toObject(OrderModel.class);
+                            if (order == null)
+                                continue;
+
+                            order.setTotal(0);
+                            order.setReceiptID(document.getId());
+                            fetchItems(document.getId(), order);
+                            Log.d("FIRESTORE Single", order.toString());
+                        }
+                    } else Log.d("FIRESTORE Single", "fetch failed");
+                }
+            });
+        }
     }
 
     private void fetchItems(String documentID, OrderModel order) {
@@ -338,24 +366,56 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     }
 
     @Override
-    public void itemComplaintGet(ItemModel reviewItem) {
+    public void itemComplaintGet(ItemModel reviewItem, String orderCode) {
+        complaintOrderCode = orderCode;
         complaintModelColor.setText(reviewItem.toString());
         complaintItemSize.setText(reviewItem.getSizes().get(reviewItem.getAmounts().indexOf(1)).toString());
+
+
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
     }
 
     @Override
     public void onConfirmClick(OrderModel confOrder) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Potvrda");
-        builder.setMessage("Jeste li sigurni da želite potvrditi dostavu nardudžbe " + confOrder.getOrderCode());
-        builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+        OrderModel clickedOrder = confOrder;
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Unesite broj narudžbe");
+        final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout,null);
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                confirmOrder(confOrder);
+            public void onClick(DialogInterface dialog, int which) {
+                EditText editText = customLayout.findViewById(R.id.editText);
+                String m_Text = editText.getText().toString();
+                if (m_Text.equals(clickedOrder.getOrderCode().toString())) {
+                    confirmOrder(clickedOrder);
+                    android.app.AlertDialog.Builder okAlert = new android.app.AlertDialog.Builder(CustomerOrderHistoryActivity.this);
+                    okAlert.setMessage("Uspješno potvrđena dostava narudžbe " + clickedOrder.getOrderCode().toString());
+                    okAlert.setPositiveButton("OK", null);
+                    okAlert.show();
+                }
+                else{
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CustomerOrderHistoryActivity.this);
+                    builder.setMessage("Krivi unos!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                }
+                            });
+                    android.app.AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         });
-        builder.setNegativeButton("Odustani", null);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         builder.show();
     }
 

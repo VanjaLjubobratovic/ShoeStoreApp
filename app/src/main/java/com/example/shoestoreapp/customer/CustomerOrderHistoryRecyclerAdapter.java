@@ -66,7 +66,6 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         }
         Integer tmpPrice = (int)currentOrder.getTotal();
         holder.finalPrice.setText(tmpPrice.toString()+"kn");
-        holder.orderId.setText(currentOrder.getOrderCode().toString());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false);
         ((SimpleItemAnimator)holder.orderItems.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -77,6 +76,11 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
         boolean isVisible = currentOrder.isExpanded();
         holder.expandedLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+
+        if(currentOrder.isPickedUp()){
+            holder.confirmDelivery.setClickable(false);
+            holder.confirmDelivery.setAlpha(0.5f);
+        }
 
     }
 
@@ -91,13 +95,13 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
     }
 
     @Override
-    public void OnItemComplaintClick(ItemModel item) {
-        mOnItemReviewGet.itemComplaintGet(item);
+    public void OnItemComplaintClick(ItemModel item, String orderCode) {
+        mOnItemReviewGet.itemComplaintGet(item, orderCode);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView orderTime, orderStatus, finalPrice, orderId;
+        TextView orderTime, orderStatus, finalPrice;
         RecyclerView orderItems;
         ConstraintLayout expandedLayout, itemLayout;
         MaterialButton confirmDelivery;
@@ -107,7 +111,6 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
             orderTime = itemView.findViewById(R.id.orderHistoryTimeTextView);
             orderStatus = itemView.findViewById(R.id.orderHistoryStatusTextView);
             finalPrice = itemView.findViewById(R.id.orderHistoryPriceTextView);
-            orderId = itemView.findViewById(R.id.orderHistoryIdTextView);
             orderItems = itemView.findViewById(R.id.orderHistoryItemsRecyclerView);
             expandedLayout = itemView.findViewById(R.id.orderHistorySubLayout);
             itemLayout = itemView.findViewById(R.id.orderHistoryItemLayout);
@@ -128,16 +131,13 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
                 }
             });
 
-
-
-
         }
 
     }
 
     public interface onItemReviewGet{
         public void itemReviewGet(ItemModel reviewItem);
-        public void itemComplaintGet(ItemModel reviewItem);
+        public void itemComplaintGet(ItemModel reviewItem, String orderCode);
         public void onConfirmClick(OrderModel order);
     }
 }

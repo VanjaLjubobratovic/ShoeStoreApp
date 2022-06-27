@@ -22,6 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="0.3"
+            android:scaleType="centerInside"
             app:srcCompat="@drawable/bag_image" />
 
         <TextView

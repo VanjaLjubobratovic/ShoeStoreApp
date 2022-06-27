@@ -99,8 +99,6 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        checkPermissions();
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         database = FirebaseFirestore.getInstance();
 
@@ -343,12 +341,6 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
             return;
         }
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_REQUEST_CODE);
-            return;
-        }
     }
 
     @Override
@@ -362,14 +354,6 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
             } else {
                 Toast.makeText(getContext(), "Odbijeno dopuštenje za fine", Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == COARSE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("REQUEST", "onRequestPermissionsResult: ");
-                Toast.makeText(getContext(), "Dodijeljeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
-                showLocationOnMap();
-            } else {
-                Toast.makeText(getContext(), "Odbijeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -377,7 +361,8 @@ public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback 
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
         addMapMarkers();
-        showLocationOnMap();
+        checkPermissions();
+        //showLocationOnMap();
     }
 
     @Override

@@ -104,6 +104,13 @@ public class AdminMainFragment extends Fragment {
 
         ordersBtn.setOnClickListener(view1 ->  {
             //TODO: order management
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, AdminOrdersFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
+
         });
 
         complaintsBtn.setOnClickListener(view1 -> {
