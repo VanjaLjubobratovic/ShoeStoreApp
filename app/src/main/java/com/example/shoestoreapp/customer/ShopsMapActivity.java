@@ -3,6 +3,7 @@ package com.example.shoestoreapp.customer;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -49,7 +50,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -62,7 +65,7 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
     private static final int FINE_REQUEST_CODE = 10;
     private static final int COARSE_REQUEST_CODE = 20;
     private static final String TAG = "ShopsMapActivity";
-    GoogleMap mGoogleMap;
+    private GoogleMap mGoogleMap;
     private ClusterManager<ClusterMarker> mClusterManager;
     private MyClusterManagerRenderer mClusterManagerRenderer;
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
@@ -74,23 +77,11 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops_map);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
-            return;
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED) {
-            //TODO: deprecated
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, COARSE_REQUEST_CODE);
-            return;
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         database = FirebaseFirestore.getInstance();
         initGoogleMap(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
     }
 
@@ -120,23 +111,30 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
 
     @SuppressLint("MissingPermission")
     public void showLocationOnMap() {
-        mGoogleMap.setMyLocationEnabled(true);
-        LatLng myLocation = new LatLng(45.333781614474205, 14.425587816563203);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            //TODO: deprecated
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_REQUEST_CODE);
+        }
+        else {
+            mGoogleMap.setMyLocationEnabled(true);
+            LatLng myLocation = new LatLng(45.333781614474205, 14.425587816563203);
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),
-                                    10));
-                        }else{
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
-                                    10));
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),
+                                        10));
+                            } else {
+                                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
+                                        10));
+                            }
                         }
-                    }
-                });
+                    });
+        }
 
     }
 
@@ -193,14 +191,9 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
                 showLocationOnMap();
             } else {
                 Toast.makeText(this, "Odbijeno dopuštenje za fine", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == COARSE_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("REQUEST", "onRequestPermissionsResult: ");
-                Toast.makeText(this, "Dodijeljeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
-                showLocationOnMap();
-            } else {
-                Toast.makeText(this, "Odbijeno dopuštenje za coarse", Toast.LENGTH_SHORT).show();
+                LatLng myLocation = new LatLng(45.333781614474205, 14.425587816563203);
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
+                        10));
             }
         }
     }
