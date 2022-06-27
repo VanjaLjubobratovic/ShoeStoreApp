@@ -17,13 +17,14 @@ public class ItemModel implements Parcelable {
     private String image;
     private double price;
     private double rating;
+    private double ratingSum;
+    private double numberOfRatings;
     private Timestamp added;
     private ArrayList<Integer> sizes;
     private ArrayList<Integer> amounts;
     private boolean employeeOrderExpanded;
 
-//model and color are parsed from document name so we use separate function for that
-
+    //model and color are parsed from document name so we use separate function for that
 
     public ItemModel(String type, String image, double price, double rating, com.google.firebase.Timestamp added, ArrayList<Integer> sizes, ArrayList<Integer> amounts) {
         this.type = type;
@@ -55,6 +56,8 @@ public class ItemModel implements Parcelable {
         sizes = in.readArrayList(Integer.class.getClassLoader());
         amounts = in.readArrayList(Integer.class.getClassLoader());
         //added = in.readParcelable(Timestamp.class.getClassLoader());
+        numberOfRatings = in.readDouble();
+        ratingSum = in.readDouble();
     }
 
     public static final Creator<ItemModel> CREATOR = new Creator<ItemModel>() {
@@ -75,6 +78,22 @@ public class ItemModel implements Parcelable {
 
     public void setEmployeeOrderExpanded(boolean employeeOrderExpanded) {
         this.employeeOrderExpanded = employeeOrderExpanded;
+    }
+
+    public double getRatingSum() {
+        return ratingSum;
+    }
+
+    public void setRatingSum(double ratingSum) {
+        this.ratingSum = ratingSum;
+    }
+
+    public double getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void setNumberOfRatings(double numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
     }
 
     public String getModel() {
@@ -98,6 +117,7 @@ public class ItemModel implements Parcelable {
     }
 
     public double getRating() {
+        calculateRating();
         return rating;
     }
 
@@ -121,6 +141,14 @@ public class ItemModel implements Parcelable {
         String[] parts = modelColor.split("-");
         this.model = parts[0];
         this.color = parts[1];
+    }
+
+    public void calculateRating() {
+        if(this.ratingSum == 0 || this.numberOfRatings == 0) {
+            this.rating = 5;
+            return;
+        }
+        this.rating = this.ratingSum / this.numberOfRatings;
     }
   
       @Override
@@ -157,5 +185,7 @@ public class ItemModel implements Parcelable {
         parcel.writeDouble(rating);
         parcel.writeList(sizes);
         parcel.writeList(amounts);
+        parcel.writeDouble(numberOfRatings);
+        parcel.writeDouble(ratingSum);
     }
 }
