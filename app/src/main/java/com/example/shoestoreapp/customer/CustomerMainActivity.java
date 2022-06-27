@@ -308,4 +308,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                     }
                 });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        items.clear();
+        fetchItems();
+    }
 }

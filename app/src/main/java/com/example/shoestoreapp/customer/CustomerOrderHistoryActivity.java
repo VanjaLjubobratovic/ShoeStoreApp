@@ -430,5 +430,4 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         DocumentReference userRef = database.collection("users").document(user.getEmail());
         userRef.update("reviewedItems", FieldValue.arrayUnion(reviewedItem.toString()));
     }
-
 }
