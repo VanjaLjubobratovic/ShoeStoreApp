@@ -18,7 +18,7 @@
     <com.example.shoestoreapp.employee.MyGridView
         android:id="@+id/inventoryGridViewLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/pageTitle"
         android:horizontalSpacing="10dp"
         android:numColumns="2"

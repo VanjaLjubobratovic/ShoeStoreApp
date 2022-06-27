@@ -1,5 +1,7 @@
 package com.example.shoestoreapp.admin;
 
+import android.app.Activity;
+import android.app.Notification;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +18,10 @@ import android.view.ViewGroup;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.databinding.FragmentAdminMainBinding;
-import com.example.shoestoreapp.employee.ReceiptFragment;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class AdminMainFragment extends Fragment {
     private FragmentAdminMainBinding binding;

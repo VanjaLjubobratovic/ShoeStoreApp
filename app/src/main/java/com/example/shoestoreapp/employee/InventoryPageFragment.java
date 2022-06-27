@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +84,8 @@ public class InventoryPageFragment extends Fragment {
 
         //Determining whether fragment was opened from admin or employee screen
         //TODO: decide whether to show this or not
-        if(userRole.equals("admin")) {
+        if(userRole.equals("admin") && getActivity().getClass().getSimpleName().equals("AdminMainActivity")) {
+            Log.d("INVENTORY-CLICK", "Clicking not allowed ");
             //ft.replace(R.id.adminActivityLayout, fragment);
             return;
         } else ft.replace(R.id.employeeActivityLayout, fragment);

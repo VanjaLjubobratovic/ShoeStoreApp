@@ -188,8 +188,8 @@ public class BusinessStatsFragment extends Fragment {
                     if(task.isSuccessful()) {
                         for(DocumentSnapshot document : task.getResult()) {
                             ReceiptModel receipt = document.toObject(ReceiptModel.class);
-                            if (receipt == null)
-                                return;
+                            if (receipt == null || receipt.isAnnulled())
+                                continue;
 
                             receipt.setReceiptID(document.getId());
                             fetchItems(document.getId(), receipt);

@@ -143,6 +143,13 @@ public class ItemManagementFragment extends Fragment {
 
         inventoryBtn.setOnClickListener(view12 -> {
             Toast.makeText(getContext(), "pregled", Toast.LENGTH_SHORT).show();
+            try {
+                Intent intent = getActivity().getIntent();
+                intent.putExtra("storeID", "webshop");
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Error getting intent", Toast.LENGTH_SHORT).show();
+            }
+
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setReorderingAllowed(true);
@@ -224,7 +231,8 @@ public class ItemManagementFragment extends Fragment {
         AtomicBoolean itemExists = new AtomicBoolean(false);
 
         //TODO: clean strings (toLower, strip...)
-        ItemModel item = new ItemModel(type, colorSpinner.getSelectedItem() + ".jpg", Double.parseDouble(priceEt.getText().toString()),
+        ItemModel item = new ItemModel(type, modelSpinner.getSelectedItem().toString() + colorSpinner.getSelectedItem().toString() + ".jpg",
+                Double.parseDouble(priceEt.getText().toString()),
                 5, Timestamp.now(), sizes, amounts);
         //TODO: fix this
         item.parseModelColor(modelSpinner.getSelectedItem() + "-" + colorSpinner.getSelectedItem());
@@ -254,6 +262,8 @@ public class ItemManagementFragment extends Fragment {
         newItem.put("type", item.getType());
         newItem.put("model", item.getModel());
         newItem.put("color", item.getColor());
+        newItem.put("numberOfRatings", item.getNumberOfRatings());
+        newItem.put("ratingSum", item.getRatingSum());
 
         //check if item exists (by document ID), if not -> add it
         database.collection("/locations/" + storeID + "/items").document(item.toString())

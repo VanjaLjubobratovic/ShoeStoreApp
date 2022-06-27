@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -229,6 +230,27 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                         Log.d("addReviewToDB", "onFailure: ");
                     }
                 });
+
+        adjustReviewSums(review.getRating());
+    }
+
+    private void adjustReviewSums(Double rating) {
+        DocumentReference itemRef = database.document("/locations/webshop/items/" + reviewedItem);
+        itemRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                ItemModel item = task.getResult().toObject(ItemModel.class);
+                if(item == null)
+                    return;
+
+                WriteBatch batch = database.batch();
+                batch.update(itemRef, "numberOfRatings", item.getNumberOfRatings() + 1);
+                batch.update(itemRef, "ratingSum", item.getRatingSum() + rating);
+
+                batch.commit().addOnCompleteListener(task1 -> {
+                    Toast.makeText(this, "Recenzija uspješno dodana", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
 
@@ -468,5 +490,4 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         DocumentReference userRef = database.collection("users").document(user.getEmail());
         userRef.update("reviewedItems", FieldValue.arrayUnion(reviewedItem.toString()));
     }
-
 }

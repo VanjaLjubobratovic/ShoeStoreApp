@@ -61,6 +61,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
     implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.6'
+    implementation 'com.android.volley:volley:1.2.1'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
