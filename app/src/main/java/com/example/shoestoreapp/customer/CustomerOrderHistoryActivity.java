@@ -12,6 +12,7 @@ import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.StoreModel;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
 import com.example.shoestoreapp.employee.OrderModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -354,16 +355,45 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
     @Override
     public void onConfirmClick(OrderModel confOrder) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Potvrda");
-        builder.setMessage("Jeste li sigurni da želite potvrditi dostavu nardudžbe " + confOrder.getOrderCode());
-        builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+        OrderModel clickedOrder = confOrder;
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Unesite broj narudžbe");
+        final View customLayout = getLayoutInflater().inflate(R.layout.custom_dialog_layout,null);
+        builder.setView(customLayout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                confirmOrder(confOrder);
+            public void onClick(DialogInterface dialog, int which) {
+                EditText editText = customLayout.findViewById(R.id.editText);
+                String m_Text = editText.getText().toString();
+                if (m_Text.equals(clickedOrder.getOrderCode().toString())) {
+                    confirmOrder(clickedOrder);
+                    android.app.AlertDialog.Builder okAlert = new android.app.AlertDialog.Builder(CustomerOrderHistoryActivity.this);
+                    okAlert.setMessage("Uspješno potvrđena dostava narudžbe " + clickedOrder.getOrderCode().toString());
+                    okAlert.setPositiveButton("OK", null);
+                    okAlert.show();
+                }
+                else{
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CustomerOrderHistoryActivity.this);
+                    builder.setMessage("Krivi unos!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                }
+                            });
+                    android.app.AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         });
-        builder.setNegativeButton("Odustani", null);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         builder.show();
     }
 
