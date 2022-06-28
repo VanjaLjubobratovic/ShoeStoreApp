@@ -246,6 +246,7 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
         Random rand = new Random();
         Map<String, Object> newOrder = new HashMap<>();
         newOrder.put("dateCreated", Timestamp.now());
+        newOrder.put("dateCreated", Timestamp.now());
         newOrder.put("inStore", true);
         newOrder.put("orderCode", Math.abs(rand.nextInt()));
         newOrder.put("pickedUp", false);
