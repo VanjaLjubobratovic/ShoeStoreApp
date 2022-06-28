@@ -1,62 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".admin.AdminOrdersFragment" >
-
-    <TextView
-        android:id="@+id/adminOrdersLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Trenutne nardudžbe"
-        android:textSize="18dp"
-        android:textColor="@color/black"
-        android:layout_margin="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/adminOrdersRecycler"
+    android:layout_marginBottom="20dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adminOrdersLabel" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/noOrdersLayout"
-        android:visibility="gone"
-        android:layout_width="409dp"
-        android:layout_height="486dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adminOrdersRecycler">
+        android:layout_height="match_parent"
+        tools:context=".admin.AdminOrdersFragment" >
 
         <TextView
-            android:id="@+id/adminNoOrdersText"
+            android:id="@+id/adminOrdersLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nema trenutnih narudžbi"
+            android:text="Trenutne nardudžbe"
             android:textSize="18dp"
             android:textColor="@color/black"
-            android:layout_marginTop="50dp"
+            android:layout_margin="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_sad_smiley"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/adminOrdersRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/adminNoOrdersText" />
+            app:layout_constraintTop_toBottomOf="@+id/adminOrdersLabel" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noOrdersLayout"
+            android:visibility="gone"
+            android:layout_width="409dp"
+            android:layout_height="486dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/adminOrdersRecycler">
+
+            <TextView
+                android:id="@+id/adminNoOrdersText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nema trenutnih narudžbi"
+                android:textSize="18dp"
+                android:textColor="@color/black"
+                android:layout_marginTop="50dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_sad_smiley"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/adminNoOrdersText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

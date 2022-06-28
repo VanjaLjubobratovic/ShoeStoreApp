@@ -60,8 +60,12 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
             holder.orderStatus.setText("Delivered");
             holder.orderStatus.setTextColor(Color.GREEN);
         }
+        else if(currentOrder.isInStore()){
+            holder.orderStatus.setText("Shipped");
+            holder.orderStatus.setTextColor(Color.rgb(200,200,50));
+        }
         else{
-            holder.orderStatus.setText("Not delivered");
+            holder.orderStatus.setText("Not yet shipped");
             holder.orderStatus.setTextColor(Color.RED);
         }
         Integer tmpPrice = (int)currentOrder.getTotal();
@@ -77,7 +81,7 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         boolean isVisible = currentOrder.isExpanded();
         holder.expandedLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
 
-        if(currentOrder.isPickedUp()){
+        if(currentOrder.isPickedUp() || !currentOrder.isInStore()){
             holder.confirmDelivery.setClickable(false);
             holder.confirmDelivery.setAlpha(0.5f);
         }

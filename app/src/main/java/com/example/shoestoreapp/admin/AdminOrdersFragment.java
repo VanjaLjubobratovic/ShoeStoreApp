@@ -47,6 +47,7 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
     private RecyclerView orderRecycler;
     private CollectionReference ordersRef;
     private View view;
+    private boolean init = true;
     private ArrayList<String> locationList = new ArrayList<>();
     public AdminOrdersFragment() {
         // Required empty public constructor
@@ -136,6 +137,17 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onResume() {
+        if(!init){
+            ordersList.clear();
+            fetchOrders();
+            orderRecycler.getAdapter().notifyDataSetChanged();
+        }
+        init = false;
+        super.onResume();
     }
 
     @Override
