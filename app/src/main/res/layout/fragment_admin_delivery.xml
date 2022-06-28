@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frameLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".admin.AdminDeliveryFragment">
+
+    <ProgressBar
+        android:id="@+id/adminDeliveryProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationZ="90dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/manualLayout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+    <ImageButton
+        android:id="@+id/adminDeliveryBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_baseline_close_24"
+        android:layout_margin="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="40dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/adminDeliveryModelEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Model"
+                android:inputType="number" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Boja:"
+                android:textSize="17sp" />
+
+            <Spinner
+                android:id="@+id/adminDeliveryColorDropdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/adminDeliveryAddBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dodaj"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:icon="@drawable/addicon"
+            app:iconSize="40dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/adminDeliveryItemImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/running_shoe_icon"/>
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/adminSpecificItemLayout"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/adminDelLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:background="@color/lightGrey"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manualLayout" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/adminDeliveryRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adminDelLine" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/adminDeliveryConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adminDeliveryRecycler"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:text="POTVRDI"
+        app:icon="@drawable/confirmicon"
+        app:iconSize="40dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+

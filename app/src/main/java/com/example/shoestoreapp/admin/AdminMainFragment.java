@@ -108,7 +108,7 @@ public class AdminMainFragment extends Fragment {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setReorderingAllowed(true);
 
-            fragmentTransaction.replace(R.id.adminActivityLayout, AdminOrdersFragment.class, null);
+            fragmentTransaction.replace(R.id.adminActivityLayout, AdminDeliveryFragment.class, null);
             fragmentTransaction.addToBackStack("name").commit();
 
         });
