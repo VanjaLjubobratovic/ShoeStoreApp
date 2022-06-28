@@ -220,8 +220,11 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         @Override
         public void onActivityResult(ActivityResult result) {
             Intent intent = result.getData();
-            user = intent.getParcelableExtra("userResult");
-
+            try {
+                user = intent.getParcelableExtra("userResult");
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
     });
 
