@@ -32,8 +32,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Username"
-            android:textSize="16dp"/>
+            android:text="@string/username"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/textViewEmail"
@@ -42,8 +42,8 @@
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
             android:gravity="top"
-            android:text="email"
-            android:textSize="16dp"/>
+            android:text="@string/email"
+            android:textSize="16sp"/>
     </LinearLayout>
 
 

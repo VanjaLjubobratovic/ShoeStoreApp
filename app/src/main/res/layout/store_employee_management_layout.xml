@@ -13,7 +13,7 @@
             android:id="@+id/storeEmployeesTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zaposlenici-StoreID"
+            android:text="@string/zaposlenici_storeid"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>

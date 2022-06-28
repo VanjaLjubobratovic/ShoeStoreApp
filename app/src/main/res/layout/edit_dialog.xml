@@ -17,7 +17,7 @@
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Message text"
+        android:text="@string/message_text"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_margin="10dp"/>
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Veličina"
+            android:text="@string/veli_ina"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginRight="10dp"/>
@@ -48,7 +48,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Razlog"
+            android:text="@string/razlog"
             android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginRight="10dp"/>
@@ -62,7 +62,7 @@
 
     <EditText
         android:id="@+id/additionalInfo"
-        android:hint="Dodatni opis (opcionalno)"
+        android:hint="@string/dodatni_opis_opcionalno"
         android:inputType="textMultiLine"
         android:minLines="3"
         android:maxLines="10"
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:text="Potvrdi"
+            android:text="@string/potvrdi"
             app:icon="@drawable/ic_baseline_check_24"/>
     </LinearLayout>
 

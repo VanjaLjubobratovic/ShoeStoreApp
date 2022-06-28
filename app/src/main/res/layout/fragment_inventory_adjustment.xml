@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
-                android:text="Model-boja"
+                android:text="@string/model_boja"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
-                android:text="Cijena: "
+                android:text="@string/cijena_space"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:gravity="center"
-            android:text="Dodaj 1\npredmet"
+            android:text="@string/dodaj_1_npredmet"
             app:icon="@drawable/ic_baseline_add_circle_outline_24"
             app:iconSize="30dp"/>
 
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:gravity="center"
-            android:text="Ukloni 1\npredmet"
+            android:text="@string/ukloni_1_npredmet"
             app:icon="@drawable/ic_baseline_remove_circle_outline_24"
             app:iconSize="30dp"/>
     </LinearLayout>
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
-        android:text="Resetiraj\nkoličine"
+        android:text="@string/resetiraj_nkoli_ine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout9"

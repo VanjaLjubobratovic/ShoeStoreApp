@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nova trgovina "
+        android:text="@string/nova_trgovina"
         android:textStyle="bold"
         android:textSize="18sp"
         android:id="@+id/storeRelocationTitle"
@@ -28,7 +28,7 @@
         android:id="@+id/newStoreCoordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Koordinate: "
+        android:text="@string/koordinate"
         android:layout_marginHorizontal="20dp"
         android:textSize="17sp"
         android:textStyle="bold"
@@ -41,7 +41,7 @@
             android:id="@+id/newStoreType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tip trgovine: "
+            android:text="@string/tip_trgovine"
             android:layout_marginHorizontal="20dp"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -63,7 +63,7 @@
             android:id="@+id/addressToSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Unesite novu adresu"
+            android:hint="@string/unesite_novu_adresu"
             android:layout_marginRight="10dp"
             android:layout_weight="0.9"/>
 
@@ -79,7 +79,7 @@
         android:id="@+id/newStoreID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Identifikator trgovine"
+        android:hint="@string/identifikator_trgovine"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="30dp"/>
 
@@ -87,7 +87,7 @@
         android:id="@+id/relocationConfirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Potvrdi"
+        android:text="@string/potvrdi"
         android:layout_gravity="center_horizontal"
         app:icon="@drawable/ic_baseline_check_24"/>
 

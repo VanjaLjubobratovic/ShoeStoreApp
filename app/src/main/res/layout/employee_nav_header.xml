@@ -19,13 +19,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="shoeStoreApp"
+        android:text="@string/shoestoreapp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/employeeNavEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="shoestoreinfo@gmail.com" />
+        android:text="@string/shoestoreinfo_gmail_com" />
 
 </LinearLayout>

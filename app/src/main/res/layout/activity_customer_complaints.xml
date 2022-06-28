@@ -2,26 +2,27 @@
 <ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".customer.CustomerComplaintsActivity">
 
     <TextView
         android:layout_marginTop="25dp"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textColor="@color/black"
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vaše žalbe"
+        android:text="@string/vasezalbe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
+        android:contentDescription="@string/back"
         android:id="@+id/customerComplaintsBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

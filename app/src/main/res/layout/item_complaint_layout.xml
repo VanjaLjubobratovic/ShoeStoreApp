@@ -9,9 +9,9 @@
         android:id="@+id/itemComplaintModelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pritužba na"
+        android:text="@string/pritu_ba_na"
         android:layout_margin="10dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,9 +22,9 @@
         android:id="@+id/itemComplaintTypeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vrsta pritužbe"
+        android:text="@string/vrsta_pritu_be"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintModelTextView"
         android:layout_marginTop="20dp"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
-        android:text="Želim novi artikl"
+        android:text="@string/elim_novi_artikl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintCustomReasonEditText" />
 
@@ -55,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:text="Pritužba"
+        android:text="@string/pritu_ba"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintNewItemCheckbox" />
 
@@ -76,7 +76,7 @@
         android:lines="8"
         android:maxLines="15"
         android:minLines="7"
-        android:hint="Opis problema"
+        android:hint="@string/opis_problema"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintLabel" />
 
@@ -85,7 +85,7 @@
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pošalji"
+        android:text="@string/po_alji"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintEditText" />
 
@@ -94,7 +94,7 @@
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Odustani"
+        android:text="@string/odustani"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintEditText" />
 
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Unesite vlastiti razlog"
+        android:hint="@string/unesite_vlastiti_razlog"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemComplaintTypeSpinner" />
@@ -115,7 +115,7 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="@string/textview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/itemComplaintModelTextView"
         app:layout_constraintTop_toTopOf="parent" />

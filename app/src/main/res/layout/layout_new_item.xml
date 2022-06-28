@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Novi proizvod"
+            android:text="@string/novi_proizvod"
             android:textStyle="bold"
             android:textSize="19sp"
             android:layout_marginBottom="20dp"/>
@@ -40,7 +40,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Model: "
+                android:text="@string/model_space"
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:layout_marginRight="10dp"/>
@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Boja: "
+                android:text="@string/boja"
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:layout_marginRight="10dp"/>
@@ -79,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cijena: "
+                android:text="@string/cijena_space"
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:layout_marginRight="10dp"/>
@@ -90,7 +90,7 @@
                 android:inputType="numberDecimal"
                 android:textStyle="bold"
                 android:textSize="17sp"
-                android:hint="0.00kn"/>
+                android:hint="@string/_0_00kn"/>
         </LinearLayout>
 
         <ImageView
@@ -102,7 +102,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(Pritisnite iznad za dodavanje slike)"
+            android:text="@string/pritisnite_iznad_za_dodavanje_slike"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp"/>
 
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Potvrdi"
+            android:text="@string/potvrdi"
             android:layout_gravity="center_horizontal"
             app:icon="@drawable/ic_baseline_check_24" />
     </LinearLayout>

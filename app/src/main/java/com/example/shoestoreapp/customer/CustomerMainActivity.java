@@ -133,7 +133,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
                 userEmail = findViewById(R.id.textViewEmail);
                 userEmail.setText(user.getEmail());
                 userProfilePic = findViewById(R.id.imageViewProfile);
-                if(ContextCompat.checkSelfPermission(CustomerMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                if(ContextCompat.checkSelfPermission(CustomerMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_GRANTED){
                     if(user.getProfileImage() != null){
                         File file = new File(user.getProfileImage());

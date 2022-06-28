@@ -30,23 +30,23 @@
             android:id="@+id/orderedItemModelColorTextView"
             android:layout_width="0dp"
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.3"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Model name and color" />
+            android:text="@string/model_name_and_color" />
 
         <TextView
             android:id="@+id/orderedItemSizeAmountTextView"
             android:layout_width="0dp"
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.2"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Size and amount" />
+            android:text="@string/size_and_amount" />
 
         <TextView
             android:id="@+id/orderedItemPriceTextView"
@@ -55,9 +55,9 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="0.2"
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Price" />
+            android:text="@string/price_single_order" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -65,9 +65,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Ocjeni proizvod"
+        android:text="@string/ocjeni_proizvod"
         android:layout_marginLeft="10dp"
-        android:textSize="12dp"
+        android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
 
@@ -76,8 +76,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textSize="12dp"
-        android:text="Podnesi pritužbu"
+        android:textSize="12sp"
+        android:text="@string/podnesi_pritu_bu"
         android:layout_marginRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />

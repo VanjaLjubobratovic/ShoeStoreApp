@@ -12,9 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="OrderCode"
+        android:text="@string/ordercode"
         android:textColor="@color/black"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,8 +23,8 @@
         android:id="@+id/adminComplaintItemModel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="itemModel"
-        android:textSize="18dp"
+        android:text="@string/itemmodel"
+        android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
         android:id="@+id/adminComplaintItemReason"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ComplaintType"
+        android:text="@string/complainttype"
         android:layout_marginLeft="10dp"
         android:textSize="18sp"
         android:textColor="@color/black"
@@ -51,9 +51,9 @@
         android:maxLines="10"
         android:minLines="5"
         android:padding="10dp"
-        android:text="Coplaint"
+        android:text="@string/coplaint"
         android:textColor="@color/black"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/adminComplaintItemReason" />
 
@@ -61,10 +61,10 @@
         android:id="@+id/adminComplaintResend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:layout_margin="10dp"
         android:textColor="@color/black"
-        android:text="Kupac želi novi artikl"
+        android:text="@string/kupac_eli_novi_artikl"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/adminComplaintItemComplaint" />
 
@@ -80,7 +80,7 @@
             android:id="@+id/adminConfirmResend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Potvrdi"
+            android:text="@string/potvrdi"
             android:layout_marginLeft="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:text="Odbij"
+            android:text="@string/odbij"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -107,7 +107,7 @@
             android:id="@+id/adminMarkAsRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Označi kao pročitano"
+            android:text="@string/ozna_i_kao_pro_itano"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

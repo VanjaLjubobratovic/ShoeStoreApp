@@ -37,14 +37,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:hint="Model"
+                android:hint="@string/model"
                 android:inputType="number" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Boja:"
+                android:text="@string/boja"
                 android:textSize="17sp" />
 
             <Spinner
@@ -59,7 +59,7 @@
             android:id="@+id/addBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dodaj"
+            android:text="@string/dodaj"
             android:textSize="16sp"
             android:textStyle="bold"
             app:icon="@drawable/addicon"

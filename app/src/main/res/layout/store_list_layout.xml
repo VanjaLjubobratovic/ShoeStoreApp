@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Popis trgovina"
+            android:text="@string/popis_trgovina"
             android:textStyle="bold"
             android:textSize="18sp"
             android:layout_marginHorizontal="10dp"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Nova trgovina"
+            android:text="@string/nova_trgovina"
             app:icon="@drawable/ic_baseline_add_business_24"
             app:iconSize="30dp"/>
     </LinearLayout>

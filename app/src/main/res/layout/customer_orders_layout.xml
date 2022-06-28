@@ -27,7 +27,7 @@
         android:layout_marginTop="15dp"
         android:text="@string/your_purchase_history"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

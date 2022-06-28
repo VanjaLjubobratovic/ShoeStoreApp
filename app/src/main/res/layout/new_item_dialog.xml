@@ -11,13 +11,13 @@
         android:id="@+id/footwearCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Artikl je obuća"/>
+        android:text="@string/artikl_je_obu_a"/>
 
     <TextView
         android:id="@+id/sizesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Definirajte koje veličine artikla postoje"
+        android:text="@string/definirajte_koje_veli_ine_artikla_postoje"
         android:textSize="15sp"
         android:textStyle="bold"/>
 
@@ -25,5 +25,5 @@
         android:id="@+id/sizesEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="1, 2, 3, 4 (BROJEVI odvojeni zarezom)"/>
+        android:hint="@string/_1_2_3_4_brojevi_odvojeni_zarezom"/>
 </LinearLayout>

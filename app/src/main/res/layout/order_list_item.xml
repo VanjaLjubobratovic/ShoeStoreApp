@@ -44,7 +44,7 @@
                     android:layout_column="1"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Order time"
+                    android:text="@string/order_time"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -55,7 +55,7 @@
                     android:layout_column="2"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Employee"
+                    android:text="@string/employee"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -66,7 +66,7 @@
                     android:layout_column="3"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Price"
+                    android:text="@string/price_cap"
                     android:textColor="@color/black" />
 
             </TableRow>
@@ -101,7 +101,7 @@
                     android:background="@drawable/image_border"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Model"
+                    android:text="@string/model"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -111,7 +111,7 @@
                     android:background="@drawable/image_border"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Color"
+                    android:text="@string/color_cap"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -121,7 +121,7 @@
                     android:background="@drawable/image_border"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Size"
+                    android:text="@string/size_cap"
                     android:textColor="@color/black" />
 
                 <TextView
@@ -130,7 +130,7 @@
                     android:layout_column="4"
                     android:background="@drawable/image_border"
                     android:gravity="center"
-                    android:text="Amount"
+                    android:text="@string/amount"
                     android:padding="1dp"
                     android:textColor="@color/black" />
 
@@ -141,7 +141,7 @@
                     android:background="@drawable/image_border"
                     android:gravity="center"
                     android:padding="1dp"
-                    android:text="Item Price"
+                    android:text="@string/item_price"
                     android:textColor="@color/black" />
 
             </TableRow>

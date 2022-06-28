@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Model: "
+                        android:text="@string/model_space"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="10dp"/>
@@ -58,7 +58,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Boja: "
+                        android:text="@string/boja"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="10dp"/>
@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Broj: "
+                        android:text="@string/broj"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="10dp"/>
@@ -110,7 +110,7 @@
                 android:id="@+id/addBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dodaj"
+                android:text="@string/dodaj"
                 android:textStyle="bold"
                 app:icon="@drawable/addicon"
                 app:iconGravity="textStart"
@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="Cijena:\n"
+                android:text="@string/cijena_n"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:text="Pregled računa"
+            android:text="@string/pregled_ra_una"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -186,7 +186,7 @@
             android:id="@+id/totalTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UKUPNO: "
+            android:text="@string/ukupno_caps"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -198,7 +198,7 @@
             android:id="@+id/confirmBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Potvrdi"
+            android:text="@string/potvrdi"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_margin="20dp"

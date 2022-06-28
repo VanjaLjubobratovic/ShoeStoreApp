@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.32"
         android:id="@+id/dividerText"
-        android:text="Or connect with"
+        android:text="@string/or_connect_with"
         android:textAllCaps="true"
         android:gravity="center"
         android:textColor="@android:color/darker_gray"/>

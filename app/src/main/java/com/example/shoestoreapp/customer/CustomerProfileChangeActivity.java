@@ -166,7 +166,7 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         profilePhone = findViewById(R.id.editTxtProfilePhone);
         profilePhone.setText(phone);
         profilePicture = findViewById(R.id.imageViewProfilePicChange);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED){
             if(user.getProfileImage() != null){
                 File file = new File(user.getProfileImage());

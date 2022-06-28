@@ -10,8 +10,8 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Potvrda nardudžbe"
-        android:textSize="20dp"
+        android:text="@string/potvrda_nardudze"
+        android:textSize="20sp"
         android:textColor="@color/black"
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,8 +21,8 @@
         android:id="@+id/paymentMethodLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Odaberite način plaćanja:"
-        android:textSize="18dp"
+        android:text="@string/odaberite_nacin_placanja"
+        android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_margin="20dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,13 +42,13 @@
             android:id="@+id/paymentPickupRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Plaćanje pouzećem" />
+            android:text="@string/placanje_pouzecem" />
 
         <RadioButton
             android:id="@+id/paymentGoogleRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GooglePay"
+            android:text="@string/googlepay"
             android:clickable="false"
             android:alpha="0.5"/>
     </RadioGroup>
@@ -65,17 +65,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="test"/>
+            android:text="@string/test"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/deliveryMethodLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Odaberite način dostave"
+        android:text="@string/odaberite_nacin_dostave"
         android:layout_margin="20dp"
         android:textColor="@color/black"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/googlePayLayout" />
 
@@ -104,9 +104,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="Odaberite dućan u kojem želite preuzeti"
+            android:text="@string/odaberite_ducan_u"
             android:textColor="@color/black"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <Spinner
             android:id="@+id/deliveryLocationSpinner"
@@ -135,9 +135,9 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="Provjerite adresu dostave"
+            android:text="@string/provjerite_adresu_dostave"
             android:textColor="@color/black"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/deliveryPostalEdit"
@@ -147,7 +147,7 @@
             app:layout_constraintTop_toBottomOf="@id/deliveryAddressLabel"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:hint="Poštanski broj"/>
+            android:hint="@string/postanski_broj"/>
 
         <EditText
             android:id="@+id/deliveryCityEdit"
@@ -157,7 +157,7 @@
             app:layout_constraintTop_toBottomOf="@id/deliveryPostalEdit"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:hint="Grad"/>
+            android:hint="@string/grad"/>
 
         <EditText
             android:id="@+id/deliveryAddressEdit"
@@ -167,7 +167,7 @@
             app:layout_constraintTop_toBottomOf="@id/deliveryCityEdit"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:hint="Adresa"/>
+            android:hint="@string/adresa"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -175,9 +175,9 @@
         android:id="@+id/purchaseTotalTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ukupno"
+        android:text="@string/ukupno"
         android:layout_margin="20dp"
-        android:textSize="22dp"
+        android:textSize="22sp"
         android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/purchaseDeliveryLayout" />
@@ -186,7 +186,7 @@
         android:id="@+id/paymentCancelButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Odustani"
+        android:text="@string/odustani"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="25dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -196,7 +196,7 @@
         android:id="@+id/paymentConfirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Potvrdi"
+        android:text="@string/potvrdi"
         android:layout_marginRight="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/paymentCancelButton" />

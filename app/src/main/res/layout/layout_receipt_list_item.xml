@@ -26,7 +26,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ID računa: "
+                android:text="@string/id_ra_una"
                 android:textSize="16sp"/>
 
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Iznos: "
+                android:text="@string/iznos"
                 android:textSize="16sp"/>
 
             <TextView
@@ -42,7 +42,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vrijeme: "
+                android:text="@string/vrijeme"
                 android:textSize="16sp"/>
         </LinearLayout>
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:text="Popis artikala:"/>
+            android:text="@string/popis_artikala"/>
 
     </LinearLayout>
 
@@ -73,7 +73,7 @@
             android:id="@+id/editButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uredi"
+            android:text="@string/uredi"
             android:textStyle="bold"
             android:layout_margin="10dp"/>
 
@@ -81,7 +81,7 @@
             android:id="@+id/annulButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Storniraj"
+            android:text="@string/storniraj"
             android:textStyle="bold"
             android:layout_margin="10dp"/>
     </LinearLayout>

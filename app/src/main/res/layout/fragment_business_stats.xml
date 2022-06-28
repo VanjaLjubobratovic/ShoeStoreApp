@@ -18,7 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="Poslovne statistike"
+                android:text="@string/poslovne_statistike"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="Trgovina"
+                        android:text="@string/trgovina_stats"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="Period"
+                        android:text="@string/period"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -86,7 +86,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:text="Period"
+                        android:text="@string/period"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -94,7 +94,7 @@
                         android:id="@+id/statsDateButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Datum" />
+                        android:text="@string/datum" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="Ukupni promet: "
+                android:text="@string/ukupni_promet"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

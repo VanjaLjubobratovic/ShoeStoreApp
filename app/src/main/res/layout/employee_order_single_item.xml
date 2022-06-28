@@ -29,24 +29,24 @@
             android:id="@+id/employeeOrderItemModelColorTextView"
             android:layout_width="0dp"
             android:textColor="@color/black"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.3"
             android:gravity="center_horizontal|center_vertical"
-            android:text="Model name and color"
+            android:text="@string/model_name_and_color"
             android:layout_marginLeft="10dp"/>
 
         <TextView
             android:id="@+id/employeeOrderItemSizeTextView"
             android:textColor="@color/black"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:gravity="center_horizontal|center_vertical"
             android:layout_gravity="center_vertical"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
-            android:text="Size and amount" />
+            android:text="@string/size_and_amount" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

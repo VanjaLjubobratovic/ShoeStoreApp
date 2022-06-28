@@ -27,7 +27,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginRight="10dp"
-                android:text="Upravljanje\nradnicima"
+                android:text="@string/upravljanje_nradnicima"
                 app:icon="@drawable/ic_baseline_people_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -37,7 +37,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginLeft="10dp"
-                android:text="Upravljanje\ntrgovinama"
+                android:text="@string/upravljanje_ntrgovinama"
                 app:icon="@drawable/ic_baseline_store_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -54,7 +54,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginRight="10dp"
-                android:text="Upravljanje\nproizvodima"
+                android:text="@string/upravljanje_nproizvodima"
                 app:icon="@drawable/ic_baseline_checkroom_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -64,7 +64,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginLeft="10dp"
-                android:text="Statistike\nPoslovanja"
+                android:text="@string/statistike_nposlovanja"
                 app:icon="@drawable/ic_baseline_query_stats_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -80,7 +80,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginRight="10dp"
-                android:text="Upravljanje\nnarudžbama"
+                android:text="@string/upravljanje_nnarud_bama"
                 app:icon="@drawable/ic_baseline_shopping_bag_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -90,7 +90,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginLeft="10dp"
-                android:text="Upravljanje\npritužbama"
+                android:text="@string/upravljanje_npritu_bama"
                 app:icon="@drawable/ic_baseline_sentiment_dissatisfied_24"
                 app:iconGravity="top"
                 app:iconSize="40dp" />
@@ -107,7 +107,7 @@
                 android:layout_width="170dp"
                 android:layout_height="110dp"
                 android:layout_marginRight="10dp"
-                android:text="Upravljanje\nDostavama"
+                android:text="@string/upravljanje_ndostavama"
                 app:icon="@drawable/truckicon"
                 app:iconGravity="top"
                 app:iconSize="40dp" />

@@ -14,9 +14,9 @@
             android:id="@+id/adminOrderCodeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Narudžba xyz"
+            android:text="@string/narud_ba_xyz"
             android:textColor="@color/black"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:layout_margin="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,8 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:text="Kupac"
-            android:textSize="16dp"
+            android:text="@string/kupac"
+            android:textSize="16sp"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/adminOrderCodeTextView" />
@@ -40,8 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:text="Adresa"
-            android:textSize="16dp"
+            android:text="@string/adresa"
+            android:textSize="16sp"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/adminOrderCustomerTextView" />
@@ -60,7 +60,7 @@
             android:id="@+id/adminOrderDenyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Odbij"
+            android:text="@string/odbij"
             android:layout_margin="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/adminSingleOrderRecycler" />
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Prihvati"
+            android:text="@string/prihvati"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/adminSingleOrderRecycler" />
     </androidx.constraintlayout.widget.ConstraintLayout>

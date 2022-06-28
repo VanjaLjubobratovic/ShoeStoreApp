@@ -27,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imageViewItem"
                 android:layout_centerHorizontal="true"
-                android:text="ItemName"
-                android:textSize="16dp"/>
+                android:text="@string/itemname"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/textViewItemPrice"
@@ -36,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textViewItemName"
                 android:layout_centerHorizontal="true"
-                android:text="Price"
-                android:textSize="16dp" />
+                android:text="@string/price_cap"
+                android:textSize="16sp" />
 
 
             <RatingBar

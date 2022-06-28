@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Model" />
+                android:text="@string/model" />
 
             <Spinner
                 android:id="@+id/inventoryModelSpinner"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Boja" />
+                android:text="@string/boja_inv" />
 
             <Spinner
                 android:id="@+id/inventoryColorSpinner"
@@ -79,7 +79,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Veličina" />
+                android:text="@string/veli_ina" />
+
 
             <Spinner
                 android:id="@+id/inventorySizeSpinner"

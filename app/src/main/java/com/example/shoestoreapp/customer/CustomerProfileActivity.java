@@ -171,7 +171,7 @@ public class CustomerProfileActivity extends AppCompatActivity {
         profilePhone = findViewById(R.id.textViewProfilePhone);
         profilePhone.setText(phone);
         profilePic = findViewById(R.id.imageViewProfilePic);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED){
             if(user.getProfileImage() != null){
                 File file = new File(user.getProfileImage());
@@ -179,12 +179,9 @@ public class CustomerProfileActivity extends AppCompatActivity {
                 Glide.with(CustomerProfileActivity.this).load(imageUri).into(profilePic);
             }
         }
-        else{
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, EXT_REQUEST_CODE);
-        }
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == EXT_REQUEST_CODE) {
@@ -197,5 +194,5 @@ public class CustomerProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Odbijeno dopuštenje za slike", Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    }*/
 }

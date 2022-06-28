@@ -29,21 +29,21 @@
                 android:id="@+id/storeID"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="StoreID"
+                android:text="@string/storeid"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/storeAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adresa"
+                android:text="@string/adresa"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/storeType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tip"
+                android:text="@string/tip"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
         </LinearLayout>
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
-        android:text="Zaposlenici: "
+        android:text="@string/zaposlenici"
         android:textStyle="bold"
         android:textSize="15sp"/>
 
@@ -67,14 +67,14 @@
             android:id="@+id/employeesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zaposlenici"
+            android:text="@string/zaposlenici_cap"
             android:layout_marginHorizontal="10dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/relocateButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Relociraj"
+            android:text="@string/relociraj"
             android:layout_marginHorizontal="10dp"/>
     </LinearLayout>
 

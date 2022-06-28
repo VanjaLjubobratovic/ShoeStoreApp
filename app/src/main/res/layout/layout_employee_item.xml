@@ -27,28 +27,28 @@
                 android:id="@+id/employeeName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ime-prezime"
+                android:text="@string/ime_prezime"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/employeeEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="email"
+                android:text="@string/email"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/employeeAddress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adresa"
+                android:text="@string/adresa"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
             <TextView
                 android:id="@+id/employeeStores"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trgovine: "
+                android:text="@string/trgovine"
                 android:textStyle="bold"
                 android:textSize="15sp"/>
         </LinearLayout>
@@ -62,14 +62,14 @@
             android:id="@+id/fireButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Otkaz"
+            android:text="@string/otkaz"
             android:layout_marginHorizontal="20dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/promoteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Unaprijedi"
+            android:text="@string/unaprijedi"
             android:layout_marginHorizontal="20dp"/>
     </LinearLayout>
 
