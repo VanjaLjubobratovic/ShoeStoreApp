@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,6 +89,8 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
 
         //TODO: rest of the code here
         checkUser();
+
+        subscribeToComplaints();
 
         getIntent().putExtra("userData", user);
         getSupportFragmentManager().beginTransaction()
@@ -143,6 +147,15 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
                 }
             }
         });
+    }
+
+    private void subscribeToComplaints() {
+        FirebaseMessaging.getInstance().subscribeToTopic("complaints")
+                .addOnCompleteListener(task -> {
+                   if(task.isSuccessful()) {
+                       Log.d("COMPLAINTS-SUB", "subscribeToComplaints: SUCCESS");
+                   } else Log.d("COMPLAINTS-SUB", "subscribeToComplaints: FAILURE");
+                });
     }
 
     private void checkUser() {

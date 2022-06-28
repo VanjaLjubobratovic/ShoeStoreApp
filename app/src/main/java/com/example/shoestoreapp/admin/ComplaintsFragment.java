@@ -24,6 +24,7 @@ import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.customer.ReviewModel;
 import com.example.shoestoreapp.customer.ReviewsRecycleViewAdapter;
 import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -111,6 +112,21 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
         complaintRecyclerView.setAdapter(adapter);
     }
 
+    private void sendComplaintReslovedNotification(String decision, ComplaintModel complaint) {
+        //TODO: maybe work with complaint ID instead of order code
+        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(
+                "/topics/" + complaint.getOrderCode() + "-status",
+                "Vaša žalba je razriješena.",
+                "Odlučeno je da je vaš prigovor " + decision
+                        + "\nza narudžbu: " + complaint.getOrderCode()
+                        + "\nPredmet: " + complaint.getModel() + " " + complaint.getSize(),
+                getContext(),
+                getActivity()
+        );
+
+        notificationsSender.SendNotifications();
+    }
+
     @Override
     public void OnComplaintResendClick(ComplaintModel complaint) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -126,9 +142,11 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
                 if(complaints.size() == 0){
                     noComplaints.setVisibility(View.VISIBLE);
                 }
+                sendComplaintReslovedNotification("PRIHVAĆEN", complaint);
             }
         });
         builder.show();
+
     }
 
     @Override
@@ -149,6 +167,8 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
                 if(complaints.size() == 0){
                     noComplaints.setVisibility(View.VISIBLE);
                 }
+
+                sendComplaintReslovedNotification("ODBIJEN", complaint);
             }
         });
         builder.show();
@@ -168,6 +188,7 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
                 if(complaints.size() == 0){
                     noComplaints.setVisibility(View.VISIBLE);
                 }
+                sendComplaintReslovedNotification("PRIHVAĆEN", complaint);
             }
         });
         builder.show();
