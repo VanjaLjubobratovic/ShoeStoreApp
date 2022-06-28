@@ -264,7 +264,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
         Spinner storeDropdown = customLayout.findViewById(R.id.storeSpinner);
 
         builder.setView(customLayout);
-        builder.setPositiveButton("Login", null)
+        builder.setPositiveButton("Ok", null)
                 .setNegativeButton("Cancel", null);
 
         AlertDialog dialog = builder.create();

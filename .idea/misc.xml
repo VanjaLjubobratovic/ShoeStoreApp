@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_admin_main.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_customer_purchase.xml" value="0.26766304347826086" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/activity_shopping_cart.xml" value="0.271286231884058" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/admin_complaints_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/admin_order_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/custom_dialog_layout.xml" value="0.26766304347826086" />
@@ -12,9 +13,14 @@
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/customer_order_single_order_list_item.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_order_list_item.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/employee_order_single_item.xml" value="0.26766304347826086" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_admin_delivery.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_admin_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_admin_orders.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_business_stats.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_complaints.xml" value="0.33" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/fragment_delivery.xml" value="0.271286231884058" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/layout_delivery_manual.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/nav_header.xml" value="0.271286231884058" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/order_list_item.xml" value="0.26766304347826086" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/layout/store_employee_management_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Karlo/Documents/GitHub/ShoeStoreApp/app/src/main/res/menu/drawer_menu.xml" value="0.36666666666666664" />

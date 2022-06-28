@@ -25,7 +25,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class AdminMainFragment extends Fragment {
     private FragmentAdminMainBinding binding;
-    private MaterialButton employeeBtn, storeBtn, itemsBtn, statsBtn, ordersBtn, complaintsBtn;
+    private MaterialButton employeeBtn, storeBtn, itemsBtn, statsBtn, ordersBtn, complaintsBtn, deliveryBtn;
 
     private FirebaseFirestore database;
     private UserModel user;
@@ -65,6 +65,7 @@ public class AdminMainFragment extends Fragment {
         statsBtn = binding.statistics;
         ordersBtn = binding.orderManagement;
         complaintsBtn = binding.complaints;
+        deliveryBtn = binding.deliveryManagement;
 
         employeeBtn.setOnClickListener(view1 -> {
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -121,6 +122,15 @@ public class AdminMainFragment extends Fragment {
             fragmentTransaction.replace(R.id.adminActivityLayout, ComplaintsFragment.class, null);
             fragmentTransaction.addToBackStack("name").commit();
             //TODO: complaints
+        });
+
+        deliveryBtn.setOnClickListener(view1 -> {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setReorderingAllowed(true);
+
+            fragmentTransaction.replace(R.id.adminActivityLayout, AdminDeliveryFragment.class, null);
+            fragmentTransaction.addToBackStack("name").commit();
         });
     }
 }

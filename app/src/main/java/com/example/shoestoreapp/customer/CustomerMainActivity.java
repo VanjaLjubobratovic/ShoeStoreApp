@@ -353,6 +353,7 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
     @Override
     protected void onResume() {
         super.onResume();
+        fetchUser();
         items.clear();
         fetchItems();
     }

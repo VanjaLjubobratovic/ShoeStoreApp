@@ -257,7 +257,6 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
         //TODO: make this ItemModelMethod
         for(ItemModel item : order.getItems()) {
             Map<String, Object> newReceiptItem = new HashMap<>();
-            newReceiptItem.put("added", item.getAdded());
             newReceiptItem.put("image", item.getImage());
             newReceiptItem.put("price", item.getPrice());
             newReceiptItem.put("rating", item.getRating());
