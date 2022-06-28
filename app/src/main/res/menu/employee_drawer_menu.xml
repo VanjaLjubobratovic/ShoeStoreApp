@@ -8,33 +8,33 @@
         <item
             android:id="@+id/nav_employee_profile"
             android:icon="@drawable/ic_my_profile"
-            android:title="My Profile" />
+            android:title="@string/myprofile" />
 
         <item
             android:id="@+id/nav_change_store"
             android:icon="@drawable/ic_store"
-            android:title="Change store" />
+            android:title="@string/change_store" />
 
         <item
             android:id="@+id/nav_admin_employee"
             android:icon="@drawable/ic_employee_switch"
-            android:title="Go to employee" />
+            android:title="@string/go_to_employee" />
 
         <item
             android:id="@+id/nav_employee_customer"
             android:icon="@drawable/ic_switch_customer"
-            android:title="Go to webshop" />
+            android:title="@string/go_to_webshop" />
 
         <item
             android:id="@+id/nav_leave_employee"
             android:icon="@drawable/ic_back_admin"
-            android:title="Back to admin" />
+            android:title="@string/back_to_admin" />
 
 
         <item
             android:id="@+id/nav_employee_logout"
             android:icon="@drawable/ic_logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
 
     </group>
 </menu>

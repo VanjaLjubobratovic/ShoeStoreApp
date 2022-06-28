@@ -34,7 +34,7 @@
                 android:layout_column="1"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Model"
+                android:text="@string/model"
                 android:textColor="@color/black" />
 
             <TextView
@@ -44,7 +44,7 @@
                 android:layout_column="2"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Color"
+                android:text="@string/color"
                 android:textColor="@color/black" />
 
             <TextView
@@ -54,7 +54,7 @@
                 android:layout_column="3"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Size"
+                android:text="@string/size"
                 android:textColor="@color/black" />
 
             <TextView
@@ -64,7 +64,7 @@
                 android:layout_column="4"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:text="Amount"
+                android:text="@string/Amount"
                 android:textColor="@color/black" />
 
             <TextView
@@ -74,7 +74,7 @@
                 android:layout_column="5"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="Price"
+                android:text="@string/price"
                 android:textColor="@color/black" />
 
         </LinearLayout>

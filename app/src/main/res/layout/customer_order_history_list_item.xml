@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:layout_margin="10dp"
+    android:background="@color/backGrey">
     <androidx.cardview.widget.CardView
         android:id="@+id/orderCardViewLayout"
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
                 android:textSize="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hello"></TextView>
+                android:text="Hello"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,9 +67,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_weight="0.35"
-                android:text="Potvrdi dostignuće"
+                android:text="@string/confirm_delivered"
                 android:textAllCaps="false"
-                android:textSize="14dp"></com.google.android.material.button.MaterialButton>
+                android:textSize="14dp"/>
         </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>

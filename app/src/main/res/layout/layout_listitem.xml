@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="1dp">
+    android:layout_gravity="center"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_centerInParent="true"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="2dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:gravity="center_horizontal">
 
             <ImageView
                 android:id="@+id/imageViewItem"
@@ -50,8 +49,5 @@
                 android:layout_centerHorizontal="true"
                 android:theme="@style/RatingBar" />
 
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-
-</RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

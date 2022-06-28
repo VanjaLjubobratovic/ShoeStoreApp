@@ -62,8 +62,8 @@ public class RegisterActivity extends AppCompatActivity {
                 if(!checkCredentials())
                     return;
 
-                loadingBar.setTitle("Creating new user...");
-                loadingBar.setMessage("Please wait while we create new user");
+                loadingBar.setTitle("Stvaram novog korisnika...");
+                loadingBar.setMessage("Molimo pričekajte, vaš račun se stvara.");
                 loadingBar.setCanceledOnTouchOutside(false);
                 loadingBar.show();
 
@@ -122,8 +122,8 @@ public class RegisterActivity extends AppCompatActivity {
                             if(task.isSuccessful()) {
                                 loadingBar.dismiss();
                                 AlertDialog.Builder successfulRegister = new AlertDialog.Builder(RegisterActivity.this);
-                                successfulRegister.setMessage("We have sent you an email to verify your email address. " +
-                                        "Please follow the instructions in the email before you can log in.");
+                                successfulRegister.setMessage("Poslali smo Vam email za potvrdu vaše email adrese. " +
+                                        "Molimo Vas, pratite upute u mailu da biste se mogli prijaviti u aplikaciju.");
                                 successfulRegister.setCancelable(true);
 
                                 successfulRegister.setPositiveButton(
@@ -163,19 +163,19 @@ public class RegisterActivity extends AppCompatActivity {
         if(email.isEmpty() || !email.contains("@") || !email.contains(".")) {
             showErrorCredentials(binding.registerEmail, "Email not valid");
         } else if(password.isEmpty() || password.length() < 7) {
-            showErrorCredentials(binding.registerPassword, "Password must be at least 8 characters long");
+            showErrorCredentials(binding.registerPassword, "Lozinka mota sadržavati bar 7 znakova");
         } else if(!password.equals(confirmPassword)) {
-            showErrorCredentials(binding.registerConfirmPassword, "Passwords must match");
+            showErrorCredentials(binding.registerConfirmPassword, "Lozinke se ne podudaraju");
         } else if(address.isEmpty()) {
-            showErrorCredentials(binding.registerAddress, "Please, input an address");
+            showErrorCredentials(binding.registerAddress, "Molimo Vas, unesite adresu.");
         } else if(zip.isEmpty() || zip.matches(".*[a-zA-Z]+.*")) {
-            showErrorCredentials(binding.registerZip, "Invalid postal number");
+            showErrorCredentials(binding.registerZip, "Unesite poštanski broj");
         } else if(city.isEmpty()) {
-            showErrorCredentials(binding.registerCity, "Invalid city");
+            showErrorCredentials(binding.registerCity, "Unesite grad");
         } else if(fullName.isEmpty()) {
-            showErrorCredentials(binding.registerName, "Invalid name");
+            showErrorCredentials(binding.registerName, "Unesite ime");
         } else if(phone.isEmpty() || phone.matches(".*[a-zA-Z]+.*")) {
-            showErrorCredentials(binding.registerPhoneNumber, "Invalid phone number");
+            showErrorCredentials(binding.registerPhoneNumber, "Nevažeći broj telefona");
         } else {
             user = new UserModel(address, email, fullName, "customer", city, phone, zip);
             return true;
