@@ -444,6 +444,17 @@ public class OrdersFragment extends Fragment {
 
     public void deleteOrderFromDB(OrderModel orderToDelete){
         DocumentReference orderRef = database.collection("/locations/" + storeID + "/orders").document(orderToDelete.getReceiptID());
+        CollectionReference delCol = orderRef.collection("/items");
+        delCol.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(DocumentSnapshot doc : task.getResult()){
+                    DocumentReference del = doc.getReference();
+                    del.delete();
+                }
+            }
+        });
+
         orderRef.delete();
     }
 
