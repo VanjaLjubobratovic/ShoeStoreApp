@@ -14,6 +14,7 @@ import com.example.shoestoreapp.StoreModel;
 import com.example.shoestoreapp.UserModel;
 import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
 import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -161,6 +163,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
                 builder.setPositiveButton("OK",null);
                 builder.show();
 
+                sendComplaintNotification();
+                subscribeToComplaintTopic();
                 flipper.setDisplayedChild(ORDER_MENU_SCREEN);
         });
 
@@ -207,6 +211,28 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         });
 
         fetchLocations();
+    }
+
+    private void subscribeToComplaintTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic(complaintOrderCode + "-status")
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        Log.d("COMPLAINT-SUB", "subscribeToComplaintTopic: SUCCESS");
+                    } else Log.d("COMPLAINT-SUB", "subscribeToComplaintTopic: FAILURE");
+                });
+    }
+
+    private void sendComplaintNotification() {
+        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(
+                "/topics/complaints",
+                "Korisnik je uložio pritužbu!",
+                user.getEmail() + " za narudžbu:\n" + complaintOrderCode,
+                getApplicationContext(),
+                this
+        );
+
+        notificationsSender.SendNotifications();
+        Log.d("COMPLAINT", "sendComplaintNotification: ");
     }
 
     private void addReviewToDB(ReviewModel review) {
@@ -370,8 +396,6 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         complaintOrderCode = orderCode;
         complaintModelColor.setText(reviewItem.toString());
         complaintItemSize.setText(reviewItem.getSizes().get(reviewItem.getAmounts().indexOf(1)).toString());
-
-
         flipper.setDisplayedChild(COMPLAINT_MENU_SCREEN);
     }
 

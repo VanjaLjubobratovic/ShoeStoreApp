@@ -48,6 +48,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -88,8 +89,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
         database = FirebaseFirestore.getInstance();
         itemsRef = database.collection("/locations/webshop/items");
         usersRef = database.collection("users");
+
         fetchUser();
         checkUser();
+        subscribeToNews();
 
         //Navigation drawer
         Toolbar toolbar = findViewById(R.id.customer_toolbar);
@@ -177,6 +180,15 @@ public class CustomerMainActivity extends AppCompatActivity implements Navigatio
             }
         });
 
+    }
+
+    private void subscribeToNews() {
+        FirebaseMessaging.getInstance().subscribeToTopic("news")
+                .addOnCompleteListener(task -> {
+                   if(task.isSuccessful()) {
+                       Log.d("NEWS-SUB", "subscribeToNews: SUCCESS");
+                   } else Log.d("NEWS-SUB", "subscribeToNews: FAILURE");
+                });
     }
 
     private void fetchItems() {

@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentItemManagementBinding;
 import com.example.shoestoreapp.employee.InventoryFragment;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -107,10 +109,6 @@ public class ItemManagementFragment extends Fragment {
         colorSpinner = flipper.getRootView().findViewById(R.id.newItemColor);
         priceEt = flipper.getRootView().findViewById(R.id.newItemPrice);
         itemImage = flipper.getRootView().findViewById(R.id.newItemIcon);
-
-        inventoryBtn.setOnClickListener(view1 ->  {
-            //TODO: show inventory
-        });
 
         newItemBtn.setOnClickListener(view1 -> {
             fetchModelColor();
@@ -278,6 +276,7 @@ public class ItemManagementFragment extends Fragment {
                                     .addOnCompleteListener(task -> {
                                         if(task.isSuccessful()) {
                                             Toast.makeText(getContext(), "Uspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
+                                            sendNewItemNotification();
                                             clearDataAndUI();
                                         } else Toast.makeText(getContext(), "Neuspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
                                     })
@@ -287,6 +286,17 @@ public class ItemManagementFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void sendNewItemNotification() {
+        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(
+                "/topics/news",
+                "Dodali smo novi artikl!",
+                "Potražite ga u našem webshopu.",
+                getContext(),
+                getActivity()
+        );
+        notificationsSender.SendNotifications();
     }
 
     private void uploadImageToDB() {

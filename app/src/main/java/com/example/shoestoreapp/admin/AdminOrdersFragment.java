@@ -23,6 +23,7 @@ import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
 import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -150,6 +151,18 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
         super.onResume();
     }
 
+    private void sendStatusNotification(String orderCode, String title, String body) {
+        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(
+                "/topics/" + orderCode + "-status",
+                title,
+                body,
+                getContext(),
+                getActivity()
+        );
+
+        notificationsSender.SendNotifications();
+    }
+
     @Override
     public void orderConfirmed(OrderModel orderItem) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -164,12 +177,25 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
                 else{
                     orderInStoreSet(orderItem);
                 }
+
+                sendStatusNotification(String.valueOf(orderItem.getOrderCode()), "Vaša narudžba je PRIHVAĆENA!", parseOrderItems(orderItem));
             }
         });
         builder.setNegativeButton("Ne", null);
         builder.show();
 
         Toast.makeText(getActivity(), "Confirmed", Toast.LENGTH_SHORT).show();
+    }
+
+    public String parseOrderItems(OrderModel orderItem) {
+        //TODO: exceptions
+        StringBuilder sb = new StringBuilder();
+        for(ItemModel item : orderItem.getItems()) {
+            int size = item.getSizes().get(item.getAmounts().indexOf(1));
+            sb.append(item + " " + size + "\n");
+        }
+
+        return sb.toString();
     }
 
     public void relocateOrder(OrderModel order){
@@ -273,6 +299,8 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
                 builder.setMessage("Narudžba uspješno odbijena");
                 builder.setPositiveButton("OK", null);
                 builder.show();
+
+                sendStatusNotification(String.valueOf(orderItem.getOrderCode()), "Vaša narudžba je ODBIJENA!", parseOrderItems(orderItem));
             }
         });
         builder.setNegativeButton("Ne", null);
