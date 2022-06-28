@@ -117,4 +117,5 @@ public class AdminComplaintsAdapter extends RecyclerView.Adapter<AdminComplaints
         void OnComplaintSeenClick(ComplaintModel complaint);
     }
 
+
 }

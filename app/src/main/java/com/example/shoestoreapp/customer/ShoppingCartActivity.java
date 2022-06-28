@@ -67,63 +67,7 @@ public class ShoppingCartActivity extends AppCompatActivity {
         emptyCartLayout = findViewById(R.id.emptyCartLayout);
         notEmptyLayout = findViewById(R.id.notEmptyCartLayout);
 
-        deliverySpinner = findViewById(R.id.deliverySpinner);
-        initDeliverySpinner();
-        //Delivery spinner onclick, changes the total price depending on selected delivery option
-        deliverySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String tmpTotalPrice = totalPrice.getText().toString();
-                switch(i){
-                    case 0:
-                        if(tmpTotalPrice.contains("+")){
-                            String result = tmpTotalPrice.split("\\+")[0];
-                            tmpTotalPrice = result;
-                        }
-                        break;
-                    case 1:
-                        tmpTotalPrice += " + 70kn";
-                }
-                totalPrice.setText(tmpTotalPrice);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
         //Adding the delivery price to the total price after a item gets removed
-        totalPrice.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Integer tmpCount = deliverySpinner.getSelectedItemPosition();
-                String tmpTotalPrice = totalPrice.getText().toString();
-                if (tmpCount > 0 && !tmpTotalPrice.contains("+")) {
-                    switch (tmpCount) {
-                        case 0:
-                            if(tmpTotalPrice.contains("+")){
-                                String result = tmpTotalPrice.split("\\+")[0];
-                                tmpTotalPrice = result;
-                            }
-                            break;
-                        case 1:
-                            tmpTotalPrice += " + 70kn";
-                    }
-                    totalPrice.setText(tmpTotalPrice);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
 
         backButton = findViewById(R.id.shoppingCartBackImageButton);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -192,14 +136,6 @@ public class ShoppingCartActivity extends AppCompatActivity {
     }
 
     //Initialization of the Delivery spinner
-    private void initDeliverySpinner(){
-        ArrayList<String> deliveryOptions = new ArrayList<>();
-        deliveryOptions.add("Obična dostava (besplatno)");
-        deliveryOptions.add("Ekspresna dostava (70kn)");
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, deliveryOptions);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        deliverySpinner.setAdapter(spinnerArrayAdapter);
-    }
 
     @Override
     protected void onResume() {

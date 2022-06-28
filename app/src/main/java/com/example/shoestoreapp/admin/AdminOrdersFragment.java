@@ -39,6 +39,7 @@ import com.google.firestore.v1.StructuredQuery;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdminOrdersFragment extends Fragment implements AdminOrdersRecyclerAdapter.onAdminOrders{
@@ -74,11 +75,11 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
         ordersRef = database.collection("/locations/webshop/orders");
         fetchOrders();
         fetchLocations();
+        orderRecycler = view.findViewById(R.id.adminOrdersRecycler);
         super.onViewCreated(view, savedInstanceState);
     }
 
     public void initOrderRecycler(){
-        orderRecycler = view.findViewById(R.id.adminOrdersRecycler);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false);
         orderRecycler.setLayoutManager(layoutManager);
         AdminOrdersRecyclerAdapter adapter = new AdminOrdersRecyclerAdapter(getActivity(), ordersList, AdminOrdersFragment.this);
@@ -283,11 +284,23 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
 
     public void deleteOrder(OrderModel orderToDelete){
         DocumentReference deleteRef = database.collection("/locations/webshop/orders").document(orderToDelete.getReceiptID());
+        CollectionReference delCol = database.collection("/locations").document("/webshop").
+                collection("/orders").document(orderToDelete.getReceiptID()).collection("/items");
+        delCol.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(DocumentSnapshot doc : task.getResult()){
+                    DocumentReference del = doc.getReference();
+                    del.delete();
+                }
+            }
+        });
         deleteRef.delete();
         ordersList.remove(orderToDelete);
         orderRecycler.getAdapter().notifyDataSetChanged();
         noOrders();
     }
+
 
     @Override
     public void orderDenied(OrderModel orderItem) {

@@ -38,9 +38,12 @@ import android.widget.ViewFlipper;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
 import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.customer.ComplaintModel;
 import com.example.shoestoreapp.customer.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentDeliveryBinding;
 import com.example.shoestoreapp.employee.DeliveryRecyclerViewAdapter;
+import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -405,8 +408,43 @@ public class AdminDeliveryFragment extends Fragment implements DeliveryRecyclerV
         builder.setMessage("Dostava uspješno zapisana");
         builder.setPositiveButton("Ok",null);
         builder.show();
+        sendDeliveryNotification(s , dest);
         clearData();
 
+    }
+
+    private void sendDeliveryNotification(Short deliveryCode, String store) {
+        //TODO: maybe work with complaint ID instead of order code
+        FcmNotificationsSender notificationsSender = new FcmNotificationsSender(
+                "/topics/" + store + "-delivery",
+                "Dostava je poslana.",
+                "Poslana je dostava " + deliveryCode
+                        + "\n" + parseOrderItems(),
+                getContext(),
+                getActivity()
+        );
+        Log.d("Notifikacija", store);
+        notificationsSender.SendNotifications();
+    }
+
+    public String parseOrderItems() {
+        //TODO: exceptions
+        StringBuilder sb = new StringBuilder();
+        for(ItemModel item : deliveredItems) {
+            ArrayList<Integer> amounts = item.getAmounts();
+            for(int amou : amounts){
+                if(amou > 0){
+                    int size = item.getSizes().get(item.getAmounts().indexOf(amou));
+                    sb.append(item);
+                    sb.append(" ");
+                    sb.append(size);
+                    sb.append(" x" + amou);
+                    sb.append(System.getProperty("line.separator"));
+                }
+            }
+        }
+
+        return sb.toString();
     }
 
     private void pickStore() {
@@ -470,4 +508,5 @@ public class AdminDeliveryFragment extends Fragment implements DeliveryRecyclerV
         initRecyclerView();
         clearItemPreview();
     }
+
 }
