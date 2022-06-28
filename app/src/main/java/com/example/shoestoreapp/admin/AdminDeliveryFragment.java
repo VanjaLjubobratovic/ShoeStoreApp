@@ -470,4 +470,5 @@ public class AdminDeliveryFragment extends Fragment implements DeliveryRecyclerV
         initRecyclerView();
         clearItemPreview();
     }
+
 }

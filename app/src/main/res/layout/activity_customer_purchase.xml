@@ -48,7 +48,9 @@
             android:id="@+id/paymentGoogleRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GooglePay" />
+            android:text="GooglePay"
+            android:clickable="false"
+            android:alpha="0.5"/>
     </RadioGroup>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -137,7 +137,10 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         customComplaintType = flipper.getRootView().findViewById(R.id.itemComplaintCustomReasonEditText);
         complaintResend = flipper.getRootView().findViewById(R.id.itemComplaintNewItemCheckbox);
 
-        complaintCancel.setOnClickListener(view -> flipper.setDisplayedChild(ORDER_MENU_SCREEN));
+        complaintCancel.setOnClickListener(view ->{
+            clearComplaintData();
+            flipper.setDisplayedChild(ORDER_MENU_SCREEN);
+        });
 
         complaintConfirm.setOnClickListener(view ->{
                 ComplaintModel complaint = new ComplaintModel();
@@ -165,6 +168,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
                 sendComplaintNotification();
                 subscribeToComplaintTopic();
+                clearComplaintData();
                 flipper.setDisplayedChild(ORDER_MENU_SCREEN);
         });
 
@@ -447,6 +451,12 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         reviewText.setText("");
         reviewModelColor.setText("");
         reviewModelImage.setImageResource(0);
+    }
+
+    public void clearComplaintData(){
+        complaintText.setText("");
+        complaintResend.setChecked(false);
+        complaintTypeSpinner.setSelection(0);
     }
 
     public void initComplaintTypeSpinner(){

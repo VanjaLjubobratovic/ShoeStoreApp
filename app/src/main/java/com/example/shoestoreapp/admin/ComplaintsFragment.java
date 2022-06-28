@@ -48,6 +48,7 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
     private RecyclerView complaintRecyclerView;
     private ArrayList<ItemModel> items = new ArrayList<>();
     private LinearLayout noComplaints;
+    private boolean init = true;
 
     public ComplaintsFragment() {
         // Required empty public constructor
@@ -306,5 +307,18 @@ public class ComplaintsFragment extends Fragment implements AdminComplaintsAdapt
                 break;
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        if(!init){
+            complaints.clear();
+            items.clear();
+            complaintRecyclerView.getAdapter().notifyDataSetChanged();
+            fetchComplaints();
+            fetchItems();
+        }
+        init = false;
+        super.onResume();
     }
 }
