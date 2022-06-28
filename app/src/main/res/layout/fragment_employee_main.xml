@@ -89,7 +89,7 @@
             android:layout_height="110dp"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="10dp"
-            android:text="Rezervacije robe"
+            android:text="Preuzimanje\nnarudžbe"
             app:icon="@drawable/reservationicon"
             app:iconSize="40dp"
             app:iconGravity="textTop"/>

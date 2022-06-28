@@ -1,6 +1,5 @@
 package com.example.shoestoreapp.admin;
 
-import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,15 +17,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.example.shoestoreapp.DataModels.StoreModel;
 import com.example.shoestoreapp.R;
+import com.example.shoestoreapp.admin.adapters.StoreRecyclerViewAdapter;
 import com.example.shoestoreapp.databinding.FragmentStoreManagementBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 

@@ -18,7 +18,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +33,10 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentItemManagementBinding;
 import com.example.shoestoreapp.employee.InventoryFragment;
 import com.example.shoestoreapp.notifications.FcmNotificationsSender;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;

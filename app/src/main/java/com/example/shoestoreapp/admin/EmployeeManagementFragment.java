@@ -19,7 +19,8 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.admin.adapters.EmployeeRecyclerViewAdapter;
 import com.example.shoestoreapp.databinding.FragmentEmployeeManagementBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

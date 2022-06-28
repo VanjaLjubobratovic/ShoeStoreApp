@@ -1,37 +1,24 @@
 package com.example.shoestoreapp.customer;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.shoestoreapp.DataModels.ClusterMarker;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.StoreModel;
-import com.example.shoestoreapp.employee.OrderModel;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.example.shoestoreapp.DataModels.CustomerStoreModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -40,23 +27,14 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -71,7 +49,7 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private LatLngBounds mMapBoundary;
     private FirebaseFirestore database;
-    private ArrayList<StoreModel> storesList = new ArrayList<>();
+    private ArrayList<CustomerStoreModel> storesList = new ArrayList<>();
     private FusedLocationProviderClient fusedLocationClient;
 
 
@@ -213,7 +191,7 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
                 mClusterManager.setRenderer(mClusterManagerRenderer);
             }
 
-            for (StoreModel store : storesList) {
+            for (CustomerStoreModel store : storesList) {
                 Log.d(TAG, "addMapMarkers: location: " + "store location");
                 try {
                     int avatar = R.drawable.launchericon1; // set the default avatar
@@ -247,7 +225,7 @@ public class ShopsMapActivity extends AppCompatActivity implements OnMapReadyCal
                         return;
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        StoreModel location = document.toObject(StoreModel.class);
+                        CustomerStoreModel location = document.toObject(CustomerStoreModel.class);
                         if(location == null || location.getType().equals("webshop"))
                             continue;
 

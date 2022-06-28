@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.shoestoreapp.DataModels.ComplaintModel;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.customer.adapters.CustomerComplaintsAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
