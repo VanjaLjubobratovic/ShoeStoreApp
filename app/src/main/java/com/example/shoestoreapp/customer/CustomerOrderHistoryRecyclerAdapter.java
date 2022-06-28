@@ -57,15 +57,15 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
         holder.orderTime.setText(date);
         if(currentOrder.isPickedUp()) {
-            holder.orderStatus.setText("Delivered");
+            holder.orderStatus.setText("Dostavljeno");
             holder.orderStatus.setTextColor(Color.GREEN);
         }
         else if(currentOrder.isInStore()){
-            holder.orderStatus.setText("Shipped");
+            holder.orderStatus.setText("Poslano");
             holder.orderStatus.setTextColor(Color.rgb(200,200,50));
         }
         else{
-            holder.orderStatus.setText("Not yet shipped");
+            holder.orderStatus.setText("Nije još poslano");
             holder.orderStatus.setTextColor(Color.RED);
         }
         Integer tmpPrice = (int)currentOrder.getTotal();

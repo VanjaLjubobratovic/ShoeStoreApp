@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                 EditText et = customLayout.findViewById(R.id.editText);
                 String email = et.getText().toString();
                 if(email.isEmpty() || !email.contains("@") || !email.contains(".")) {
-                    showErrorCredentials(et, "Invalid email format");
+                    showErrorCredentials(et, "Neispravan format email adrese");
                 } else {
                     sendPasswordReset(email);
                     dialog.dismiss();
@@ -117,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
         String password = binding.password.getText().toString();
 
         if(email.isEmpty() || !email.contains("@"))
-            showErrorCredentials(binding.username, "Email is not valid");
+            showErrorCredentials(binding.username, "Neispravan email");
         else if(password.isEmpty() || password.length() < 7)
-            showErrorCredentials(binding.password, "Password must be at least 8 characters long");
+            showErrorCredentials(binding.password, "Lozinka mora imati bar 7 znakova");
         else {
-            loadingBar.setTitle("Authenticating user...");
-            loadingBar.setMessage("Please wait while we check your credentials...");
+            loadingBar.setTitle("Provjeravamo podatke...");
+            loadingBar.setMessage("Molimo Vas, pričekajte da provjerimo Vaše podatke...");
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
 
@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if(!firebaseAuth.getCurrentUser().isEmailVerified()) {
                                     loadingBar.dismiss();
                                     AlertDialog.Builder failedLoginAlert = new AlertDialog.Builder(LoginActivity.this);
-                                    failedLoginAlert.setMessage("Please verify your email address before signing in.");
+                                    failedLoginAlert.setMessage("Molimo Vas, potvrdite svoju email adresu prije prijave.");
                                     failedLoginAlert.setCancelable(true);
 
                                     failedLoginAlert.setPositiveButton(
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
                                     );
 
                                     failedLoginAlert.setNegativeButton(
-                                            "Resend email",
+                                            "Ponovno pošalji",
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -168,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
                                                                     if(task.isSuccessful()) {
-                                                                        Toast.makeText(LoginActivity.this, "Verification email has been sent.", Toast.LENGTH_SHORT).show();
+                                                                        Toast.makeText(LoginActivity.this, "Email potvrde je poslan.", Toast.LENGTH_SHORT).show();
                                                                     } else {
                                                                         Log.d("EMAIL VERIFICATION", "Failed to send verification email");
                                                                     }
@@ -202,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         if(intent == null || user.getRole().equals("employee"))
                                                             return;
 
-                                                        Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(LoginActivity.this, "Uspješna prijava!", Toast.LENGTH_SHORT).show();
                                                         loadingBar.dismiss();
 
                                                         //write user data to SharedPreferences
@@ -228,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //TODO: generate more detailed alerts based on the reason of request failure
                                 loadingBar.dismiss();
                                 AlertDialog.Builder failedLoginAlert = new AlertDialog.Builder(LoginActivity.this);
-                                failedLoginAlert.setMessage("Login has failed. Please check your email and password and try again");
+                                failedLoginAlert.setMessage("Prijava nije uspjela. Molimo Vas, provjerite svoje podatke i pokušajte opet.");
                                 failedLoginAlert.setCancelable(true);
 
                                 failedLoginAlert.setPositiveButton(
@@ -242,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                                 );
                                 failedLoginAlert.show();
 
-                                Toast.makeText(LoginActivity.this, "Failed to login", Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginActivity.this, "Neuspješna prijava", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -275,8 +275,8 @@ public class LoginActivity extends AppCompatActivity {
         Spinner storeDropdown = customLayout.findViewById(R.id.storeSpinner);
 
         builder.setView(customLayout);
-        builder.setPositiveButton("Login", null)
-                .setNegativeButton("Cancel", null);
+        builder.setPositiveButton("Prijava", null)
+                .setNegativeButton("Odustani", null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -311,7 +311,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void employeeLogin(Intent intent, String storeID) {
-        Toast.makeText(LoginActivity.this, "Succesful login", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, "Uspješna prijava", Toast.LENGTH_SHORT).show();
         loadingBar.dismiss();
 
         //write user data to SharedPreferences
@@ -377,10 +377,10 @@ public class LoginActivity extends AppCompatActivity {
 
             firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
                 if(task.isSuccessful()) {
-                    resetAlert.setMessage("Password reset email has been sent!");
+                    resetAlert.setMessage("Email za oporavak lozinke poslan!");
                     resetAlert.show();
                 } else {
-                    resetAlert.setMessage("Account with given email does not exist.");
+                    resetAlert.setMessage("Račun s navedenim emailom ne postoji.");
                     resetAlert.show();
                 }
             });

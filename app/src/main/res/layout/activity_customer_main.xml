@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/backGrey"
     tools:context=".customer.CustomerMainActivity">
 
     <LinearLayout
@@ -67,9 +68,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:layout_marginTop="10dp"
-                    android:text="Most Popular Products"
-                    android:textColor="@color/black"
-                    android:textSize="18dp"
+                    android:text="@string/most_popular_products"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageViewShoeRack" />
 
@@ -79,7 +80,7 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="4dp"
-                    android:background="@android:color/black"
+                    android:background="@color/lightGrey"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textViewPopularProducts" />
 
@@ -97,10 +98,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
-                    android:layout_marginTop="10dp"
-                    android:text="Most Recent Products"
-                    android:textColor="@color/black"
-                    android:textSize="18dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/most_recent_products"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recyclerViewPopularProducts" />
 
@@ -110,7 +111,7 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="4dp"
-                    android:background="@android:color/black"
+                    android:background="@color/lightGrey"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textViewRecentProducts" />
 
@@ -130,6 +131,7 @@
                     android:layout_marginTop="4dp"
                     android:background="@android:color/black"
                     app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="invisible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/recyclerViewRecentProducts" />
 
@@ -137,28 +139,31 @@
                     android:id="@+id/textViewSearchCategories"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Search by category"
-                    android:textColor="@color/black"
-                    android:textSize="18dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/search_by_category"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+
                     app:layout_constraintTop_toBottomOf="@+id/viewAboveCategory" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginTop="15dp"
                     android:weightSum="1"
+                    android:gravity="center_horizontal"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textViewSearchCategories">
 
                     <ImageView
                         android:id="@+id/imageViewShoe"
                         android:layout_width="0dp"
-                        android:layout_height="200dp"
+                        android:layout_height="150dp"
                         android:layout_margin="10dp"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.45"
                         android:background="@drawable/image_border"
                         android:cropToPadding="true"
                         android:padding="1dp"
@@ -170,7 +175,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.45"
                         android:background="@drawable/image_border"
                         android:cropToPadding="true"
                         android:padding="1dp"

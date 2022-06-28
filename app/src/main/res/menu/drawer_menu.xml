@@ -7,28 +7,28 @@
         <item
             android:id="@+id/nav_my_profile"
             android:icon="@drawable/ic_my_profile"
-            android:title="MyProfile" />
+            android:title="@string/myprofile" />
         <item
             android:id="@+id/nav_store_locations"
             android:icon="@drawable/ic_order_history"
-            android:title="OrderHistory" />
+            android:title="@string/orderhistory" />
         <item
             android:id="@+id/nav_payment_method"
             android:icon="@drawable/ic_store_locations"
-            android:title="Store locations" />
+            android:title="@string/store_locations" />
         <item
             android:id="@+id/nav_complaints"
             android:icon="@drawable/ic_complaints"
-            android:title="My complaints" />
+            android:title="@string/my_complaints" />
         <item
             android:id="@+id/nav_leave_customer"
             android:icon="@drawable/ic_back_original"
-            android:title="Leave customer role" />
+            android:title="@string/leave_customer_role" />
 
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
     </group>
 
 
