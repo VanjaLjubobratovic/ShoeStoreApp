@@ -137,7 +137,7 @@ public class AdminMainActivity extends AppCompatActivity implements NavigationVi
                 TextView userEmail = findViewById(R.id.employeeNavEmail);
                 userEmail.setText(user.getEmail());
                 ImageView userImage = findViewById(R.id.employeeNavImage);
-                if(ContextCompat.checkSelfPermission(AdminMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                if(ContextCompat.checkSelfPermission(AdminMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_GRANTED){
                     if(user.getProfileImage() != null){
                         File file = new File(user.getProfileImage());

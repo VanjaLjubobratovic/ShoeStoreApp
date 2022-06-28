@@ -155,7 +155,7 @@ public class EmployeeMainActivity extends AppCompatActivity implements Navigatio
                 TextView userEmail = findViewById(R.id.employeeNavEmail);
                 userEmail.setText(user.getEmail());
                 ImageView userImage = findViewById(R.id.employeeNavImage);
-                if(ContextCompat.checkSelfPermission(EmployeeMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                if(ContextCompat.checkSelfPermission(EmployeeMainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_GRANTED){
                     if(user.getProfileImage() != null){
                         File file = new File(user.getProfileImage());
