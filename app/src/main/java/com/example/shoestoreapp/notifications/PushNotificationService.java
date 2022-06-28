@@ -7,6 +7,7 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.shoestoreapp.R;
@@ -28,10 +29,11 @@ public class PushNotificationService extends FirebaseMessagingService {
         );
 
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        Notification.Builder notification = new Notification.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
-                .setContentText(text)
+                .setContentText("")
                 .setSmallIcon(R.drawable.logo1)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setAutoCancel(true);
         NotificationManagerCompat.from(this).notify(1, notification.build());
         super.onMessageReceived(message);

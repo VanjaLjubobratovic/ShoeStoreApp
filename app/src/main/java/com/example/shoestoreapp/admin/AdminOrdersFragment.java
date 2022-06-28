@@ -192,7 +192,10 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
         StringBuilder sb = new StringBuilder();
         for(ItemModel item : orderItem.getItems()) {
             int size = item.getSizes().get(item.getAmounts().indexOf(1));
-            sb.append(item + " " + size + "\n");
+            sb.append(item);
+            sb.append(" ");
+            sb.append(size);
+            sb.append(System.getProperty("line.separator"));
         }
 
         return sb.toString();
