@@ -7,38 +7,17 @@
     tools:context=".employee.EmployeeMainFragment">
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/storeID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/status_blagajne"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="17sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"/>
 
-    <TextView
-        android:id="@+id/statusBlagajne"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/status_placeholder"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/textView1"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/otvoriZatvoriBlagajnu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Otvori"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/statusBlagajne"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/salesChart"
@@ -48,7 +27,7 @@
         android:layout_marginVertical="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statusBlagajne" />
+        app:layout_constraintTop_toBottomOf="@+id/storeID" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

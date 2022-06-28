@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
@@ -42,6 +43,7 @@ public class EmployeeMainFragment extends Fragment {
     private BarChart barChart;
 
     private MaterialButton newReceiptBtn, salesListBtn, deliveryBtn, inventoryBtn, orderBtn;
+    private TextView storeTV;
 
     private UserModel user;
 
@@ -85,11 +87,14 @@ public class EmployeeMainFragment extends Fragment {
         deliveryBtn = view.findViewById(R.id.acceptDelivery);
         orderBtn = view.findViewById(R.id.rezervacije);
         inventoryBtn = view.findViewById(R.id.searchInventory);
+        storeTV = view.findViewById(R.id.storeID);
+        barChart = view.findViewById(R.id.salesChart);
 
         Intent intent = getActivity().getIntent();
         user = (UserModel) intent.getParcelableExtra("userData");
 
-        barChart = view.findViewById(R.id.salesChart);
+
+        storeTV.setText(storeID);
 
         //fetchTraffic();
 

@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -236,6 +237,10 @@ public class CustomerProfileChangeActivity extends AppCompatActivity {
         newUser.put("city", user.getCity());
         newUser.put("phoneNumber", user.getPhoneNumber());
         newUser.put("profileImage", user.getProfileImage());
+
+        if(user.getReviewedItems() == null)
+            user.setReviewedItems(new ArrayList<>());
+        newUser.put("reviewedItems", user.getReviewedItems());
 
         database.collection("users").document(user.getEmail())
                 .set(newUser)

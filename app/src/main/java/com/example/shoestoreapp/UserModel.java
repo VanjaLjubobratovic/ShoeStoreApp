@@ -13,7 +13,7 @@ public class UserModel implements Parcelable{
     private String city;
     private String phoneNumber;
     private String postalNumber;
-    private ArrayList<String> reviewedItems;
+    private ArrayList<String> reviewedItems = new ArrayList<>();
     private String profileImage = null;
 
     public ArrayList<String> getReviewedItems() {
@@ -50,6 +50,7 @@ public class UserModel implements Parcelable{
         this.phoneNumber = in.readString();
         this.postalNumber = in.readString();
         this.profileImage = in.readString();
+        this.reviewedItems = in.readArrayList(String.class.getClassLoader());
     }
 
     public static final Creator<UserModel> CREATOR = new Creator<UserModel>() {
@@ -139,5 +140,6 @@ public class UserModel implements Parcelable{
         parcel.writeString(phoneNumber);
         parcel.writeString(postalNumber);
         parcel.writeString(profileImage);
+        parcel.writeList(reviewedItems);
     }
 }
