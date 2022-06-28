@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import android.content.Context;
@@ -168,6 +169,9 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
                     }
                     addOrderToDB();
                     addReceiptToDB();
+
+                    subscribeToOrderTopic(String.valueOf(order.getOrderCode()));
+
                     editor.remove("ShoppingCartReceipt");
                     editor.apply();
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -193,6 +197,14 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
 
     }
 
+    private void subscribeToOrderTopic(String orderCode) {
+        FirebaseMessaging.getInstance().subscribeToTopic(orderCode + "-status")
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        Log.d("COMPLAINT-SUB", "subscribeToComplaintTopic: SUCCESS");
+                    } else Log.d("COMPLAINT-SUB", "subscribeToComplaintTopic: FAILURE");
+                });
+    }
 
 
     public void readItems(){

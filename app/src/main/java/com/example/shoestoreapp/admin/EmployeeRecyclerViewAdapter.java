@@ -75,7 +75,6 @@ public class EmployeeRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeRe
         loadStores(holder, employee.getEmail());
 
         //TODO: load user image
-
         holder.itemView.setOnClickListener(view -> {
             if(holder.fireBtn.getVisibility() == View.GONE) {
                 holder.fireBtn.setVisibility(View.VISIBLE);

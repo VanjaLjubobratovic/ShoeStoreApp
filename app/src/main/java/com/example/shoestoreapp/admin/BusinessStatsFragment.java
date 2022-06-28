@@ -235,7 +235,7 @@ public class BusinessStatsFragment extends Fragment {
         BusinessStatsRecyclerAdapter adapter = new BusinessStatsRecyclerAdapter(getContext(), itemsMerged.getItems());
         recyclerView.setAdapter(adapter);
 
-        totalTV.setText("Ukupni promet: " + itemsMerged.getTotal() + "kn");
+        //totalTV.setText("Ukupni promet: " + itemsMerged.getTotal() + "kn");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -303,7 +303,6 @@ public class BusinessStatsFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sortByMonth(Date startDate, Date endDate) {
         ArrayList<Integer> months = new ArrayList<>();
-        ArrayList<Double> totals = new ArrayList<>(Collections.nCopies(12, 0.0));
         LocalDate startLocal = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endLocal = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -311,12 +310,16 @@ public class BusinessStatsFragment extends Fragment {
             months.add(date.getMonthValue());
         }
 
+        ArrayList<Double> totals = new ArrayList<>(Collections.nCopies(months.size(), 0.0));
+
         for(ReceiptModel receipt : receiptsList) {
-            Date receiptTime = new Date(receipt.getTime().getSeconds() * 1000);
-            int month = receiptTime.getMonth();
+            LocalDate receiptTime = receipt.getTime().toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int month = receiptTime.getMonthValue();
+
+            Log.d("MONTH", "Receipt: " + receipt.getTime().toDate() + " MonthConvert: " + month);
             int index = months.indexOf(month);
 
-            if(receiptTime.getYear() == endDate.getYear())
+            if(receiptTime.getYear() == endLocal.getYear())
                 index = months.lastIndexOf(month);
 
             totals.set(index, totals.get(index) + receipt.getTotal());
@@ -327,6 +330,12 @@ public class BusinessStatsFragment extends Fragment {
 
     private void setGraph(ArrayList<Integer> xAxisVals, ArrayList<Double> yAxisVals) {
         ArrayList<BarEntry> saleSumList = new ArrayList<>();
+        double total = 0;
+
+        for(double i : yAxisVals)
+            total += i;
+        totalTV.setText("Ukupni promet: " + total + "kn");
+
         for(int i = 0; i < xAxisVals.size(); i++)
             saleSumList.add(new BarEntry(i, yAxisVals.get(i).intValue()));
 
