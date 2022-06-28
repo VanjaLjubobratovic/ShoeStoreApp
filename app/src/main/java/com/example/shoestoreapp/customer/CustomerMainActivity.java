@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,9 +34,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.customer.adapters.RecyclerViewAdapter;
 import com.example.shoestoreapp.databinding.ActivityCustomerMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

@@ -20,9 +20,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ItemModel;
-import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
-import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.DataModels.OrderModel;
+import com.example.shoestoreapp.admin.adapters.AdminOrdersRecyclerAdapter;
 import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,12 +34,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firestore.v1.StructuredQuery;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AdminOrdersFragment extends Fragment implements AdminOrdersRecyclerAdapter.onAdminOrders{

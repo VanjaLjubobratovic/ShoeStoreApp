@@ -2,11 +2,9 @@ package com.example.shoestoreapp.admin;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,8 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ClusterMarker;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.ClusterMarker;
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.customer.MyClusterManagerRenderer;
 import com.example.shoestoreapp.databinding.FragmentStoreAddNewBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,10 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,8 +46,6 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.HashMap;
 
 public class StoreAddNewFragment extends Fragment implements OnMapReadyCallback {

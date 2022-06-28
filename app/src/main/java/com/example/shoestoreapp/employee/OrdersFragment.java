@@ -22,9 +22,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.shoestoreapp.DataModels.OrderModel;
+import com.example.shoestoreapp.DataModels.ReceiptModel;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.employee.adapters.EmployeeOrderRecyclerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,11 +39,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.model.mutation.ArrayTransformOperation;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

@@ -22,24 +22,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.admin.adapters.BusinessStatsRecyclerAdapter;
 import com.example.shoestoreapp.databinding.FragmentBusinessStatsBinding;
 import com.example.shoestoreapp.employee.DatePicker;
-import com.example.shoestoreapp.employee.ReceiptListRecyclerViewAdapter;
-import com.example.shoestoreapp.employee.ReceiptModel;
+import com.example.shoestoreapp.DataModels.ReceiptModel;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

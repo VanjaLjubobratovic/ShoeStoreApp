@@ -6,11 +6,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.StoreModel;
-import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.employee.OrderModel;
-import com.example.shoestoreapp.employee.ReceiptModel;
+import com.example.shoestoreapp.DataModels.CustomerStoreModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.DataModels.OrderModel;
+import com.example.shoestoreapp.DataModels.ReceiptModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,12 +37,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +52,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
     private UserModel user;
     private OrderModel order;
     private FirebaseFirestore database;
-    private ArrayList<StoreModel> storesList = new ArrayList<>();
+    private ArrayList<CustomerStoreModel> storesList = new ArrayList<>();
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private Spinner locationSpinner, deliverySpinner;
@@ -239,7 +238,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
                         return;
                     }
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        StoreModel location = document.toObject(StoreModel.class);
+                        CustomerStoreModel location = document.toObject(CustomerStoreModel.class);
                         if(location == null || location.getType().equals("webshop"))
                             continue;
 
@@ -255,7 +254,7 @@ public class CustomerPurchaseActivity extends AppCompatActivity {
 
     public void initLocationSpinner(){
         ArrayList<String> storeNames = new ArrayList<>();
-        for(StoreModel location : storesList){
+        for(CustomerStoreModel location : storesList){
             String address = location.getAddress().split("\\d{5}")[0];
             address.replaceAll(".$", "");
             storeNames.add(location.getName() + " " + address);

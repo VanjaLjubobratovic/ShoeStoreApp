@@ -2,7 +2,6 @@ package com.example.shoestoreapp;
 
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -23,9 +22,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.shoestoreapp.DataModels.UserModel;
 import com.example.shoestoreapp.admin.AdminMainActivity;
 import com.example.shoestoreapp.customer.CustomerMainActivity;
-import com.example.shoestoreapp.customer.CustomerProfileChangeActivity;
 import com.example.shoestoreapp.databinding.ActivityLoginBinding;
 import com.example.shoestoreapp.employee.EmployeeMainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;

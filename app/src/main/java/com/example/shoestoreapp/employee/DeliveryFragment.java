@@ -2,20 +2,15 @@ package com.example.shoestoreapp.employee;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +20,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +39,12 @@ import android.widget.ViewFlipper;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
-import com.budiyev.android.codescanner.DecodeCallback;
 import com.bumptech.glide.Glide;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentDeliveryBinding;
+import com.example.shoestoreapp.employee.adapters.DeliveryRecyclerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,12 +59,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.zxing.Result;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeliveryFragment extends Fragment implements DeliveryRecyclerViewAdapter.OnDeliveryItemListener {
     private MaterialButton manualAddBtn, codeScanBtn, confirmBtn, addItemBtn;

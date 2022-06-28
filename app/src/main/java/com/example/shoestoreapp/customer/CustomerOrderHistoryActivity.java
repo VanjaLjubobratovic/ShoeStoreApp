@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.shoestoreapp.DataModels.ComplaintModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.DataModels.ReviewModel;
 import com.example.shoestoreapp.LoginActivity;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.StoreModel;
-import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.employee.EmployeeOrderRecyclerViewAdapter;
-import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.DataModels.OrderModel;
+import com.example.shoestoreapp.customer.adapters.CustomerOrderHistoryRecyclerAdapter;
 import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -52,7 +54,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,6 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
     private UserModel user;
     private ImageButton exit;
     private MaterialButton reviewConfirm, reviewCancel, complaintConfirm, complaintCancel;
-    private ArrayList<TestOrderModel> fillerOrders = new ArrayList<>();
     private ArrayList<ItemModel> orderItems = new ArrayList<>();
     private ArrayList<OrderModel> orderList = new ArrayList<>();
     private ViewFlipper flipper;

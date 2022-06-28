@@ -1,7 +1,6 @@
 package com.example.shoestoreapp.admin;
 
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
@@ -19,11 +18,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ComplaintModel;
-import com.example.shoestoreapp.customer.ItemModel;
-import com.example.shoestoreapp.customer.ReviewModel;
-import com.example.shoestoreapp.customer.ReviewsRecycleViewAdapter;
-import com.example.shoestoreapp.employee.OrderModel;
+import com.example.shoestoreapp.DataModels.ComplaintModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.admin.adapters.AdminComplaintsAdapter;
 import com.example.shoestoreapp.notifications.FcmNotificationsSender;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;

@@ -2,7 +2,6 @@ package com.example.shoestoreapp.employee;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -30,12 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.shoestoreapp.DataModels.InventoryLogModel;
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.UserModel;
-import com.example.shoestoreapp.customer.ItemModel;
+import com.example.shoestoreapp.DataModels.UserModel;
+import com.example.shoestoreapp.DataModels.ItemModel;
 import com.example.shoestoreapp.databinding.FragmentInventoryAdjustmentBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
@@ -50,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class InventoryAdjustmentFragment extends Fragment {
     private FirebaseFirestore database;

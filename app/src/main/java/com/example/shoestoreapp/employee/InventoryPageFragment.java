@@ -13,18 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shoestoreapp.R;
-import com.example.shoestoreapp.customer.ItemModel;
-import com.google.firebase.Timestamp;
+import com.example.shoestoreapp.DataModels.ItemModel;
+import com.example.shoestoreapp.employee.adapters.InventoryGridAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class InventoryPageFragment extends Fragment {
