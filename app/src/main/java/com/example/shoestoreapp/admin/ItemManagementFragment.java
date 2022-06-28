@@ -243,6 +243,7 @@ public class ItemManagementFragment extends Fragment {
                         for (DocumentSnapshot document : task.getResult()) {
                             addItemToStore(document.getId(), item);
                         }
+                        sendNewItemNotification();
                     }
                 });
 
@@ -276,7 +277,6 @@ public class ItemManagementFragment extends Fragment {
                                     .addOnCompleteListener(task -> {
                                         if(task.isSuccessful()) {
                                             Toast.makeText(getContext(), "Uspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
-                                            sendNewItemNotification();
                                             clearDataAndUI();
                                         } else Toast.makeText(getContext(), "Neuspješno dodavanje novog artikla", Toast.LENGTH_SHORT).show();
                                     })
