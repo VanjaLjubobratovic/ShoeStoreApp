@@ -137,7 +137,6 @@ public class ItemManagementFragment extends Fragment {
         });
 
         inventoryBtn.setOnClickListener(view12 -> {
-            Toast.makeText(getContext(), "pregled", Toast.LENGTH_SHORT).show();
             try {
                 Intent intent = getActivity().getIntent();
                 intent.putExtra("storeID", "webshop");

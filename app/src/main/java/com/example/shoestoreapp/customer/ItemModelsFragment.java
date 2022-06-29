@@ -130,8 +130,6 @@ public class ItemModelsFragment extends Fragment implements ModelRecycleViewAdap
 
     @Override
     public void onModelClick(int position) {
-        Toast.makeText(getActivity(), "CLICKED", Toast.LENGTH_SHORT).show();
-
         ItemModel selectedModel = models.get(position);
         Intent singleItemIntent = new Intent(getActivity(),   SingleItemActivity.class);
         singleItemIntent.putExtra("selectedItem", selectedModel);
