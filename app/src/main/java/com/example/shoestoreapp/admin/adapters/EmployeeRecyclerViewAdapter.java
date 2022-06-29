@@ -60,13 +60,17 @@ public class EmployeeRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeRe
         holder.email.setText(employee.getEmail());
         holder.address.setText(employee.getAddress());
 
-        if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+        /*if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
                 PackageManager.PERMISSION_GRANTED){
             if(employee.getProfileImage() != null){
                 File file = new File(employee.getProfileImage());
                 Uri imageUri = Uri.fromFile(file);
                 Glide.with(mContext).load(imageUri).into(holder.employeeImage);
             }
+        }*/
+
+        if(employee.getRole().equals("admin")) {
+            Glide.with(mContext).load(R.drawable.avataradmin).into(holder.employeeImage);
         }
 
         loadStores(holder, employee.getEmail());
@@ -156,6 +160,7 @@ public class EmployeeRecyclerViewAdapter extends RecyclerView.Adapter<EmployeeRe
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(mContext, "Zaposlenik uspješno unaprijeđen", Toast.LENGTH_SHORT).show();
+                        employee.setRole("admin");
                         notifyItemChanged(position);
                     }
                 });

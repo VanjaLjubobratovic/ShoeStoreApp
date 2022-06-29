@@ -65,6 +65,10 @@ public class UserModel implements Parcelable{
         }
     };
 
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getFullName() {
         return fullName;
     }
