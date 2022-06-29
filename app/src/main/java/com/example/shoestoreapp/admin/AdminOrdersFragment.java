@@ -73,6 +73,7 @@ public class AdminOrdersFragment extends Fragment implements AdminOrdersRecycler
         fetchOrders();
         fetchLocations();
         orderRecycler = view.findViewById(R.id.adminOrdersRecycler);
+        initOrderRecycler();
         super.onViewCreated(view, savedInstanceState);
     }
 

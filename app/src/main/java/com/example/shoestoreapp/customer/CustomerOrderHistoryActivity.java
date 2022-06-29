@@ -449,12 +449,14 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
     public void clearReviewData(){
         reviewText.setText("");
+        reviewText.clearFocus();
         reviewModelColor.setText("");
         reviewModelImage.setImageResource(0);
     }
 
     public void clearComplaintData(){
         complaintText.setText("");
+        complaintText.clearFocus();
         complaintResend.setChecked(false);
         complaintTypeSpinner.setSelection(0);
     }

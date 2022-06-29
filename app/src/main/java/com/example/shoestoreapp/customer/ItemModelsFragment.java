@@ -123,7 +123,6 @@ public class ItemModelsFragment extends Fragment implements ModelRecycleViewAdap
                 modelsList.add(item.getModel());
             }
         }
-
         return uniqueModels;
     }
 
