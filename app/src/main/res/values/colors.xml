@@ -10,4 +10,8 @@
     <color name="lightGrey">#636363</color>
     <color name="backGrey">#f0f0f0</color>
     <color name="annulledRed">#e35d5d</color>
+    <color name="deliveryGreen">#5cde50</color>
+    <color name="deliveryRed">#de6a50</color>
+    <color name="deliveryYellow">#f2eb5c</color>
+    <color name="darkerYellow">#c4bc4d</color>
 </resources>

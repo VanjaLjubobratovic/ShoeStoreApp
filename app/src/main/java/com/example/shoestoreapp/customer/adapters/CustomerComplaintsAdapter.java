@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shoestoreapp.DataModels.ComplaintModel;
@@ -42,15 +43,15 @@ public class CustomerComplaintsAdapter extends RecyclerView.Adapter<CustomerComp
         holder.status.setText("Status: " + curComp.getResolved());
         holder.item.setText(curComp.getModel() + " broj " + curComp.getSize());
         if(curComp.getResolved().equals("Approved")){
-            holder.compLayout.setBackgroundColor(Color.GREEN);
+            holder.compLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.deliveryGreen));
         }
         else if(curComp.getResolved().equals("Denied")){
-            holder.compLayout.setBackgroundColor(Color.RED);
+            holder.compLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.deliveryRed));
             holder.denyReason.setText("Razlog: " + curComp.getReason());
             holder.denyReason.setVisibility(View.VISIBLE);
         }
         else{
-            holder.compLayout.setBackgroundColor(Color.YELLOW);
+            holder.compLayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.deliveryYellow));
         }
 
     }

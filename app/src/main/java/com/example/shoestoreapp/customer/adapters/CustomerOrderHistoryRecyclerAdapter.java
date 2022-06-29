@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -59,7 +60,7 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
         }
         else if(currentOrder.isInStore()){
             holder.orderStatus.setText("Poslano");
-            holder.orderStatus.setTextColor(Color.rgb(200,200,50));
+            holder.orderStatus.setTextColor(ContextCompat.getColor(mContext, R.color.darkerYellow));
         }
         else{
             holder.orderStatus.setText("Nije još poslano");
