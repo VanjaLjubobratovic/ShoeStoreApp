@@ -1,6 +1,7 @@
 package com.example.shoestoreapp.customer;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -137,36 +139,46 @@ public class SingleItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                //Converting item sizes to work with ReceiptModel items
-                //TODO make this a method in ReceiptModel
-                Integer sizeIndex = selectedItem.getSizes().indexOf(Integer.parseInt(sizeSpinner.getSelectedItem().toString()));
+                AlertDialog.Builder builder = new AlertDialog.Builder(SingleItemActivity.this);
+                builder.setMessage("Jeste li sigurni da želite dodati artikl u košaricu?");
+                builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Integer sizeIndex = selectedItem.getSizes().indexOf(Integer.parseInt(sizeSpinner.getSelectedItem().toString()));
 
-                ArrayList<Integer> sizeList = new ArrayList<>(Collections.nCopies(selectedItem.getSizes().size(), 0));
-                sizeList.set(sizeIndex, 1);
+                        ArrayList<Integer> sizeList = new ArrayList<>(Collections.nCopies(selectedItem.getSizes().size(), 0));
+                        sizeList.set(sizeIndex, 1);
 
-                ItemModel receiptItem = new ItemModel(selectedItem.getType(), selectedItem.getImage(), selectedItem.getPrice(),
-                        selectedItem.getRating(), selectedItem.getAdded(), selectedItem.getSizes(), sizeList);
-                receiptItem.parseModelColor(selectedItem.toString());
-                ReceiptModel receipt;
+                        ItemModel receiptItem = new ItemModel(selectedItem.getType(), selectedItem.getImage(), selectedItem.getPrice(),
+                                selectedItem.getRating(), selectedItem.getAdded(), selectedItem.getSizes(), sizeList);
+                        receiptItem.parseModelColor(selectedItem.toString());
+                        ReceiptModel receipt;
 
-                //Reading receipt written in Shared Preferences using gson
-                if(sharedPref.contains("ShoppingCartReceipt")){
-                    Gson gson = new Gson();
-                    String json = sharedPref.getString("ShoppingCartReceipt","NoItems");
-                    receipt = gson.fromJson(json, ReceiptModel.class);
-                }
-                //Creating a new receipt if there isn't one already in Shared Preferences
-                else{
-                    receipt = new ReceiptModel();
-                }
-                //Adding the selected item to cart and then Shared Preferences using gson
-                receipt.addItem(receiptItem);
-                Gson receiptGson = new Gson();
-                String receiptJson = receiptGson.toJson(receipt);
-                editor.putString("ShoppingCartReceipt",receiptJson);
-                editor.apply();
-                Toast.makeText(SingleItemActivity.this, "Item added to cart", Toast.LENGTH_SHORT).show();
+                        //Reading receipt written in Shared Preferences using gson
+                        if(sharedPref.contains("ShoppingCartReceipt")){
+                            Gson gson = new Gson();
+                            String json = sharedPref.getString("ShoppingCartReceipt","NoItems");
+                            receipt = gson.fromJson(json, ReceiptModel.class);
+                        }
+                        //Creating a new receipt if there isn't one already in Shared Preferences
+                        else{
+                            receipt = new ReceiptModel();
+                        }
+                        //Adding the selected item to cart and then Shared Preferences using gson
+                        receipt.addItem(receiptItem);
+                        Gson receiptGson = new Gson();
+                        String receiptJson = receiptGson.toJson(receipt);
+                        editor.putString("ShoppingCartReceipt",receiptJson);
+                        editor.apply();
 
+                        AlertDialog.Builder yesDialog = new AlertDialog.Builder(SingleItemActivity.this);
+                        yesDialog.setMessage("Artikl uspješno dodan.");
+                        yesDialog.setPositiveButton("Ok", null);
+                        yesDialog.show();
+                    }
+                });
+                builder.setNegativeButton("Ne", null);
+                builder.show();
             }
         });
 

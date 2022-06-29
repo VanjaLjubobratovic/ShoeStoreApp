@@ -94,7 +94,8 @@ public class ShoppingCartActivity extends AppCompatActivity {
             //Checking if there are any items left in the cart
             @Override
             public void onChildViewDetachedFromWindow(@NonNull View view) {
-                Toast.makeText(ShoppingCartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
+                readData();
+                //Toast.makeText(ShoppingCartActivity.this, "Item removed", Toast.LENGTH_SHORT).show();
                 //If not show empty cart message
                 if(receipt.getItems().size() <= 0) {
                     notEmptyLayout.setVisibility(View.GONE);
