@@ -401,8 +401,9 @@ public class AdminDeliveryFragment extends Fragment implements DeliveryRecyclerV
                     });
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Dostava uspješno zapisana");
+        builder.setMessage("Dostava uspješno zapisana. Broj dostave: " + s);
         builder.setPositiveButton("Ok",null);
+        builder.setCancelable(false);
         builder.show();
         sendDeliveryNotification(s , dest);
         clearData();
