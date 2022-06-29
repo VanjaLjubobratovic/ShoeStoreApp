@@ -318,8 +318,9 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
     private void fetchOrders(ArrayList<String> locations) {
         for(String location : locations) {
-            ordersRef = database.collection("/locations/" + location + "/orders");
-            ordersRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            CollectionReference singleOrderRef;
+            singleOrderRef = database.collection("/locations/" + location + "/orders");
+            singleOrderRef.whereEqualTo("user", user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -335,7 +336,7 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
 
                             order.setTotal(0);
                             order.setReceiptID(document.getId());
-                            fetchItems(document.getId(), order);
+                            fetchItems(document.getId(), order, singleOrderRef);
                             Log.d("FIRESTORE Single", order.toString());
                         }
                     } else Log.d("FIRESTORE Single", "fetch failed");
@@ -344,8 +345,8 @@ public class CustomerOrderHistoryActivity extends AppCompatActivity implements C
         }
     }
 
-    private void fetchItems(String documentID, OrderModel order) {
-        ordersRef.document(documentID).collection("items").get()
+    private void fetchItems(String documentID, OrderModel order, CollectionReference singleOrderRef) {
+        singleOrderRef.document(documentID).collection("items").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {

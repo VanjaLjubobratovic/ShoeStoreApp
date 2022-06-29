@@ -386,7 +386,7 @@ public class OrdersFragment extends Fragment {
         boolean orderFound = false;
         OrderModel orderToRemove = null;
         for(OrderModel order : orderList){
-            if(orderCode.equals(order.getOrderCode().toString())){
+            if(orderCode.equals(order.getOrderCode().toString().substring(0,5))){
                 orderFound = true;
                 orderToRemove = order;
             }

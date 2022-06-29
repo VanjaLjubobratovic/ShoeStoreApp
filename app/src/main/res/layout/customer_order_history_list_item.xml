@@ -20,6 +20,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/orderHistoryOrderCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:text="Broj narudžbe" />
+
             <TextView
                 android:id="@+id/orderHistoryTimeTextView"
                 android:gravity="center"

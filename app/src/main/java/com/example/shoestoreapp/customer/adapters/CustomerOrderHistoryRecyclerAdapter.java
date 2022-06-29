@@ -78,6 +78,8 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
         boolean isVisible = currentOrder.isExpanded();
         holder.expandedLayout.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        String code = currentOrder.getOrderCode().toString();
+        holder.orderCode.setText(code.substring(0,5));
 
         if(currentOrder.isPickedUp() || !currentOrder.isInStore()){
             holder.confirmDelivery.setClickable(false);
@@ -103,13 +105,14 @@ public class CustomerOrderHistoryRecyclerAdapter extends RecyclerView.Adapter<Cu
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView orderTime, orderStatus, finalPrice;
+        TextView orderTime, orderStatus, finalPrice, orderCode;
         RecyclerView orderItems;
         ConstraintLayout expandedLayout, itemLayout;
         MaterialButton confirmDelivery;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            orderCode = itemView.findViewById(R.id.orderHistoryOrderCode);
             orderTime = itemView.findViewById(R.id.orderHistoryTimeTextView);
             orderStatus = itemView.findViewById(R.id.orderHistoryStatusTextView);
             finalPrice = itemView.findViewById(R.id.orderHistoryPriceTextView);
