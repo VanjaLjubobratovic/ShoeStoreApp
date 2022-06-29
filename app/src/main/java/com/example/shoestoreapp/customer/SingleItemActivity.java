@@ -228,7 +228,6 @@ public class SingleItemActivity extends AppCompatActivity {
             if(task.isSuccessful()) {
                 if(task.getResult().size() == 0) {
                     Log.d("FIRESTORE", "0 Results");
-                    return;
                 }
                 //Writing the results to a ArrayList
                 for(QueryDocumentSnapshot document : task.getResult()) {
